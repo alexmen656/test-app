@@ -2,6 +2,7 @@ class BetaBayApp {
     constructor() {
         this.user = null;
         this.apps = [];
+        this.authToken = null;
         // API Base URL - change this to your deployed backend URL
         this.apiBaseUrl = 'https://betabay.vercel.app';
         this.init();
@@ -9,6 +10,7 @@ class BetaBayApp {
 
     init() {
         this.bindEvents();
+        this.handleAuthCallback();
         this.checkAuthStatus();
     }
 
@@ -40,10 +42,41 @@ class BetaBayApp {
         });
     }
 
+    handleAuthCallback() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        const authStatus = urlParams.get('auth');
+        
+        if (token && authStatus === 'success') {
+            // Store token in localStorage
+            localStorage.setItem('authToken', token);
+            this.authToken = token;
+            
+            // Clean up URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+        } else if (authStatus === 'error') {
+            this.showError('Authentication failed. Please try again.');
+            // Clean up URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+        
+        // Load token from localStorage if available
+        if (!this.authToken) {
+            this.authToken = localStorage.getItem('authToken');
+        }
+    }
+
     async checkAuthStatus() {
         try {
             this.showLoading(true);
+            
+            const headers = {};
+            if (this.authToken) {
+                headers['Authorization'] = `Bearer ${this.authToken}`;
+            }
+            
             const response = await fetch(`${this.apiBaseUrl}/api/user`, {
+                headers,
                 credentials: 'include'
             });
             
@@ -69,20 +102,35 @@ class BetaBayApp {
     async logout() {
         try {
             this.showLoading(true);
+            
+            const headers = {};
+            if (this.authToken) {
+                headers['Authorization'] = `Bearer ${this.authToken}`;
+            }
+            
             const response = await fetch(`${this.apiBaseUrl}/api/logout`, { 
                 method: 'POST',
-                credentials: 'include'
+                credentials: 'include',
+                headers
             });
             
+            // Clear token regardless of response
+            localStorage.removeItem('authToken');
+            this.authToken = null;
+            this.setUser(null);
+            
             if (response.ok) {
-                this.setUser(null);
-                this.showNotification('Erfolgreich abgemeldet', 'success');
+                this.showNotification('Successfully logged out', 'success');
             } else {
-                this.showNotification('Fehler beim Abmelden', 'error');
+                this.showNotification('Error during logout', 'error');
             }
         } catch (error) {
             console.error('Logout error:', error);
-            this.showNotification('Fehler beim Abmelden', 'error');
+            // Still clear local data
+            localStorage.removeItem('authToken');
+            this.authToken = null;
+            this.setUser(null);
+            this.showNotification('Error during logout', 'error');
         } finally {
             this.showLoading(false);
         }
@@ -212,11 +260,17 @@ class BetaBayApp {
         try {
             this.showLoading(true);
             
+            const headers = {
+                'Content-Type': 'application/json',
+            };
+            
+            if (this.authToken) {
+                headers['Authorization'] = `Bearer ${this.authToken}`;
+            }
+            
             const response = await fetch(`${this.apiBaseUrl}/api/apps`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers,
                 credentials: 'include',
                 body: JSON.stringify(appData)
             });
@@ -226,10 +280,10 @@ class BetaBayApp {
                 this.apps.unshift(newApp); // Add to beginning of array
                 this.renderApps();
                 this.closeSubmitModal();
-                this.showNotification('App erfolgreich eingereicht!', 'success');
+                this.showNotification('App successfully submitted!', 'success');
             } else {
                 const error = await response.json();
-                this.showNotification(error.error || 'Fehler beim Einreichen der App', 'error');
+                this.showNotification(error.error || 'Error submitting app', 'error');
             }
         } catch (error) {
             console.error('Submit error:', error);

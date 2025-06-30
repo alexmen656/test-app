@@ -152,8 +152,23 @@ app.get('/auth/slack/callback', async (req, res) => {
     
     console.log('User authenticated successfully:', user.id);
     
-    // Redirect to frontend
-    res.redirect('http://localhost:3000/?auth=success');
+    // Create JWT token for cross-domain authentication
+    const crypto = require('crypto');
+    const userToken = Buffer.from(JSON.stringify({
+      id: user.id,
+      name: user.real_name || user.name,
+      email: user.profile.email,
+      image: user.profile.image_512 || user.profile.image_192,
+      team: tokenResponse.data.team.name || 'Unknown Team',
+      exp: Date.now() + 24 * 60 * 60 * 1000 // 24 hours
+    })).toString('base64');
+    
+    // Redirect to frontend with token
+    const frontendUrl = process.env.NODE_ENV === 'production' 
+      ? `http://localhost:3000/?auth=success&token=${userToken}`
+      : `http://localhost:3000/?auth=success&token=${userToken}`;
+    
+    res.redirect(frontendUrl);
     
   } catch (error) {
     console.error('Slack OAuth error:', error.message);
@@ -163,6 +178,27 @@ app.get('/auth/slack/callback', async (req, res) => {
 });
 
 app.get('/api/user', (req, res) => {
+  // Check for token-based auth first (for cross-domain)
+  const token = req.headers.authorization?.replace('Bearer ', '') || req.query.token;
+  
+  if (token) {
+    try {
+      const userData = JSON.parse(Buffer.from(token, 'base64').toString());
+      
+      // Check if token is expired
+      if (userData.exp && userData.exp < Date.now()) {
+        return res.status(401).json({ error: 'Token expired' });
+      }
+      
+      // Remove expiration from response
+      delete userData.exp;
+      return res.json(userData);
+    } catch (error) {
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+  }
+  
+  // Fallback to session-based auth (for same-domain)
   if (req.session.user) {
     res.json(req.session.user);
   } else {
@@ -207,7 +243,30 @@ app.get('/api/apps', (req, res) => {
 });
 
 app.post('/api/apps', (req, res) => {
-  if (!req.session.user) {
+  let user = null;
+  
+  // Check for token-based auth first (for cross-domain)
+  const token = req.headers.authorization?.replace('Bearer ', '');
+  
+  if (token) {
+    try {
+      const userData = JSON.parse(Buffer.from(token, 'base64').toString());
+      
+      // Check if token is expired
+      if (userData.exp && userData.exp < Date.now()) {
+        return res.status(401).json({ error: 'Token expired' });
+      }
+      
+      user = userData;
+    } catch (error) {
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+  } else if (req.session.user) {
+    // Fallback to session-based auth
+    user = req.session.user;
+  }
+  
+  if (!user) {
     return res.status(401).json({ error: 'Authentication required' });
   }
   
@@ -225,7 +284,7 @@ app.post('/api/apps', (req, res) => {
     category,
     url,
     status: 'pending',
-    submittedBy: req.session.user.name,
+    submittedBy: user.name,
     submitDate: new Date().toISOString().split('T')[0]
   };
   
