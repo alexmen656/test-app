@@ -1,0 +1,26 @@
+{
+  "name": "betabay-slack-auth",
+  "version": "1.0.0",
+  "description": "A Website where you can test apps and submit apps for review with Slack authentication",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "frontend": "node frontend-server.js",
+    "frontend:dev": "nodemon frontend-server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "dotenv": "^16.3.1",
+    "axios": "^1.6.0",
+    "express-session": "^1.17.3",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": ["slack", "oauth", "authentication", "app-testing", "betabay"],
+  "author": "",
+  "license": "MIT"
+}
