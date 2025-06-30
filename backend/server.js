@@ -35,16 +35,21 @@ app.use(express.urlencoded({ extended: true }));
 app.use(session({
   secret: process.env.SESSION_SECRET || 'fallback-secret-key',
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: true, // Changed to true to persist OAuth state
   cookie: {
     secure: process.env.NODE_ENV === 'production',
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
-  }
+  },
+  // Force session to be saved even if unmodified
+  rolling: true
 }));
 
 // Serve static files from public directory
 app.use(express.static(path.join(__dirname, 'public')));
+
+// In-memory store for OAuth states (in production, use Redis or database)
+const oauthStates = new Map();
 
 // Slack OAuth URLs - Updated to latest API endpoints
 const SLACK_OAUTH_URL = 'https://slack.com/oauth/v2/authorize';
@@ -65,22 +70,36 @@ app.get('/api/auth/slack', (req, res) => {
     response_type: 'code'
   });
   
-  // Store state in session for verification
-  req.session.oauthState = state;
+  // Store state in memory store with expiration (10 minutes)
+  oauthStates.set(state, {
+    timestamp: Date.now(),
+    sessionId: req.sessionID
+  });
   
-  // Add nonce for additional security
-  req.session.nonce = require('crypto').randomBytes(16).toString('hex');
+  // Clean up old states (older than 10 minutes)
+  const tenMinutesAgo = Date.now() - 10 * 60 * 1000;
+  for (const [key, value] of oauthStates.entries()) {
+    if (value.timestamp < tenMinutesAgo) {
+      oauthStates.delete(key);
+    }
+  }
   
+  console.log('OAuth state generated and stored:', state);
   res.redirect(`${SLACK_OAUTH_URL}?${params}`);
 });
 
 app.get('/auth/slack/callback', async (req, res) => {
   const { code, state } = req.query;
   
-  // Verify state for CSRF protection
-  if (state !== req.session.oauthState) {
-    return res.status(400).json({ error: 'Invalid state parameter' });
+  // Verify state for CSRF protection using in-memory store
+  const storedState = oauthStates.get(state);
+  if (!storedState) {
+    console.error('OAuth state not found:', state);
+    return res.status(400).json({ error: 'Invalid or expired state parameter' });
   }
+  
+  // Remove used state
+  oauthStates.delete(state);
   
   if (!code) {
     return res.status(400).json({ error: 'Authorization code not provided' });
@@ -131,12 +150,10 @@ app.get('/auth/slack/callback', async (req, res) => {
       team: tokenResponse.data.team.name || 'Unknown Team'
     };
     
-    // Clear OAuth state
-    delete req.session.oauthState;
-    delete req.session.nonce;
+    console.log('User authenticated successfully:', user.id);
     
     // Redirect to frontend
-    res.redirect('/?auth=success');
+    res.redirect('http://localhost:3000/?auth=success');
     
   } catch (error) {
     console.error('Slack OAuth error:', error.message);
