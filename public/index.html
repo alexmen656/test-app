@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BetaBay - App Testing Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="container">
+                <div class="nav">
+                    <div class="logo">
+                        <h1>🚀 BetaBay</h1>
+                        <span>App Testing Platform</span>
+                    </div>
+                    <div class="nav-actions">
+                        <div id="user-info" class="user-info" style="display: none;">
+                            <img id="user-avatar" class="avatar" src="" alt="User Avatar">
+                            <span id="user-name"></span>
+                            <button id="logout-btn" class="btn btn-secondary">Abmelden</button>
+                        </div>
+                        <button id="login-btn" class="btn btn-primary">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M5.5 2C3.6 2 2 3.6 2 5.5V18.5C2 20.4 3.6 22 5.5 22H18.5C20.4 22 22 20.4 22 18.5V5.5C22 3.6 20.4 2 18.5 2H5.5ZM5.5 4H18.5C19.3 4 20 4.7 20 5.5V18.5C20 19.3 19.3 20 18.5 20H5.5C4.7 20 4 19.3 4 18.5V5.5C4 4.7 4.7 4 5.5 4ZM8 7V9H16V7H8ZM8 11V13H16V11H8ZM8 15V17H13V15H8Z"/>
+                            </svg>
+                            Mit Slack anmelden
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <div class="container">
+                <!-- Welcome Section -->
+                <section id="welcome-section" class="welcome-section">
+                    <div class="hero">
+                        <h2>Willkommen bei BetaBay</h2>
+                        <p>Die Plattform für App-Testing und -Bewertung. Melde dich mit Slack an, um Apps zu testen oder deine eigenen Apps zur Bewertung einzureichen.</p>
+                        <div class="features">
+                            <div class="feature">
+                                <div class="feature-icon">🧪</div>
+                                <h3>Apps testen</h3>
+                                <p>Teste neue Apps und gib wertvolles Feedback</p>
+                            </div>
+                            <div class="feature">
+                                <div class="feature-icon">📝</div>
+                                <h3>Apps einreichen</h3>
+                                <p>Reiche deine eigenen Apps zur Bewertung ein</p>
+                            </div>
+                            <div class="feature">
+                                <div class="feature-icon">🤝</div>
+                                <h3>Community</h3>
+                                <p>Vernetze dich mit anderen Entwicklern</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Dashboard Section -->
+                <section id="dashboard-section" class="dashboard-section" style="display: none;">
+                    <div class="dashboard">
+                        <div class="dashboard-header">
+                            <h2>Dashboard</h2>
+                            <button id="submit-app-btn" class="btn btn-primary">App einreichen</button>
+                        </div>
+                        
+                        <div class="dashboard-content">
+                            <!-- Apps List -->
+                            <div class="section">
+                                <h3>Verfügbare Apps zum Testen</h3>
+                                <div id="apps-list" class="apps-grid">
+                                    <!-- Apps werden hier dynamisch geladen -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- App Submission Modal -->
+    <div id="submit-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>App zur Bewertung einreichen</h3>
+                <button id="close-modal" class="close-btn">&times;</button>
+            </div>
+            <form id="submit-form" class="modal-body">
+                <div class="form-group">
+                    <label for="app-name">App Name *</label>
+                    <input type="text" id="app-name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="app-description">Beschreibung *</label>
+                    <textarea id="app-description" name="description" rows="4" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="app-category">Kategorie *</label>
+                    <select id="app-category" name="category" required>
+                        <option value="">Kategorie wählen</option>
+                        <option value="productivity">Produktivität</option>
+                        <option value="communication">Kommunikation</option>
+                        <option value="development">Entwicklung</option>
+                        <option value="design">Design</option>
+                        <option value="other">Sonstiges</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="app-url">App URL (optional)</label>
+                    <input type="url" id="app-url" name="url" placeholder="https://...">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="cancel-submit" class="btn btn-secondary">Abbrechen</button>
+                    <button type="submit" class="btn btn-primary">App einreichen</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading" class="loading" style="display: none;">
+        <div class="spinner"></div>
+        <p>Wird geladen...</p>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
