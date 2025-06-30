@@ -57,6 +57,12 @@ body {
     margin: 0;
 }
 
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: start;
+}
 /* Buttons - Updated to red theme */
 .btn {
     display: inline-flex;
