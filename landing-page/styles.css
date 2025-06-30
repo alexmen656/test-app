@@ -18,7 +18,42 @@ body {
     padding: 0 20px;
 }
 
-/* Buttons */
+/* Logo Styles */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-image {
+    height: 40px;
+    width: auto;
+}
+
+.logo-text h1,
+.logo-text h3 {
+    margin: 0;
+    color: #DC2626;
+    font-weight: 700;
+}
+
+.logo-text h1 {
+    font-size: 1.5rem;
+}
+
+.logo-text h3 {
+    font-size: 1.25rem;
+}
+
+.logo-text span,
+.logo-text p {
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-weight: 400;
+    margin: 0;
+}
+
+/* Buttons - Updated to red theme */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -39,23 +74,23 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
     color: white;
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 10px 25px rgba(220, 38, 38, 0.3);
 }
 
 .btn-secondary {
     background: transparent;
-    color: #667eea;
-    border: 2px solid #667eea;
+    color: #DC2626;
+    border: 2px solid #DC2626;
 }
 
 .btn-secondary:hover {
-    background: #667eea;
+    background: #DC2626;
     color: white;
 }
 
@@ -91,9 +126,9 @@ body {
     font-weight: 400;
 }
 
-/* Hero Section */
+/* Hero Section - Updated to red theme */
 .hero {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
     color: white;
     padding: 120px 0 80px;
     margin-top: 70px;
@@ -361,7 +396,7 @@ section {
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
     color: white;
     font-size: 2rem;
     font-weight: 700;
@@ -369,7 +404,7 @@ section {
     align-items: center;
     justify-content: center;
     margin: 0 auto 2rem;
-    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 10px 30px rgba(220, 38, 38, 0.3);
 }
 
 .step h3 {
@@ -385,8 +420,9 @@ section {
 }
 
 /* Stats Section */
+/* Stats Section - Updated to red theme */
 .stats {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
     color: white;
 }
 
@@ -476,7 +512,7 @@ section {
 }
 
 .footer-section ul li a:hover {
-    color: #667eea;
+    color: #DC2626;
 }
 
 .footer-bottom {
