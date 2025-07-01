@@ -1,6 +1,38 @@
+'use client';
+
 import Link from 'next/link';
+import { useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function HomePage() {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const { setAuthToken, debugStorage } = useAuth();
+
+    useEffect(() => {
+        const authStatus = searchParams.get('auth');
+        const token = searchParams.get('token');
+        
+        console.log('HomePage: authStatus =', authStatus, 'token =', token ? 'present' : 'missing');
+        
+        // Debug localStorage
+        debugStorage();
+        
+        if (authStatus === 'success' && token) {
+            console.log('HomePage: Storing token and redirecting...');
+            console.log('HomePage: Token preview =', token.substring(0, 50) + '...');
+            
+            // Use the auth hook to set the token
+            setAuthToken(token);
+            
+            // Redirect to explore page after a short delay
+            setTimeout(() => {
+                router.push('/explore');
+            }, 1000);
+        }
+    }, [searchParams, router, setAuthToken, debugStorage]);
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
             {/* Header */}

@@ -12,16 +12,24 @@ export default function SignInPage() {
 
   useEffect(() => {
     const authStatus = searchParams.get('auth');
-    if (authStatus === 'error') {
+    const token = searchParams.get('token');
+    
+    if (authStatus === 'success' && token) {
+      // Store token in localStorage
+      localStorage.setItem('authToken', token);
+      
+      // Redirect to explore page or dashboard
+      router.push('/explore');
+    } else if (authStatus === 'error') {
       setError('Authentication failed. Please try again.');
     }
-  }, [searchParams]);
+  }, [searchParams, router]);
 
   const handleSlackSignIn = () => {
     setIsLoading(true);
     setError('');
     
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://betabay.vercel.app';
+    const backendUrl = 'https://betabay.vercel.app';//process.env.NEXT_PUBLIC_BACKEND_URL || 
     
     window.location.href = `${backendUrl}/api/auth/slack`;
   };
