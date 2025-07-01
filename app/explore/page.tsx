@@ -2,8 +2,10 @@
 
 import Image from 'next/image';
 import type { FC } from 'react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import AppCard from '@/components/AppCard'; // Import the AppCard component
+import { useAuth } from '@/hooks/useAuth';
 import { App } from '@/types'; // Import the App type from the explore page
 import AppListCard from '@/components/AppListCard';
 
@@ -219,5 +221,50 @@ const ExplorePageContent: FC<{ onSelectApp: (id: number) => void }> = ({ onSelec
   );
 };
 
+// Wrapper component that handles authentication
+const ExplorePage: FC = () => {
+  const { isAuthenticated, isLoading, user } = useAuth();
+  const router = useRouter();
 
-export default ExplorePageContent;
+  useEffect(() => {
+    console.log('ExplorePage: isLoading =', isLoading, 'isAuthenticated =', isAuthenticated, 'user =', user);
+    
+    // Only redirect if we're done loading and definitely not authenticated
+    if (!isLoading && !isAuthenticated) {
+      console.log('ExplorePage: Redirecting to signin...');
+      router.push('/signin');
+    }
+  }, [isAuthenticated, isLoading, router, user]);
+
+  if (isLoading) {
+    console.log('ExplorePage: Showing loading state...');
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    console.log('ExplorePage: Not authenticated, will redirect...');
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Redirecting to sign in...</p>
+        </div>
+      </div>
+    );
+  }
+
+  console.log('ExplorePage: Authenticated, showing content...');
+  const handleSelectApp = (id: number) => {
+    router.push(`/explore/detail/${id}`);
+  };
+
+  return <ExplorePageContent onSelectApp={handleSelectApp} />;
+};
+
+export default ExplorePage;
