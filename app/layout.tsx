@@ -30,7 +30,9 @@ export default function RootLayout({
       >
         <div className="bg-gray-100 text-black flex-1 h-screen overflow-hidden relative">
           <Header />
-          {children}
+          <div className="absolute inset-0 top-[64px] overflow-auto">
+            {children}
+          </div>
         </div>
       </body>
     </html>
