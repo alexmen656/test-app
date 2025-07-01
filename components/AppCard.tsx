@@ -1,11 +1,11 @@
 import React from 'react'
 import Image from 'next/image'
-import type { App } from '@/app/explore/page'; // Import the App type
+import type { App } from '@/types'; // Import the App type
 
 const AppCard: React.FC<{ app: App }> = ({ app }) => {
     return (
-        <button onClick={() => window.location.href = `/explore/detail/${app.id}`} className="w-full">
-            <div key={app.id} className="min-w-xl group cursor-pointer bg-gray-100 pb-9 pt-9 px-5 rounded-2xl">
+        <button onClick={() => window.location.href = `/explore/detail/${app.id}`} className="w-full ">
+            <div key={app.id} className="min-w-xl group cursor-pointer bg-white pb-9 pt-9 px-5 rounded-2xl">
                 <div className="relative h-64 w-full bg-gray-200 rounded-lg overflow-hidden transform transition-transform duration-300 group-hover:scale-105">
                     <Image
                         src={app.coverImageUrl}

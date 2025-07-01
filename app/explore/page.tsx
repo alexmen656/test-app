@@ -4,6 +4,8 @@ import Image from 'next/image';
 import type { FC } from 'react';
 import { useState, useMemo } from 'react';
 import AppCard from '@/components/AppCard'; // Import the AppCard component
+import { App } from '@/types'; // Import the App type from the explore page
+import AppListCard from '@/components/AppListCard';
 
 // Define the structure for an app object
 
@@ -11,33 +13,7 @@ import AppCard from '@/components/AppCard'; // Import the AppCard component
 
 // --- DATA STRUCTURE AND MOCK DATA ---
 // Expanded data structure for the app details page.
-interface App {
-  id: number;
-  name: string;
-  creator: {
-    name: string;
-    avatarUrl: string;
-  };
-  price: string;
-  coins?: number;
-  coverImageUrl: string;
-  iconUrl: string;
-  description: string;
-  screenshots: string[];
-  videoUrl?: string;
-  reviews: {
-    id: number;
-    reviewerName: string;
-    score: number;
-    comment: string;
-  }[];
-  joinedTesters: {
-    id: number;
-    name: string;
-    avatarUrl: string;
-  }[];
-}
-export type { App }; // Exporting the App type for use in other components  
+ 
 // Expanded mock data for the apps.
 const allApps: App[] = [
   {
@@ -211,7 +187,7 @@ const ExplorePageContent: FC<{ onSelectApp: (id: number) => void }> = ({ onSelec
   }, [searchQuery]);
 
   return (
-    <main className="flex-1 bg-white text-gray-800  overflow-y-auto animate-fade-in h-screen my-10">
+    <main className="flex-1 bg-gray-100 text-gray-800  overflow-y-auto animate-fade-in h-screen my-10">
       <div className="px-8 py-10">
         {/* Top Grid Section */}
             <section className="overflow-x-auto w-screen">
@@ -222,28 +198,16 @@ const ExplorePageContent: FC<{ onSelectApp: (id: number) => void }> = ({ onSelec
             </div>
             </section>
 
-        <hr className="my-15 border-gray-200" />
-
+        <hr className="my-15  border-gray-200" />
         {/* Search & List Section */}
         <section className="mx-auto max-w-4xl">
-          <div className="mb-6">
+          <div className="mb-6 bg-white">
             <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search by app name or creator..." className="w-full rounded-md border border-gray-300 bg-gray-100 px-4 py-3 text-lg text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
           <div className="space-y-3">
             {filteredApps.length > 0 ? (
               filteredApps.map((app) => (
-                <div key={app.id} onClick={() => onSelectApp(app.id)} className="flex items-center justify-between rounded-md border border-gray-200 p-4 hover:bg-gray-50 transition-colors duration-200 cursor-pointer">
-                  <div className="flex items-center gap-4">
-                    <div className="relative h-12 w-12 flex-shrink-0 bg-gray-300 rounded-md overflow-hidden">
-                      <Image src={app.iconUrl} alt={`Icon for ${app.name}`} layout="fill" objectFit="cover" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-800">{app.name}</p>
-                      <p className="text-sm text-gray-500">{app.creator.name}</p>
-                    </div>
-                  </div>
-                  <p className="font-medium text-gray-700">{app.price}</p>
-                </div>
+                <AppListCard key={app.id} app={app} />
               ))
             ) : (
               <div className="text-center py-10"><p className="text-lg text-gray-500">No apps found for &quot;{searchQuery}&quot;</p></div>

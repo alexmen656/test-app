@@ -18,7 +18,7 @@ const Header = () => {
       <Link href="/explore" className="px-4 py-2 hover:underline">
       Explore
       </Link>
-      <Link href="/joined" className="px-4 py-2 hover:underline">
+      <Link href="/myapps" className="px-4 py-2 hover:underline">
       My Apps
       </Link>
       <Link href="/joined" className="px-4 py-2 hover:underline">

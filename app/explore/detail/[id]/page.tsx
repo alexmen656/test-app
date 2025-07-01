@@ -8,7 +8,8 @@ import { ChevronLeft, MessageSquare, Star, Gem } from 'lucide-react';
 import { allApps } from '@/app/explore/page'; // Import the allApps array from the explore page
 import AppCard, { App } from '@/components/AppCard'; // Import the AppCard component and type
 
-const AppDetailPage: FC<{ app: App; onBack: () => void }> = ({ app, onBack }) => {
+
+const AppDetailPage: FC<{ app: App }> = ({ app }) => {
     const router = useRouter();
     const { id } = useParams() as { id: string }; // Extract the dynamic route parameter
     const appData = allApps[parseInt(id)-1];
@@ -17,7 +18,9 @@ const AppDetailPage: FC<{ app: App; onBack: () => void }> = ({ app, onBack }) =>
         <div className="h-screen overflow-y-auto flex-1 bg-gray-50 text-gray-800 animate-fade-in">
             {/* Back button */}
             <button
-                onClick={onBack}
+                onClick={() => {
+                    router.push('/explore');
+                }}
                 className="absolute top-6 left-6 z-20 flex items-center gap-2 rounded-full bg-white/70 px-4 py-2 text-sm font-semibold text-gray-800 shadow-md backdrop-blur-sm transition-all hover:bg-white hover:scale-105"
             >
                 <ChevronLeft size={16} />
