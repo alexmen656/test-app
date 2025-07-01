@@ -4,6 +4,7 @@ export interface App {
     creator: {
         name: string;
         avatarUrl: string;
+        slackLink: string;
     };
     price: string;
     coins?: number;
