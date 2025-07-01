@@ -11,6 +11,10 @@ export interface App {
     coverImageUrl: string;
     iconUrl: string;
     description: string;
+    iosLink: string;
+    testingInstruction: string;
+    androidLink: string;
+    googleGroupLink: string;
     screenshots: string[];
     videoUrl?: string;
     reviews: {
@@ -33,13 +37,14 @@ export interface App {
 export interface NewAppData {
     name: string;
     description: string;
-    youtubeLink: string;
-    iosLink: string;
-    androidLink: string;
-    googleGroupLink: string;
+    videoUrl?: string | null;
+    iosLink?: string | null;
+    androidLink?: string | null;
+    googleGroupLink?: string | null;
     testingInstruction: string;
     price: number;
     icon?: File | null;
+    iconUrl?: string | null;
     coverImage?: File | null;
     screenshots: File[];
 }

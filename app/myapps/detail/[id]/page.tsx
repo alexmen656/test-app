@@ -5,6 +5,7 @@ import React, { FC, useState, ChangeEvent } from 'react';
 import { NewAppData } from '@/types';
 import FormField from '@/components/FormField';
 import ImageUpload from '@/components/ImageUpload';
+import { allApps } from '@/app/explore/page'; // Importing mock data for apps
 import { useParams, useRouter } from 'next/navigation';
 
 /**
@@ -21,12 +22,58 @@ interface NewAppPageProps {
  * The page containing the form to post a new application.
  */
 const NewAppPage: FC<NewAppPageProps> = ({ onCancel, onCreate }) => {
+    
+    const params = useParams();
+    const isEditing = params.id !== 'new';
+
+    const app = allApps.find(app => app.id === parseInt(params.id as string))?? allApps[0]; // Fallback to the first app if not found
+
     const [data, setData] = useState<NewAppData>({
-        name: '', description: '', youtubeLink: '', iosLink: '', androidLink: '',
-        googleGroupLink: '', testingInstruction: '', price: 0, icon: null,
+        name: app.name, description: app.description, videoUrl: app.videoUrl, iosLink: app.iosLink, androidLink: app.androidLink,
+        googleGroupLink: app.googleGroupLink, testingInstruction: app.testingInstruction, price: parseInt(app.price), icon: null,
         coverImage: null, screenshots: []
     });
     const [previews, setPreviews] = useState<{ icon?: string; coverImage?: string; screenshots: string[] }>({ screenshots: [] });
+
+    React.useEffect(() => {
+        if (isEditing) {
+            if (typeof app.iconUrl === 'string') {
+                setPreviews(prev => ({ ...prev, icon: app.iconUrl }));
+            }
+            if (typeof app.coverImageUrl === 'string') {
+                setPreviews(prev => ({ ...prev, coverImage: app.coverImageUrl }));
+            }
+            if (Array.isArray(app.screenshots)) {
+                setPreviews(prev => ({
+                    ...prev,
+                    screenshots: app.screenshots
+                }));
+            } else if (typeof app.screenshots === 'string') {
+                setPreviews(prev => ({
+                    ...prev,
+                    screenshots: [URL.createObjectURL(new Blob([app.screenshots as unknown as string], { type: 'image/png' }))]
+                }));
+            }
+            setData({
+                name: typeof app.name === 'string' ? app.name : '',
+                description: typeof app.description === 'string' ? app.description : '',
+                videoUrl: typeof app.videoUrl === 'string' ? app.videoUrl : '',
+                iosLink: typeof app.iosLink === 'string' ? app.iosLink : '',
+                androidLink: typeof app.androidLink === 'string' ? app.androidLink : '',
+                googleGroupLink: typeof app.googleGroupLink === 'string' ? app.googleGroupLink : '',
+                testingInstruction: typeof app.testingInstruction === 'string' ? app.testingInstruction : '',
+                price: typeof app.price === 'string' ? parseFloat(app.price) : 0,
+                screenshots: []
+            });
+        } else {
+            setData({
+                name: '', description: '', videoUrl: '', iosLink: '', androidLink: '',
+                googleGroupLink: '', testingInstruction: '', price: 0, icon: null,
+                coverImage: null, screenshots: []
+            });
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isEditing, app.name]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value, type } = e.target;
@@ -66,8 +113,7 @@ const NewAppPage: FC<NewAppPageProps> = ({ onCancel, onCreate }) => {
 
     // Render the form with sections for core information, media & visuals, and testing & distribution
 
-    const params = useParams();
-    const isEditing = params.id !== 'new';
+  
 
     return (
         <div className="max-w-5xl mx-auto mb-10">
@@ -87,7 +133,7 @@ const NewAppPage: FC<NewAppPageProps> = ({ onCancel, onCreate }) => {
                     <h3 className="text-xl font-semibold text-gray-700 mb-6">Core Information</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="md:col-span-1">
-                            <ImageUpload label="App Icon" id="icon" onChange={handleFileChange} previewUrl={previews.icon} />
+                            <ImageUpload label="App Icon" id="icon" onChange={handleFileChange} previewUrl={previews.icon} /> 
                         </div>
                         <div className="md:col-span-2 space-y-4">
                             <FormField label="App Name" id="name" placeholder="My Awesome App" value={data.name} onChange={handleChange} />
@@ -106,16 +152,16 @@ const NewAppPage: FC<NewAppPageProps> = ({ onCancel, onCreate }) => {
                                 {previews.screenshots.map((src, i) => <img key={i} src={src} className="w-full h-auto object-cover rounded-md" alt={`Screenshot ${i + 1}`} />)}
                             </div>
                         )}
-                        <FormField label="YouTube Link (Optional)" id="youtubeLink" placeholder="https://youtube.com/watch?v=..." value={data.youtubeLink} onChange={handleChange} />
+                        <FormField label="YouTube Link (Optional)" id="youtubeLink" placeholder="https://youtube.com/watch?v=..." value={data.videoUrl ?? ''} onChange={handleChange} />
                     </div>
                 </div>
 
                 <div className="p-8 bg-white border border-gray-200 rounded-2xl shadow-sm">
                     <h3 className="text-xl font-semibold text-gray-700 mb-6">Testing & Distribution</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <FormField label="iOS Test Link (TestFlight)" id="iosLink" placeholder="https://testflight.apple.com/join/..." value={data.iosLink} onChange={handleChange} />
-                        <FormField label="Android Test Link (Play Store)" id="androidLink" placeholder="https://play.google.com/apps/testing/..." value={data.androidLink} onChange={handleChange} />
-                        <FormField label="Google Group Link (Optional)" id="googleGroupLink" placeholder="https://groups.google.com/g/..." value={data.googleGroupLink} onChange={handleChange} />
+                        <FormField label="iOS Test Link (TestFlight)" id="iosLink" placeholder="https://testflight.apple.com/join/..." value={data.iosLink ?? ''} onChange={handleChange} />
+                        <FormField label="Android Test Link (Play Store)" id="androidLink" placeholder="https://play.google.com/apps/testing/..." value={data.androidLink ?? ''} onChange={handleChange} />
+                        <FormField label="Google Group Link (Optional)" id="googleGroupLink" placeholder="https://groups.google.com/g/..." value={data.googleGroupLink ?? ''} onChange={handleChange} />
                         <div className="md:col-span-2">
                             <FormField label="Testing Instructions" id="testingInstruction" as="textarea" placeholder="e.g., 'Log in with user: test@test.com, pass: 1234. Then, navigate to the dashboard and try creating a new project.'" value={data.testingInstruction} onChange={handleChange} />
                         </div>
