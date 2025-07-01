@@ -19,6 +19,9 @@ export default function HomePage() {
                         <Link href="/contact" className="text-gray-600 hover:text-gray-800">
                             Contact
                         </Link>
+                        <Link href="/signin" className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                            Sign In
+                        </Link>
                     </div>
                 </nav>
             </header>
@@ -34,9 +37,9 @@ export default function HomePage() {
                         Get early feedback, iterate quickly, and build something amazing.
                     </p>
                     <div className="space-x-4">
-                        <button className="bg-blue-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 transition">
+                        <Link href="/signin" className="bg-blue-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 transition inline-block">
                             Get Started
-                        </button>
+                        </Link>
                         <button className="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-50 transition">
                             Learn More
                         </button>
