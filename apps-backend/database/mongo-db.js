@@ -27,6 +27,8 @@ const testPostSchema = new mongoose.Schema({
   app_name: { type: String, required: true },
   description: { type: String, required: true },
   testing_link: String,
+  ios_link: String,
+  android_link: String,
   test_price: { type: Number, required: true, default: 0 },
   instructions: String,
   youtube_link: String,
