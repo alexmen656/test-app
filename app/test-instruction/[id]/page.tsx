@@ -6,11 +6,10 @@ import { App } from '@/types';
 import { useParams } from 'next/navigation';
 import { getBackendUrl } from '@/lib/api';
 
-interface TestInstructionPageProps {
-  // Props interface kept for future extension
-}
+// Since this component doesn't currently need props, we can remove the interface
+// and use React.FC directly
 
-const TestInstructionPage: FC<TestInstructionPageProps> = () => {
+const TestInstructionPage: FC = () => {
   const [reviews, setReviews] = useState<{ name: string; text: string; rating: string }[]>([]);
   const [app, setApp] = useState<App | null>(null);
   const [loading, setLoading] = useState(true);
