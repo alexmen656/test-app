@@ -106,8 +106,8 @@ const NewAppPage: FC<NewAppPageProps> = ({ onCancel, onCreate }) => {
                 app_name: data.name,
                 description: data.description,
                 youtube_link: data.youtubeLink,
-                //ios_link: data.iosLink,
-                //android_link: data.androidLink,
+                ios_link: data.iosLink,
+                android_link: data.androidLink,
                 google_group_link: data.googleGroupLink,
                 /*testing_instruction: data.testingInstruction,*/
                 /*price: data.price,*/
