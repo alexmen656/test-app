@@ -7,12 +7,19 @@ import ImageUpload from '@/components/ImageUpload';
 import { allApps } from '@/public/MockData'; // Importing mock data for apps
 import { useParams, useRouter } from 'next/navigation';
 import { getBackendUrl } from '@/lib/api';
+import router from 'next/router';
 
 
 
 /**
  * The page containing the form to post a new application.
  */
+// Define the NewAppPageProps interface
+interface NewAppPageProps {
+    onCancel: () => void;
+    onCreate: () => void;
+}
+
 const NewAppPage: FC<NewAppPageProps> = ({ onCancel, onCreate }) => {
     
     const params = useParams();
@@ -105,7 +112,7 @@ const NewAppPage: FC<NewAppPageProps> = ({ onCancel, onCreate }) => {
             const jsonData = {
                 app_name: data.name,
                 description: data.description,
-                youtube_link: data.youtubeLink,
+                youtube_link: data.videoUrl,
                 //ios_link: data.iosLink,
                 //android_link: data.androidLink,
                 google_group_link: data.googleGroupLink,
