@@ -2,7 +2,7 @@
 
 import { FC, use, useState } from 'react';
 import { App } from '@/types';
-import { allApps } from '@/public/MockData'; // Importing mock data for apps
+import { allApps } from '@/public/MockData'; // Corrected import path for mock data
 
 // Import all apps data (you should move this to a separate data file)
 // Function to generate app-specific test instructions
