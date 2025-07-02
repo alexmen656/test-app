@@ -5,8 +5,6 @@ const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
 const Joi = require('joi');
-
-// Import the shared database instance
 const db = require('../database');
 
 const router = express.Router();
@@ -77,15 +75,12 @@ const authenticateUser = async (req, res, next) => {
 // Get all test posts (public)
 router.get('/', async (req, res) => {
   try {
-    // DB is pre-initialized in server.js
-    
     const { page = 1, limit = 10, status = 'active', search } = req.query;
     const offset = (page - 1) * limit;
     
     let testPosts;
     let total = 0;
     
-    // MongoDB approach
     // Build query
     const query = { status };
     if (search) {
@@ -154,10 +149,7 @@ router.get('/', async (req, res) => {
 
 // Get single test post
 router.get('/:id', async (req, res) => {
-  try {
-    // DB is pre-initialized in server.js
-    
-    // MongoDB approach
+  try {    
     const testPost = await db.findOne('test_posts', { id: req.params.id });
     
     if (!testPost) {
@@ -212,13 +204,9 @@ router.post('/', authenticateUser, async (req, res) => {
     }
     
     // Get user ID from authenticated user
-    const userId = req.user.id;
-    
-    // DB is pre-initialized in server.js
-    
+    const userId = req.user.id;    
     const testPostId = uuidv4();
     
-    // MongoDB approach
     await db.insert('test_posts', {
       id: testPostId,
       user_id: userId,
@@ -248,7 +236,6 @@ router.post('/', authenticateUser, async (req, res) => {
   } catch (error) {
     console.error('❌ Error creating test post:', error);
     
-    // Provide more detailed error message for MongoDB connection issues
     if (error.name === 'MongoNetworkError' || error.name === 'MongoServerSelectionError') {
       return res.status(500).json({ 
         error: 'Database connection error', 
@@ -264,9 +251,6 @@ router.post('/', authenticateUser, async (req, res) => {
 // Update test post
 router.put('/:id', authenticateUser, async (req, res) => {
   try {
-    // DB is pre-initialized in server.js
-    
-    // MongoDB approach
     const testPost = await db.findOne('test_posts', { id: req.params.id });
     
     if (!testPost) {
@@ -313,10 +297,7 @@ router.put('/:id', authenticateUser, async (req, res) => {
 
 // Join test post as tester
 router.post('/:id/join', authenticateUser, async (req, res) => {
-  try {
-    // DB is pre-initialized in server.js
-    
-    // MongoDB approach
+  try {    
     const testPost = await db.findOne('test_posts', { id: req.params.id, status: 'active' });
     
     if (!testPost) {
