@@ -1,4 +1,4 @@
-node_modules/*
+vite-slack-login-app/node_modules/*
 backend/.env
 apps-backend/.env
 backend/node_modules/*
