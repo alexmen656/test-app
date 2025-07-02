@@ -63,22 +63,15 @@ export default function App() {
         <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
             <div className="container mx-auto p-4 sm:p-6 lg:p-8">
 
-                {/* User Profile Section */}
-                <header className="flex items-center mb-8 sm:mb-12">
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-300  rounded-full mr-4 sm:mr-6">
-                        {/* You can place a user avatar image here */}
-                    </div>
-                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">{username}</h1>
-                </header>
 
                 {/* Apps Section */}
                 <main>
-                    <h2 className="text-xl sm:text-2xl font-semibold mb-6 sm:mb-8">My Apps</h2>
+                    <h2 className="text-xl sm:text-2xl font-semibold mb-6 sm:mb-8">Joined Tests</h2>
 
                     {/* Grid for the apps */}
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
                         {myApps.map(app => (
-                            <AppSquareCard key={app.id} app={app} route={`/myapps/detail/${app.id}`} />
+                            <AppSquareCard key={app.id} app={app} route={`/explore/detail/${app.id}`} />
                         ))}
                         <AddNewAppCard />
                     </div>
