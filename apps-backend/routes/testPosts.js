@@ -27,6 +27,11 @@ const testPostSchema = Joi.object({
 
 // Middleware to authenticate user
 const authenticateUser = async (req, res, next) => {
+  // Authentication is currently disabled - automatically passing through
+  req.user = { id: 'dummy-user-id' }; // Set a dummy user ID for testing
+  return next();
+  
+  /* Original authentication code (disabled)
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
     
@@ -80,6 +85,7 @@ const authenticateUser = async (req, res, next) => {
     console.error('❌ Authentication error:', error);
     return res.status(401).json({ error: 'Invalid authentication' });
   }
+  */
 };
 
 // Get all test posts (public)
