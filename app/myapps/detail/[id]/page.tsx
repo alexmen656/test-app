@@ -1,32 +1,29 @@
 'use client'
 
-// src/pages/NewAppPage.tsx
 import React, { FC, useState, ChangeEvent } from 'react';
 import { NewAppData } from '@/types';
 import FormField from '@/components/FormField';
 import ImageUpload from '@/components/ImageUpload';
 import { useParams, useRouter } from 'next/navigation';
-
-/**
- * Props for the NewAppPage component.
- */
-interface NewAppPageProps {
-    onCancel: () => void;
-    onCreate: (data: NewAppData) => void;
-}
+import { getBackendUrl } from '@/lib/api';
 
 
 
 /**
  * The page containing the form to post a new application.
  */
-const NewAppPage: FC<NewAppPageProps> = ({ onCancel, onCreate }) => {
+const NewAppPage: FC = () => {
+    const router = useRouter();
+    const params = useParams();
+    const isEditing = params.id !== 'new';
+    
     const [data, setData] = useState<NewAppData>({
         name: '', description: '', youtubeLink: '', iosLink: '', androidLink: '',
         googleGroupLink: '', testingInstruction: '', price: 0, icon: null,
         coverImage: null, screenshots: []
     });
     const [previews, setPreviews] = useState<{ icon?: string; coverImage?: string; screenshots: string[] }>({ screenshots: [] });
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value, type } = e.target;
@@ -49,25 +46,74 @@ const NewAppPage: FC<NewAppPageProps> = ({ onCancel, onCreate }) => {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!data.name.trim()) {
             alert("App Name is required.");
             return;
         }
-        onCreate(data);
+        
+        setIsSubmitting(true);
+        
+        try {
+            const backendUrl = getBackendUrl();
+            
+            // Prepare JSON data for upload
+            const jsonData = {
+                app_name: data.name,
+                description: data.description,
+                youtube_link: data.youtubeLink,
+                //ios_link: data.iosLink,
+                //android_link: data.androidLink,
+                google_group_link: data.googleGroupLink,
+                /*testing_instruction: data.testingInstruction,*/
+                /*price: data.price,*/
+                
+                // We'll need to handle file uploads separately or convert them to base64
+                // For this JSON implementation, we'll assume the backend can accept these as null
+                // or you would need to implement a separate file upload endpoint
+                /*icon_url: null,*/
+                /*cover_image_url: null,*/
+                /*screenshot_urls: []*/
+            };
+            
+            // Optional: Get Token from localStorage if it exists
+            const token = localStorage.getItem('betabay_token');
+            const headers: HeadersInit = {
+                'Content-Type': 'application/json'
+            };
+            
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+            
+            // Send JSON data to backend
+            const response = await fetch(`${backendUrl}/api/test-posts`, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(jsonData)
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Error creating app: ${response.status}`);
+            }
+            
+            const result = await response.json();
+            console.log('App created successfully:', result);
+            
+            // Redirect to myapps page
+            router.push('/myapps');
+        } catch (error) {
+            console.error('Failed to create app:', error);
+            alert('Failed to create app. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
-
-    const router = useRouter();
 
     const handleCancel = () => {
        router.push('/myapps'); // Redirect to the My Apps page
     };
-
-    // Render the form with sections for core information, media & visuals, and testing & distribution
-
-    const params = useParams();
-    const isEditing = params.id !== 'new';
 
     return (
         <div className="max-w-5xl mx-auto mb-10">

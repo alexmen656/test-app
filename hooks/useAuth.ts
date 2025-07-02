@@ -82,6 +82,20 @@ export function useAuth() {
         const userData = await response.json();
         console.log('useAuth: User data received =', userData);
         setUser(userData);
+        
+        // Speichere Slack-Profildaten im localStorage
+        if (userData.name) {
+          localStorage.setItem('betabay_username', userData.name);
+        }
+        
+        if (userData.image) {
+          localStorage.setItem('betabay_profile_image', userData.image);
+        }
+        
+        if (userData.id) {
+          localStorage.setItem('betabay_user_id', userData.id);
+        }
+        
         setError(null);
       } else {
         console.log('useAuth: Auth request failed, status =', response.status);
