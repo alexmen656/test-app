@@ -42,15 +42,8 @@ const authenticateUser = async (req, res, next) => {
         return res.status(401).json({ error: 'Token expired' });
       }
       
-      // Check if we're using MongoDB or SQLite
-      let user;
-      if (db.findOne) {
-        // MongoDB approach
-        user = await db.findOne('users', { id: userData.id });
-      } else {
-        // SQLite approach
-        user = await db.get('SELECT * FROM users WHERE id = ?', [userData.id]);
-      }
+      // MongoDB approach
+      const user = await db.findOne('users', { id: userData.id });
       
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
@@ -61,15 +54,8 @@ const authenticateUser = async (req, res, next) => {
     }
     
     if (req.session.user) {
-      // Check if we're using MongoDB or SQLite
-      let user;
-      if (db.findOne) {
-        // MongoDB approach
-        user = await db.findOne('users', { id: req.session.user.id });
-      } else {
-        // SQLite approach
-        user = await db.get('SELECT * FROM users WHERE id = ?', [req.session.user.id]);
-      }
+      // MongoDB approach
+      const user = await db.findOne('users', { id: req.session.user.id });
       
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
@@ -99,112 +85,55 @@ router.get('/', async (req, res) => {
     let testPosts;
     let total = 0;
     
-    if (db.find) {
-      // MongoDB approach
-      // Build query
-      const query = { status };
-      if (search) {
-        query.$or = [
-          { app_name: { $regex: search, $options: 'i' } },
-          { description: { $regex: search, $options: 'i' } }
-        ];
+    // MongoDB approach
+    // Build query
+    const query = { status };
+    if (search) {
+      query.$or = [
+        { app_name: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } }
+      ];
+    }
+    
+    // Get total count
+    const count = await db.count('test_posts', query);
+    total = count || 0;
+    
+    // Get paginated posts
+    testPosts = await db.find('test_posts', query, { 
+      sort: { created_at: -1 },
+      skip: offset,
+      limit: parseInt(limit)
+    });
+    
+    // Enhance posts with additional data
+    for (const post of testPosts) {
+      // Get user data
+      const user = await db.findOne('users', { id: post.user_id });
+      if (user) {
+        post.username = user.username;
+        post.display_name = user.display_name;
+        post.avatar_url = user.avatar_url;
       }
       
-      // Get total count
-      const count = await db.count('test_posts', query);
-      total = count || 0;
+      // Get screenshots
+      const screenshots = await db.find('screenshots', { test_post_id: post.id });
+      post.screenshots = screenshots || [];
       
-      // Get paginated posts
-      testPosts = await db.find('test_posts', query, { 
-        sort: { created_at: -1 },
-        skip: offset,
-        limit: parseInt(limit)
-      });
+      // Get current testers count
+      const testers = await db.find('test_participants', { test_post_id: post.id, status: 'testing' });
+      post.current_testers = testers ? testers.length : 0;
       
-      // Enhance posts with additional data
-      for (const post of testPosts) {
-        // Get user data
-        const user = await db.findOne('users', { id: post.user_id });
-        if (user) {
-          post.username = user.username;
-          post.display_name = user.display_name;
-          post.avatar_url = user.avatar_url;
-        }
-        
-        // Get screenshots
-        const screenshots = await db.find('screenshots', { test_post_id: post.id });
-        post.screenshots = screenshots || [];
-        
-        // Get current testers count
-        const testers = await db.find('test_participants', { test_post_id: post.id, status: 'testing' });
-        post.current_testers = testers ? testers.length : 0;
-        
-        // Get review stats
-        const reviews = await db.find('reviews', { test_post_id: post.id });
-        if (reviews && reviews.length > 0) {
-          const totalScore = reviews.reduce((sum, review) => sum + (review.review_score || 0), 0);
-          post.avg_rating = totalScore / reviews.length;
-          post.review_count = reviews.length;
-        } else {
-          post.avg_rating = null;
-          post.review_count = 0;
-        }
+      // Get review stats
+      const reviews = await db.find('reviews', { test_post_id: post.id });
+      if (reviews && reviews.length > 0) {
+        const totalScore = reviews.reduce((sum, review) => sum + (review.review_score || 0), 0);
+        post.avg_rating = totalScore / reviews.length;
+        post.review_count = reviews.length;
+      } else {
+        post.avg_rating = null;
+        post.review_count = 0;
       }
-    } else {
-      // SQLite approach
-      let query = `
-        SELECT 
-          tp.*,
-          u.username,
-          u.display_name,
-          u.avatar_url,
-          COUNT(DISTINCT tprt.id) as current_testers,
-          AVG(r.review_score) as avg_rating,
-          COUNT(DISTINCT r.id) as review_count
-        FROM test_posts tp
-        LEFT JOIN users u ON tp.user_id = u.id
-        LEFT JOIN test_participants tprt ON tp.id = tprt.test_post_id AND tprt.status = 'testing'
-        LEFT JOIN reviews r ON tp.id = r.test_post_id
-        WHERE tp.status = ?
-      `;
-      
-      const params = [status];
-      
-      if (search) {
-        query += ' AND (tp.app_name LIKE ? OR tp.description LIKE ?)';
-        params.push(`%${search}%`, `%${search}%`);
-      }
-      
-      query += `
-        GROUP BY tp.id
-        ORDER BY tp.created_at DESC
-        LIMIT ? OFFSET ?
-      `;
-      
-      params.push(parseInt(limit), offset);
-      
-      testPosts = await db.all(query, params);
-      
-      // Get screenshots for each test post
-      for (const post of testPosts) {
-        const screenshots = await db.all(
-          'SELECT * FROM screenshots WHERE test_post_id = ? ORDER BY display_order',
-          [post.id]
-        );
-        post.screenshots = screenshots;
-      }
-      
-      // Get total count
-      let countQuery = 'SELECT COUNT(*) as total FROM test_posts WHERE status = ?';
-      const countParams = [status];
-      
-      if (search) {
-        countQuery += ' AND (app_name LIKE ? OR description LIKE ?)';
-        countParams.push(`%${search}%`, `%${search}%`);
-      }
-      
-      const countResult = await db.get(countQuery, countParams);
-      total = countResult.total;
     }
     
     res.json({
@@ -228,90 +157,41 @@ router.get('/:id', async (req, res) => {
   try {
     // DB is pre-initialized in server.js
     
-    let testPost;
+    // MongoDB approach
+    const testPost = await db.findOne('test_posts', { id: req.params.id });
     
-    if (db.findOne) {
-      // MongoDB approach
-      testPost = await db.findOne('test_posts', { id: req.params.id });
-      
-      if (!testPost) {
-        return res.status(404).json({ error: 'Test post not found' });
-      }
-      
-      // Get user data
-      const user = await db.findOne('users', { id: testPost.user_id });
-      if (user) {
-        testPost.username = user.username;
-        testPost.display_name = user.display_name;
-        testPost.avatar_url = user.avatar_url;
-      }
-      
-      // Get screenshots
-      const screenshots = await db.find('screenshots', { test_post_id: testPost.id });
-      testPost.screenshots = screenshots || [];
-      
-      // Get reviews
-      const reviews = await db.find('reviews', { test_post_id: testPost.id }, { sort: { created_at: -1 }, limit: 10 });
-      testPost.reviews = reviews || [];
-      
-      // Get current testers count
-      const testers = await db.find('test_participants', { test_post_id: testPost.id, status: 'testing' });
-      testPost.current_testers = testers ? testers.length : 0;
-      
-      // Calculate average rating
-      if (reviews && reviews.length > 0) {
-        const totalScore = reviews.reduce((sum, review) => sum + (review.review_score || 0), 0);
-        testPost.avg_rating = totalScore / reviews.length;
-        testPost.review_count = reviews.length;
-      } else {
-        testPost.avg_rating = null;
-        testPost.review_count = 0;
-      }
+    if (!testPost) {
+      return res.status(404).json({ error: 'Test post not found' });
+    }
+    
+    // Get user data
+    const user = await db.findOne('users', { id: testPost.user_id });
+    if (user) {
+      testPost.username = user.username;
+      testPost.display_name = user.display_name;
+      testPost.avatar_url = user.avatar_url;
+    }
+    
+    // Get screenshots
+    const screenshots = await db.find('screenshots', { test_post_id: testPost.id });
+    testPost.screenshots = screenshots || [];
+    
+    // Get reviews
+    const reviews = await db.find('reviews', { test_post_id: testPost.id }, { sort: { created_at: -1 }, limit: 10 });
+    testPost.reviews = reviews || [];
+    
+    // Get current testers count
+    const testers = await db.find('test_participants', { test_post_id: testPost.id, status: 'testing' });
+    testPost.current_testers = testers ? testers.length : 0;
+    
+    // Calculate average rating
+    if (reviews && reviews.length > 0) {
+      const totalScore = reviews.reduce((sum, review) => sum + (review.review_score || 0), 0);
+      testPost.avg_rating = totalScore / reviews.length;
+      testPost.review_count = reviews.length;
     } else {
-      // SQLite approach
-      testPost = await db.get(`
-        SELECT 
-          tp.*,
-          u.username,
-          u.display_name,
-          u.avatar_url,
-          COUNT(DISTINCT tprt.id) as current_testers,
-          AVG(r.review_score) as avg_rating,
-          COUNT(DISTINCT r.id) as review_count
-        FROM test_posts tp
-        LEFT JOIN users u ON tp.user_id = u.id
-        LEFT JOIN test_participants tprt ON tp.id = tprt.test_post_id AND tprt.status = 'testing'
-        LEFT JOIN reviews r ON tp.id = r.test_post_id
-        WHERE tp.id = ?
-        GROUP BY tp.id
-      `, [req.params.id]);
-      
-      if (!testPost) {
-        return res.status(404).json({ error: 'Test post not found' });
-      }
-      
-      // Get screenshots
-      const screenshots = await db.all(
-        'SELECT * FROM screenshots WHERE test_post_id = ? ORDER BY display_order',
-        [testPost.id]
-      );
-      
-      // Get recent reviews
-      const reviews = await db.all(`
-        SELECT 
-          r.*,
-          u.username,
-          u.display_name,
-          u.avatar_url
-        FROM reviews r
-        LEFT JOIN users u ON r.reviewer_user_id = u.id
-        WHERE r.test_post_id = ?
-        ORDER BY r.created_at DESC
-        LIMIT 10
-      `, [testPost.id]);
-      
-      testPost.screenshots = screenshots;
-      testPost.reviews = reviews;
+      testPost.avg_rating = null;
+      testPost.review_count = 0;
     }
     
     res.json(testPost);
@@ -338,55 +218,27 @@ router.post('/', authenticateUser, async (req, res) => {
     
     const testPostId = uuidv4();
     
-    // Create a test post document (works for both MongoDB and SQLite)
-    if (db.insert) {
-      // MongoDB approach
-      await db.insert('test_posts', {
-        id: testPostId,
-        user_id: userId,
-        app_name: value.app_name,
-        description: value.description,
-        testing_link: value.testing_link || null,
-        test_price: value.test_price,
-        instructions: value.instructions || null,
-        youtube_link: value.youtube_link || null,
-        google_group_link: value.google_group_link || null,
-        max_testers: value.max_testers,
-        expires_at: value.expires_at || null,
-        status: 'active',
-        current_testers: 0,
-        created_at: new Date(),
-        updated_at: new Date()
-      });
-    } else {
-      // SQLite approach
-      await db.run(`
-        INSERT INTO test_posts (
-          id, user_id, app_name, description, testing_link, test_price,
-          instructions, youtube_link, google_group_link, max_testers, expires_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `, [
-        testPostId,
-        userId,
-        value.app_name,
-        value.description,
-        value.testing_link || null,
-        value.test_price,
-        value.instructions || null,
-        value.youtube_link || null,
-        value.google_group_link || null,
-        value.max_testers,
-        value.expires_at || null
-      ]);
-    }
+    // MongoDB approach
+    await db.insert('test_posts', {
+      id: testPostId,
+      user_id: userId,
+      app_name: value.app_name,
+      description: value.description,
+      testing_link: value.testing_link || null,
+      test_price: value.test_price,
+      instructions: value.instructions || null,
+      youtube_link: value.youtube_link || null,
+      google_group_link: value.google_group_link || null,
+      max_testers: value.max_testers,
+      expires_at: value.expires_at || null,
+      status: 'active',
+      current_testers: 0,
+      created_at: new Date(),
+      updated_at: new Date()
+    });
     
-    // Get the created test post (works for both MongoDB and SQLite)
-    let createdPost;
-    if (db.get) {
-      createdPost = await db.get('SELECT * FROM test_posts WHERE id = ?', [testPostId]);
-    } else if (db.findOne) {
-      createdPost = await db.findOne('test_posts', { id: testPostId });
-    }
+    // Get the created test post
+    const createdPost = await db.findOne('test_posts', { id: testPostId });
     
     res.status(201).json({
       message: 'Test post created successfully',
@@ -414,18 +266,8 @@ router.put('/:id', authenticateUser, async (req, res) => {
   try {
     // DB is pre-initialized in server.js
     
-    let testPost;
-    
-    // Check if test post exists
-    if (db.findOne) {
-      // MongoDB approach
-      testPost = await db.findOne('test_posts', { id: req.params.id });
-    } else {
-      // SQLite approach
-      testPost = await db.get('SELECT * FROM test_posts WHERE id = ?', [
-        req.params.id
-      ]);
-    }
+    // MongoDB approach
+    const testPost = await db.findOne('test_posts', { id: req.params.id });
     
     if (!testPost) {
       return res.status(404).json({ error: 'Test post not found' });
@@ -438,54 +280,25 @@ router.put('/:id', authenticateUser, async (req, res) => {
     }
     
     // Update test post
-    if (db.update) {
-      // MongoDB approach
-      await db.update('test_posts', 
-        { id: req.params.id },
-        { 
-          $set: {
-            app_name: value.app_name,
-            description: value.description,
-            testing_link: value.testing_link || null,
-            instructions: value.instructions || null,
-            youtube_link: value.youtube_link || null,
-            google_group_link: value.google_group_link || null,
-            max_testers: value.max_testers,
-            expires_at: value.expires_at || null,
-            updated_at: new Date()
-          }
+    await db.update('test_posts', 
+      { id: req.params.id },
+      { 
+        $set: {
+          app_name: value.app_name,
+          description: value.description,
+          testing_link: value.testing_link || null,
+          instructions: value.instructions || null,
+          youtube_link: value.youtube_link || null,
+          google_group_link: value.google_group_link || null,
+          max_testers: value.max_testers,
+          expires_at: value.expires_at || null,
+          updated_at: new Date()
         }
-      );
-    } else {
-      // SQLite approach
-      await db.run(`
-        UPDATE test_posts SET
-          app_name = ?, description = ?, testing_link = ?, instructions = ?,
-          youtube_link = ?, google_group_link = ?, max_testers = ?,
-          expires_at = ?, updated_at = CURRENT_TIMESTAMP
-        WHERE id = ?
-      `, [
-        value.app_name,
-        value.description,
-        value.testing_link || null,
-        value.instructions || null,
-        value.youtube_link || null,
-        value.google_group_link || null,
-        value.max_testers,
-        value.expires_at || null,
-        req.params.id
-      ]);
-    }
+      }
+    );
     
     // Get updated test post
-    let updatedPost;
-    if (db.findOne) {
-      // MongoDB approach
-      updatedPost = await db.findOne('test_posts', { id: req.params.id });
-    } else {
-      // SQLite approach
-      updatedPost = await db.get('SELECT * FROM test_posts WHERE id = ?', [req.params.id]);
-    }
+    const updatedPost = await db.findOne('test_posts', { id: req.params.id });
     
     res.json({
       message: 'Test post updated successfully',
@@ -503,50 +316,23 @@ router.post('/:id/join', authenticateUser, async (req, res) => {
   try {
     // DB is pre-initialized in server.js
     
-    let testPost;
-    let existingParticipant;
-    let currentTestersCount = 0;
-    
-    if (db.findOne) {
-      // MongoDB approach
-      testPost = await db.findOne('test_posts', { id: req.params.id, status: 'active' });
-      
-      if (testPost) {
-        existingParticipant = await db.findOne('test_participants', { 
-          test_post_id: req.params.id, 
-          user_id: req.user.id
-        });
-        
-        const currentTesters = await db.find('test_participants', { 
-          test_post_id: req.params.id, 
-          status: 'testing' 
-        });
-        currentTestersCount = currentTesters ? currentTesters.length : 0;
-      }
-    } else {
-      // SQLite approach
-      testPost = await db.get('SELECT * FROM test_posts WHERE id = ? AND status = ?', [
-        req.params.id,
-        'active'
-      ]);
-      
-      if (testPost) {
-        existingParticipant = await db.get(
-          'SELECT * FROM test_participants WHERE test_post_id = ? AND user_id = ?',
-          [req.params.id, req.user.id]
-        );
-        
-        const currentTesters = await db.get(
-          'SELECT COUNT(*) as count FROM test_participants WHERE test_post_id = ? AND status = ?',
-          [req.params.id, 'testing']
-        );
-        currentTestersCount = currentTesters.count;
-      }
-    }
+    // MongoDB approach
+    const testPost = await db.findOne('test_posts', { id: req.params.id, status: 'active' });
     
     if (!testPost) {
       return res.status(404).json({ error: 'Test post not found or not active' });
     }
+    
+    const existingParticipant = await db.findOne('test_participants', { 
+      test_post_id: req.params.id, 
+      user_id: req.user.id
+    });
+    
+    const currentTesters = await db.find('test_participants', { 
+      test_post_id: req.params.id, 
+      status: 'testing' 
+    });
+    const currentTestersCount = currentTesters ? currentTesters.length : 0;
     
     // Get user ID from authenticated user
     const userId = req.user.id;
@@ -570,53 +356,28 @@ router.post('/:id/join', authenticateUser, async (req, res) => {
     // Join the test
     const participantId = uuidv4();
     
-    if (db.insert) {
-      // MongoDB approach
-      await db.insert('test_participants', {
-        id: participantId,
-        test_post_id: req.params.id,
-        user_id: userId,
-        status: 'testing',
-        created_at: new Date(),
-        updated_at: new Date()
-      });
-      
-      // Create notification for test owner
-      const notificationId = uuidv4();
-      await db.insert('notifications', {
-        id: notificationId,
-        user_id: testPost.user_id,
-        title: 'New Tester Joined! 🎉',
-        message: `${userName} joined your test for "${testPost.app_name}"`,
-        type: 'success',
-        reference_type: 'test_post',
-        reference_id: req.params.id,
-        is_read: false,
-        created_at: new Date()
-      });
-    } else {
-      // SQLite approach
-      await db.run(`
-        INSERT INTO test_participants (id, test_post_id, user_id)
-        VALUES (?, ?, ?)
-      `, [participantId, req.params.id, userId]);
-      
-      // Create notification for test owner
-      const notificationId = uuidv4();
-      await db.run(`
-        INSERT INTO notifications (
-          id, user_id, title, message, type, reference_type, reference_id
-        ) VALUES (?, ?, ?, ?, ?, ?, ?)
-      `, [
-        notificationId,
-        testPost.user_id,
-        'New Tester Joined! 🎉',
-        `${userName} joined your test for "${testPost.app_name}"`,
-        'success',
-        'test_post',
-        req.params.id
-      ]);
-    }
+    await db.insert('test_participants', {
+      id: participantId,
+      test_post_id: req.params.id,
+      user_id: userId,
+      status: 'testing',
+      created_at: new Date(),
+      updated_at: new Date()
+    });
+    
+    // Create notification for test owner
+    const notificationId = uuidv4();
+    await db.insert('notifications', {
+      id: notificationId,
+      user_id: testPost.user_id,
+      title: 'New Tester Joined! 🎉',
+      message: `${userName} joined your test for "${testPost.app_name}"`,
+      type: 'success',
+      reference_type: 'test_post',
+      reference_id: req.params.id,
+      is_read: false,
+      created_at: new Date()
+    });
     
     res.json({ message: 'Successfully joined test post' });
     
@@ -628,50 +389,29 @@ router.post('/:id/join', authenticateUser, async (req, res) => {
 
 // Get user's test posts
 router.get('/user/mine', authenticateUser, async (req, res) => {
-  try {
-    // DB is pre-initialized in server.js
-    
+  try {    
     // Get user ID from authenticated user
     const userId = req.user.id;
     
-    let testPosts;
+    // MongoDB approach
+    const testPosts = await db.find('test_posts', { user_id: userId }, { sort: { created_at: -1 } });
     
-    if (db.find) {
-      // MongoDB approach
-      testPosts = await db.find('test_posts', { user_id: userId }, { sort: { created_at: -1 } });
+    // For each post, get additional data
+    for (const post of testPosts) {
+      // Get testers count
+      const testers = await db.find('test_participants', { test_post_id: post.id, status: 'testing' });
+      post.current_testers = testers ? testers.length : 0;
       
-      // For each post, get additional data
-      for (const post of testPosts) {
-        // Get testers count
-        const testers = await db.find('test_participants', { test_post_id: post.id, status: 'testing' });
-        post.current_testers = testers ? testers.length : 0;
-        
-        // Get review stats
-        const reviews = await db.find('reviews', { test_post_id: post.id });
-        if (reviews && reviews.length > 0) {
-          const totalScore = reviews.reduce((sum, review) => sum + (review.review_score || 0), 0);
-          post.avg_rating = totalScore / reviews.length;
-          post.review_count = reviews.length;
-        } else {
-          post.avg_rating = null;
-          post.review_count = 0;
-        }
+      // Get review stats
+      const reviews = await db.find('reviews', { test_post_id: post.id });
+      if (reviews && reviews.length > 0) {
+        const totalScore = reviews.reduce((sum, review) => sum + (review.review_score || 0), 0);
+        post.avg_rating = totalScore / reviews.length;
+        post.review_count = reviews.length;
+      } else {
+        post.avg_rating = null;
+        post.review_count = 0;
       }
-    } else {
-      // SQLite approach
-      testPosts = await db.all(`
-        SELECT 
-          tp.*,
-          COUNT(DISTINCT tprt.id) as current_testers,
-          AVG(r.review_score) as avg_rating,
-          COUNT(DISTINCT r.id) as review_count
-        FROM test_posts tp
-        LEFT JOIN test_participants tprt ON tp.id = tprt.test_post_id AND tprt.status = 'testing'
-        LEFT JOIN reviews r ON tp.id = r.test_post_id
-        WHERE tp.user_id = ?
-        GROUP BY tp.id
-        ORDER BY tp.created_at DESC
-      `, [userId]);
     }
     
     res.json(testPosts);
