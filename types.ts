@@ -28,6 +28,12 @@ export interface App {
         name: string;
         avatarUrl: string;
     }[];
+    testingFocus: string;
+    focusAreas: string[];
+    subtitle: string;
+    createdAt: string;
+    testPeriod?: string;
+    feedbackInstructions: string,
   }
 
 /**

@@ -5,7 +5,7 @@ import React, { FC, useState, ChangeEvent } from 'react';
 import { NewAppData } from '@/types';
 import FormField from '@/components/FormField';
 import ImageUpload from '@/components/ImageUpload';
-import { allApps } from '@/app/explore/page'; // Importing mock data for apps
+import { allApps } from '@/public/MockData'; // Importing mock data for apps
 import { useParams, useRouter } from 'next/navigation';
 
 /**

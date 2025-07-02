@@ -4,8 +4,8 @@ import Image from 'next/image';
 import type { FC } from 'react';
 import { useState, useMemo } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ChevronLeft, MessageSquare, Star, Gem } from 'lucide-react';
-import { allApps } from '@/app/explore/page'; // Import the allApps array from the explore page
+import { ChevronLeft, MessageSquare, Star, Gem, Link } from 'lucide-react';
+import { allApps } from '@/public/MockData'; // Import the mock data for apps
 import AppCard, { App } from '@/components/AppCard'; // Import the AppCard component and type
 
 
@@ -124,9 +124,9 @@ const AppDetailPage: FC<{ app: App }> = ({ app }) => {
                         {/* Join Test */}
                         <section className="rounded-lg border border-gray-200 bg-white p-4">
                             <h3 className="font-bold mb-3">Join Test</h3>
-                            <button className="w-full rounded-md bg-blue-600 py-2.5 font-semibold text-white transition-colors hover:bg-blue-700">
+                            <a href={`/test-instruction/${appData.id}`} className="block w-full text-center rounded-md bg-blue-600 py-2.5 font-semibold text-white transition-colors hover:bg-blue-700">
                                 Join
-                            </button>
+                            </a>
                         </section>
 
                         {/* Joined Testers */}

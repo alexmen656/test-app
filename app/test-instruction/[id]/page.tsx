@@ -1,226 +1,20 @@
 'use client';
 
-import { FC, use } from 'react';
+import { FC, use, useState } from 'react';
 import { App } from '@/types';
+import { allApps } from '@/public/MockData'; // Importing mock data for apps
 
 // Import all apps data (you should move this to a separate data file)
-const allApps: App[] = [
-  {
-    id: 1,
-    name: 'Stellar Navigator',
-    creator: { name: 'CosmoDev', avatarUrl: 'https://placehold.co/40x40/2D3748/FFFFFF?text=C', slackLink: '' },
-    price: '$4.99',
-    coins: 500,
-    coverImageUrl: 'https://placehold.co/1200x400/2D3748/FFFFFF?text=Stellar+Navigator',
-    iconUrl: 'https://placehold.co/150x150/2D3748/FFFFFF?text=SN',
-    description: 'Explore the vastness of space with Stellar Navigator. Chart new galaxies, discover unknown planets, and trade resources in this epic space exploration simulator. Built with a realistic physics engine and stunning visuals.',
-    screenshots: [
-      'https://placehold.co/600x400/2D3748/FFFFFF?text=Galaxy+View',
-      'https://placehold.co/600x400/2D3748/FFFFFF?text=Planet+Surface',
-      'https://placehold.co/600x400/2D3748/FFFFFF?text=Trading+Post',
-      'https://placehold.co/600x400/2D3748/FFFFFF?text=Ship+Cockpit',
-    ],
-    videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    reviews: [
-      { id: 1, reviewerName: 'GalacticGamer', score: 5, comment: 'Absolutely breathtaking! A must-have for any space enthusiast.' },
-      { id: 2, reviewerName: 'AstroJunkie', score: 4, comment: 'Great game, but the trading system could be improved.' },
-    ],
-    joinedTesters: [
-      { id: 1, name: 'TestPilot1', avatarUrl: 'https://placehold.co/40x40/718096/FFFFFF?text=T1' },
-      { id: 2, name: 'ExplorerX', avatarUrl: 'https://placehold.co/40x40/718096/FFFFFF?text=EX' },
-    ],
-  },
-  {
-    id: 2,
-    name: 'Aqua Planner',
-    creator: { name: 'Oceanic Builds', avatarUrl: 'https://placehold.co/40x40/4A5568/FFFFFF?text=O', slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1' },
-    price: 'Free',
-    coverImageUrl: 'https://placehold.co/1200x400/4A5568/FFFFFF?text=Aqua+Planner',
-    iconUrl: 'https://placehold.co/150x150/4A5568/FFFFFF?text=AP',
-    description: 'Organize your life with Aqua Planner, the fluid and intuitive task manager. With a clean interface and powerful features, you can manage projects, set reminders, and collaborate with your team seamlessly.',
-    screenshots: [
-      'https://placehold.co/600x400/4A5568/FFFFFF?text=Dashboard',
-      'https://placehold.co/600x400/4A5568/FFFFFF?text=Task+View',
-      'https://placehold.co/600x400/4A5568/FFFFFF?text=Calendar',
-      'https://placehold.co/600x400/4A5568/FFFFFF?text=Collaboration',
-    ],
-    reviews: [
-      { id: 1, reviewerName: 'ProductivityPro', score: 5, comment: 'The best planner I have ever used. Changed my workflow completely.' },
-    ],
-    joinedTesters: [
-      { id: 1, name: 'BetaUser', avatarUrl: 'https://placehold.co/40x40/A0AEC0/FFFFFF?text=BU' },
-    ],
-  },
-  {
-    id: 3,
-    name: 'Neon Racer',
-    creator: { name: 'SpeedForge', avatarUrl: 'https://placehold.co/40x40/7C3AED/FFFFFF?text=SF', slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1' },
-    price: '$9.99',
-    coins: 750,
-    coverImageUrl: 'https://placehold.co/1200x400/7C3AED/FFFFFF?text=Neon+Racer',
-    iconUrl: 'https://placehold.co/150x150/7C3AED/FFFFFF?text=NR',
-    description: 'Experience high-speed cyberpunk racing in Neon Racer. Navigate through futuristic cityscapes, customize your vehicles, and compete in underground tournaments. Features stunning neon visuals and electronic soundtrack.',
-    screenshots: [
-      'https://placehold.co/600x400/7C3AED/FFFFFF?text=Night+Race',
-      'https://placehold.co/600x400/7C3AED/FFFFFF?text=Car+Garage',
-      'https://placehold.co/600x400/7C3AED/FFFFFF?text=City+Track',
-      'https://placehold.co/600x400/7C3AED/FFFFFF?text=Tournament',
-    ],
-    videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    reviews: [
-      { id: 1, reviewerName: 'SpeedDemon', score: 5, comment: 'The graphics are insane! Best racing game this year.' },
-      { id: 2, reviewerName: 'CyberPunkFan', score: 4, comment: 'Love the aesthetic and music, controls could be tighter.' },
-      { id: 3, reviewerName: 'RaceKing', score: 5, comment: 'Addictive gameplay, spent hours customizing my ride!' },
-    ],
-    joinedTesters: [
-      { id: 1, name: 'TurboTester', avatarUrl: 'https://placehold.co/40x40/EC4899/FFFFFF?text=TT' },
-      { id: 2, name: 'NeonFan', avatarUrl: 'https://placehold.co/40x40/EC4899/FFFFFF?text=NF' },
-      { id: 3, name: 'RaceReviewer', avatarUrl: 'https://placehold.co/40x40/EC4899/FFFFFF?text=RR' },
-    ],
-  },
-  {
-    id: 4,
-    name: 'Mindful Meditation',
-    creator: { name: 'Zen Studios', avatarUrl: 'https://placehold.co/40x40/059669/FFFFFF?text=ZS', slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1' },
-    price: '$2.99',
-    coins: 200,
-    coverImageUrl: 'https://placehold.co/1200x400/059669/FFFFFF?text=Mindful+Meditation',
-    iconUrl: 'https://placehold.co/150x150/059669/FFFFFF?text=MM',
-    description: 'Find inner peace with Mindful Meditation. Guided sessions, breathing exercises, and nature sounds help you reduce stress and improve focus. Perfect for beginners and experienced practitioners alike.',
-    screenshots: [
-      'https://placehold.co/600x400/059669/FFFFFF?text=Meditation+Timer',
-      'https://placehold.co/600x400/059669/FFFFFF?text=Guided+Sessions',
-      'https://placehold.co/600x400/059669/FFFFFF?text=Nature+Sounds',
-      'https://placehold.co/600x400/059669/FFFFFF?text=Progress+Track',
-    ],
-    reviews: [
-      { id: 1, reviewerName: 'CalmSeeker', score: 5, comment: 'This app has genuinely improved my mental health. Highly recommend!' },
-      { id: 2, reviewerName: 'StressedOut', score: 4, comment: 'Great for daily meditation, love the nature sounds feature.' },
-    ],
-    joinedTesters: [
-      { id: 1, name: 'ZenMaster', avatarUrl: 'https://placehold.co/40x40/10B981/FFFFFF?text=ZM' },
-      { id: 2, name: 'PeacefulSoul', avatarUrl: 'https://placehold.co/40x40/10B981/FFFFFF?text=PS' },
-    ],
-  },
-  {
-    id: 5,
-    name: 'Code Quest',
-    creator: { name: 'DevAcademy', avatarUrl: 'https://placehold.co/40x40/DC2626/FFFFFF?text=DA', slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1' },
-    price: 'Free',
-    coverImageUrl: 'https://placehold.co/1200x400/DC2626/FFFFFF?text=Code+Quest',
-    iconUrl: 'https://placehold.co/150x150/DC2626/FFFFFF?text=CQ',
-    description: 'Learn programming through gamification with Code Quest. Solve coding challenges, unlock achievements, and progress through different difficulty levels. Supports multiple programming languages including Python, JavaScript, and Java.',
-    screenshots: [
-      'https://placehold.co/600x400/DC2626/FFFFFF?text=Challenge+Mode',
-      'https://placehold.co/600x400/DC2626/FFFFFF?text=Code+Editor',
-      'https://placehold.co/600x400/DC2626/FFFFFF?text=Progress+Map',
-      'https://placehold.co/600x400/DC2626/FFFFFF?text=Leaderboard',
-    ],
-    reviews: [
-      { id: 1, reviewerName: 'CodeNewbie', score: 5, comment: 'Finally learning to code is fun! Great for beginners.' },
-      { id: 2, reviewerName: 'DevMentor', score: 4, comment: 'Good concept, would love to see more advanced challenges.' },
-      { id: 3, reviewerName: 'StudentCoder', score: 5, comment: 'This helped me pass my programming course!' },
-    ],
-    joinedTesters: [
-      { id: 1, name: 'BugHunter', avatarUrl: 'https://placehold.co/40x40/F59E0B/FFFFFF?text=BH' },
-      { id: 2, name: 'CodeMaster', avatarUrl: 'https://placehold.co/40x40/F59E0B/FFFFFF?text=CM' },
-      { id: 3, name: 'AlgorithmAce', avatarUrl: 'https://placehold.co/40x40/F59E0B/FFFFFF?text=AA' },
-    ],
-  },
-];
-
 // Function to generate app-specific test instructions
-const getTestInstructionData = (app: App) => {
-  const baseData = {
-    testPeriod: '14 Days',
-    feedbackInstructions: 'Submit daily feedback via Google Forms',
-    appleTestFlightLink: `https://testflight.apple.com/join/${app.name.toLowerCase().replace(/\s+/g, '-')}`,
-    googlePlayTestingLink: `https://play.google.com/apps/internaltest/${app.name.toLowerCase().replace(/\s+/g, '-')}`,
-    googleGroupsLink: `https://groups.google.com/g/${app.name.toLowerCase().replace(/\s+/g, '-')}-beta`
-  };
 
-  // Customize based on app type
-  switch (app.id) {
-    case 1: // Stellar Navigator
-      return {
-        ...baseData,
-        testingFocus: 'Space exploration mechanics and galaxy navigation',
-        focusAreas: [
-          'Galaxy navigation and exploration features',
-          'Planet discovery and resource trading',
-          'Spacecraft controls and physics simulation',
-          'Visual effects and stellar rendering'
-        ],
-        subtitle: 'Help us perfect the next generation of space exploration'
-      };
-    case 2: // Aqua Planner
-      return {
-        ...baseData,
-        testingFocus: 'Task management and productivity features',
-        focusAreas: [
-          'Task creation and organization',
-          'Calendar integration and reminders',
-          'Team collaboration features',
-          'Interface responsiveness and usability'
-        ],
-        subtitle: 'Help us create the ultimate productivity experience'
-      };
-    case 3: // Neon Racer
-      return {
-        ...baseData,
-        testingFocus: 'Racing mechanics and cyberpunk visual effects',
-        focusAreas: [
-          'High-speed racing mechanics and controls',
-          'Cyberpunk visual effects and neon lighting',
-          'Vehicle customization and upgrades',
-          'Underground tournament gameplay'
-        ],
-        subtitle: 'Help us perfect the ultimate cyberpunk racing experience'
-      };
-    case 4: // Mindful Meditation
-      return {
-        ...baseData,
-        testingFocus: 'Meditation features and user experience',
-        focusAreas: [
-          'Guided meditation sessions',
-          'Breathing exercise accuracy',
-          'Nature sounds and audio quality',
-          'Progress tracking and analytics'
-        ],
-        subtitle: 'Help us create a more mindful world'
-      };
-    case 5: // Code Quest
-      return {
-        ...baseData,
-        testingFocus: 'Learning mechanics and coding challenges',
-        focusAreas: [
-          'Coding challenge difficulty progression',
-          'Code editor functionality',
-          'Achievement and progress systems',
-          'Educational content quality'
-        ],
-        subtitle: 'Help us make coding education more engaging'
-      };
-    default:
-      return {
-        ...baseData,
-        testingFocus: 'General app functionality and user experience',
-        focusAreas: [
-          'Core app functionality',
-          'User interface and navigation',
-          'Performance and stability',
-          'Overall user experience'
-        ],
-        subtitle: 'Help us perfect this amazing app'
-      };
-  }
-};
+
 
 interface TestInstructionPageProps {
   params: Promise<{ id: string }>;
 }
 
 const TestInstructionPage: FC<TestInstructionPageProps> = ({ params }) => {
+  const [reviews, setReviews] = useState<{ name: string; text: string; rating: string }[]>([]);
   const resolvedParams = use(params);
   const appId = parseInt(resolvedParams.id);
   const app = allApps.find(a => a.id === appId);
@@ -237,17 +31,17 @@ const TestInstructionPage: FC<TestInstructionPageProps> = ({ params }) => {
     );
   }
 
-  const testInstructionData = getTestInstructionData(app);
+  const testInstructionData = allApps.find(a => a.id === appId);
   const handleAppleClick = () => {
-    window.open(testInstructionData.appleTestFlightLink, '_blank');
+    window.open(testInstructionData!.iosLink, '_blank');
   };
 
   const handleGoogleClick = () => {
-    window.open(testInstructionData.googlePlayTestingLink, '_blank');
+    window.open(testInstructionData!.androidLink, '_blank');
   };
 
   const handleGoogleGroupsClick = () => {
-    window.open(testInstructionData.googleGroupsLink, '_blank');
+    window.open(testInstructionData!.googleGroupLink, '_blank');
   };
 
   return (
@@ -256,7 +50,7 @@ const TestInstructionPage: FC<TestInstructionPageProps> = ({ params }) => {
         {/* Header Section */}
         <div className="text-center mb-16">
           <h1 className="text-4xl font-light text-gray-900 mb-4 tracking-tight">Beta Testing</h1>
-          <p className="text-xl text-gray-600 font-light">{testInstructionData.subtitle}</p>
+          <p className="text-xl text-gray-600 font-light">{testInstructionData!.subtitle}</p>
         </div>
         
         {/* App Hero Card */}
@@ -289,7 +83,7 @@ const TestInstructionPage: FC<TestInstructionPageProps> = ({ params }) => {
                     <div>
                       <p className="font-medium mb-2">Focus Areas:</p>
                       <ul className="space-y-1 text-gray-600">
-                        {testInstructionData.focusAreas.map((area, index) => (
+                        {testInstructionData!.focusAreas.map((area, index) => (
                           <li key={index}>• {area}</li>
                         ))}
                       </ul>
@@ -300,15 +94,15 @@ const TestInstructionPage: FC<TestInstructionPageProps> = ({ params }) => {
                 <div className="space-y-6">
                   <div>
                     <p className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-1">Duration</p>
-                    <p className="text-2xl font-light text-gray-900">{testInstructionData.testPeriod}</p>
+                    <p className="text-2xl font-light text-gray-900">{testInstructionData!.testPeriod}</p>
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-1">Feedback</p>
-                    <p className="text-sm text-gray-600 leading-relaxed">{testInstructionData.feedbackInstructions}</p>
+                    <p className="text-sm text-gray-600 leading-relaxed">{testInstructionData!.feedbackInstructions}</p>
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-1">Focus</p>
-                    <p className="text-sm text-gray-600 leading-relaxed">{testInstructionData.testingFocus}</p>
+                    <p className="text-sm text-gray-600 leading-relaxed">{testInstructionData!.testingFocus}</p>
                   </div>
                 </div>
               </div>
@@ -356,11 +150,119 @@ const TestInstructionPage: FC<TestInstructionPageProps> = ({ params }) => {
               <h3 className="text-lg font-semibold text-blue-900 mb-3">Testing Guidelines</h3>
               <ul className="text-blue-800 space-y-2 leading-relaxed">
                 <li>This is a pre-release version with potential bugs and incomplete features</li>
-                <li>Focus on {testInstructionData.testingFocus.toLowerCase()}</li>
+                <li>Focus on {testInstructionData!.testingFocus.toLowerCase()}</li>
                 <li>Report crashes or major issues immediately through the feedback channels</li>
                 <li>Save progress may not transfer to the final release version</li>
               </ul>
             </div>
+          </div>
+        </div>
+
+        {/* Submit Review Section */}
+        <div className="mt-16">
+          <h3 className="text-2xl font-light text-gray-900 mb-8 text-center">Submit Your Review</h3>
+          <form
+            className="max-w-2xl mx-auto bg-white rounded-3xl shadow-sm border border-gray-100 p-8 space-y-6"
+            onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const newReview = {
+          name: formData.get('reviewerName') as string,
+          text: formData.get('reviewText') as string,
+          rating: formData.get('rating') as string,
+              };
+              console.log('Review submitted:', newReview);
+              setReviews((prevReviews) => [...prevReviews, newReview]);
+              e.currentTarget.reset();
+            }}
+          >
+            <div>
+              <label htmlFor="reviewerName" className="block text-sm font-medium text-gray-700 mb-2">
+          Your Name
+              </label>
+              <input
+          type="text"
+          id="reviewerName"
+          name="reviewerName"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Enter your name"
+          required
+              />
+            </div>
+            <div>
+              <label htmlFor="reviewText" className="block text-sm font-medium text-gray-700 mb-2">
+          Your Review
+              </label>
+              <textarea
+          id="reviewText"
+          name="reviewText"
+          rows={4}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          placeholder="Share your feedback about the app"
+          required
+              ></textarea>
+            </div>
+            <div>
+              <label htmlFor="rating" className="block text-sm font-medium text-gray-700 mb-2">
+          Rating
+              </label>
+              <select
+          id="rating"
+          name="rating"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+          required
+              >
+          <option value="">Select a rating</option>
+          <option value="5">5 - Excellent</option>
+          <option value="4">4 - Good</option>
+          <option value="3">3 - Average</option>
+          <option value="2">2 - Poor</option>
+          <option value="1">1 - Terrible</option>
+              </select>
+            </div>
+            <div className="text-center">
+              <button
+          type="submit"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg shadow-md transition-all duration-200"
+              >
+          Submit Review
+              </button>
+            </div>
+          </form>
+
+          {/* Review History Section */}
+          <div className="mt-16">
+            <h3 className="text-2xl font-light text-gray-900 mb-8 text-center">Review History</h3>
+            <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-sm border border-gray-100 p-8 space-y-6">
+              {reviews.length > 0 ? (
+          reviews.map((review, index) => (
+            <div key={index} className="border-b border-gray-200 pb-4 mb-4">
+              <p className="text-lg font-medium text-gray-900">{review.name}</p>
+              <p className="text-sm text-gray-600">{review.text}</p>
+              <p className="text-sm text-yellow-500">Rating: {review.rating} / 5</p>
+            </div>
+          ))
+              ) : (
+          <p className="text-center text-gray-600">No reviews submitted yet.</p>
+              )}
+            </div>
+          </div>
+
+          <div className="text-center mt-8">
+            <button
+              className="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg shadow-md transition-all duration-200"
+              onClick={() => {
+                if (window.confirm('Are you sure you want to finish your reviews?')) {
+                  setReviews([]); // Clear reviews if needed
+                  window.location.href = '/joined';
+                  console.log('Thank you for completing your reviews!');
+                  //Delete the app from joined testing
+                  //send in-app notification to app developer
+              }
+              }}
+            >
+              Finish Reviews
+            </button>
           </div>
         </div>
       </div>
