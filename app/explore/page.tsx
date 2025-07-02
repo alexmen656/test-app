@@ -21,7 +21,7 @@ const allApps: App[] = [
   {
     id: 1,
     name: 'Stellar Navigator',
-    creator: { name: 'CosmoDev', avatarUrl: 'https://placehold.co/40x40/2D3748/FFFFFF?text=C' },
+    creator: { name: 'CosmoDev', avatarUrl: 'https://placehold.co/40x40/2D3748/FFFFFF?text=C', slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1' },
     price: '$4.99',
     coins: 500,
     coverImageUrl: 'https://placehold.co/1200x400/2D3748/FFFFFF?text=Stellar+Navigator',
