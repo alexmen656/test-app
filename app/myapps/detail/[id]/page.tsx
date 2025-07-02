@@ -116,8 +116,8 @@ const NewAppPage: FC<NewAppPageProps> = ({ onCancel, onCreate }) => {
                 ios_link: data.iosLink,
                 android_link: data.androidLink,
                 google_group_link: data.googleGroupLink,
-                /*testing_instruction: data.testingInstruction,*/
-                /*price: data.price,*/
+                testing_instruction: data.testingInstruction,
+                test_price: data.price,
                 
                 // We'll need to handle file uploads separately or convert them to base64
                 // For this JSON implementation, we'll assume the backend can accept these as null
