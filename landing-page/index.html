@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BetaBay - App Testing Platform</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="nav">
+                <div class="logo">
+                    <img src="BetaBay-Logo.png" alt="BetaBay" class="logo-image">
+                    <div class="logo-text">
+                        <h1>BetaBay</h1>
+                        <span>App Testing Platform</span>
+                    </div>
+                </div>
+                <div class="nav-actions">
+                    <button id="login-btn" class="btn btn-primary">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M5.5 2C3.6 2 2 3.6 2 5.5V18.5C2 20.4 3.6 22 5.5 22H18.5C20.4 22 22 20.4 22 18.5V5.5C22 3.6 20.4 2 18.5 2H5.5ZM5.5 4H18.5C19.3 4 20 4.7 20 5.5V18.5C20 19.3 19.3 20 18.5 20H5.5C4.7 20 4 19.3 4 18.5V5.5C4 4.7 4.7 4 5.5 4ZM8 7V9H16V7H8ZM8 11V13H16V11H8ZM8 15V17H13V15H8Z"/>
+                        </svg>
+                        Sign in with Slack
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Welcome to BetaBay</h1>
+                <p class="hero-subtitle">The ultimate platform for app testing and review. Connect with developers, test cutting-edge applications, and help shape the future of software.</p>
+                <div class="hero-actions">
+                    <button class="btn btn-primary btn-large" id="cta-login">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M5.5 2C3.6 2 2 3.6 2 5.5V18.5C2 20.4 3.6 22 5.5 22H18.5C20.4 22 22 20.4 22 18.5V5.5C22 3.6 20.4 2 18.5 2H5.5ZM5.5 4H18.5C19.3 4 20 4.7 20 5.5V18.5C20 19.3 19.3 20 18.5 20H5.5C4.7 20 4 19.3 4 18.5V5.5C4 4.7 4.7 4 5.5 4ZM8 7V9H16V7H8ZM8 11V13H16V11H8ZM8 15V17H13V15H8Z"/>
+                        </svg>
+                        Get Started with Slack
+                    </button>
+                    <button class="btn btn-secondary btn-large" onclick="document.getElementById('features').scrollIntoView({behavior: 'smooth'})">
+                        Learn More
+                    </button>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="hero-image">
+                    <div class="app-preview">
+                        <div class="app-preview-header">
+                            <div class="app-preview-dots">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                        </div>
+                        <div class="app-preview-content">
+                            <div class="app-card">
+                                <div class="app-icon">🧪</div>
+                                <h4>TaskMaster Pro</h4>
+                                <p>Advanced task management</p>
+                                <span class="status testing">Testing</span>
+                            </div>
+                            <div class="app-card">
+                                <div class="app-icon">⚡</div>
+                                <h4>CodeReview Bot</h4>
+                                <p>Automated code review</p>
+                                <span class="status approved">Approved</span>
+                            </div>
+                            <div class="app-card">
+                                <div class="app-icon">🎨</div>
+                                <h4>Design Helper</h4>
+                                <p>UI/UX design assistant</p>
+                                <span class="status pending">Pending</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Why Choose BetaBay?</h2>
+                <p>Everything you need to test, review, and improve applications</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🧪</div>
+                    <h3>Test Apps</h3>
+                    <p>Get early access to innovative applications and provide valuable feedback to developers. Help shape the next generation of software.</p>
+                    <ul>
+                        <li>Early access to beta apps</li>
+                        <li>Structured feedback system</li>
+                        <li>Impact app development</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📝</div>
+                    <h3>Submit Apps</h3>
+                    <p>Submit your own applications for comprehensive testing and review by our community of experienced testers and developers.</p>
+                    <ul>
+                        <li>Comprehensive app review</li>
+                        <li>Quality feedback from experts</li>
+                        <li>Improve before launch</li>
+                    </ul>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤝</div>
+                    <h3>Community</h3>
+                    <p>Connect with a vibrant community of developers, testers, and tech enthusiasts. Share knowledge and grow together.</p>
+                    <ul>
+                        <li>Network with professionals</li>
+                        <li>Share experiences</li>
+                        <li>Collaborative learning</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2>How It Works</h2>
+                <p>Get started in just a few simple steps</p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Sign In</h3>
+                        <p>Connect your Slack account to join our platform securely and instantly.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Explore</h3>
+                        <p>Browse available apps for testing or submit your own application for review.</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Engage</h3>
+                        <p>Test apps, provide feedback, and connect with developers in our community.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Apps Tested</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">1,200+</div>
+                    <div class="stat-label">Active Testers</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">Developers</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">98%</div>
+                    <div class="stat-label">Satisfaction Rate</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Get Started?</h2>
+                <p>Join BetaBay today and be part of the future of app development and testing.</p>
+                <button class="btn btn-primary btn-large" id="final-cta">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M5.5 2C3.6 2 2 3.6 2 5.5V18.5C2 20.4 3.6 22 5.5 22H18.5C20.4 22 22 20.4 22 18.5V5.5C22 3.6 20.4 2 18.5 2H5.5ZM5.5 4H18.5C19.3 4 20 4.7 20 5.5V18.5C20 19.3 19.3 20 18.5 20H5.5C4.7 20 4 19.3 4 18.5V5.5C4 4.7 4.7 4 5.5 4ZM8 7V9H16V7H8ZM8 11V13H16V11H8ZM8 15V17H13V15H8Z"/>
+                    </svg>
+                    Sign in with Slack
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="logo">
+                        <img src="BetaBay-Logo.png" alt="BetaBay" class="logo-image">
+                        <div class="logo-text">
+                            <h3>BetaBay</h3>
+                            <p>The ultimate app testing platform</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Platform</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
+                        <li><a href="#stats">Statistics</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Community</h4>
+                    <ul>
+                        <li><a href="#">Developers</a></li>
+                        <li><a href="#">Testers</a></li>
+                        <li><a href="#">Support</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">API</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 BetaBay. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="landing.js"></script>
+</body>
+</html>
