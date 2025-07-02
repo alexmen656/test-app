@@ -11,7 +11,6 @@ import AppCard, { App } from '@/components/AppCard'; // Import the AppCard compo
 
 const AppDetailPage: FC<{ app: App }> = ({ app }) => {
     const router = useRouter();
-    const developerName = app.creator.;
     const { id } = useParams() as { id: string }; // Extract the dynamic route parameter
     const appData = allApps[parseInt(id)-1];
 
