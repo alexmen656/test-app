@@ -1,7 +1,7 @@
 'use client';
 import AppSquareCard from '@/components/AppSquareCard';
 import React, { useState, useEffect } from 'react';
-import { allApps } from '@/app/explore/page'; // Importing mock data for apps
+import { allApps } from '@/public/MockData'; // Importing mock data for apps
 
 // --- Helper Components ---
 
