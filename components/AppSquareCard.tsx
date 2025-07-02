@@ -2,11 +2,11 @@ import React from 'react'
 import type { App } from '@/types'; // Import the App type
 
 
-const AppSquareCard = ({ app }: { app: App }) => {
+const AppSquareCard = ({ app, route }: { app: App, route: string }) => {
   return (
     <div
         className="group relative aspect-square bg-gray-200 rounded-2xl shadow-md overflow-hidden cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl"
-        onClick={() => window.location.href = `/myapps/detail/${app.id}`}
+        onClick={() => window.location.href = route}
     >
         {/* Cover Image */}
         {app.coverImageUrl ? (

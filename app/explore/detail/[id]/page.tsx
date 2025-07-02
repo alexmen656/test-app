@@ -57,7 +57,9 @@ const AppDetailPage: FC<{ app: App }> = ({ app }) => {
                         <span className="font-semibold text-gray-600">{appData.creator.name}</span>
                     </div>
                     <div className="flex items-center gap-4">
-                        <button className="flex items-center gap-2 rounded-md bg-gray-200 px-4 py-2 font-semibold text-gray-700 transition-colors hover:bg-gray-300">
+                        <button onClick={() => {
+                            window.open(appData.creator.slackLink, '_blank');
+                        }} className="flex items-center gap-2 rounded-md bg-gray-200 px-4 py-2 font-semibold text-gray-700 transition-colors hover:bg-gray-300">
                             <MessageSquare size={16} /> Message
                         </button>
                         <div className="flex items-center gap-2 rounded-md bg-green-100 px-4 py-2">

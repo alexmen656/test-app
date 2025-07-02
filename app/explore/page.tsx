@@ -21,7 +21,7 @@ const allApps: App[] = [
   {
     id: 1,
     name: 'Stellar Navigator',
-    creator: { name: 'CosmoDev', avatarUrl: 'https://placehold.co/40x40/2D3748/FFFFFF?text=C' },
+    creator: { name: 'CosmoDev', avatarUrl: 'https://placehold.co/40x40/2D3748/FFFFFF?text=C', slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1' },
     price: '$4.99',
     coins: 500,
     coverImageUrl: 'https://placehold.co/1200x400/2D3748/FFFFFF?text=Stellar+Navigator',
@@ -42,11 +42,15 @@ const allApps: App[] = [
       { id: 1, name: 'TestPilot1', avatarUrl: 'https://placehold.co/40x40/718096/FFFFFF?text=T1' },
       { id: 2, name: 'ExplorerX', avatarUrl: 'https://placehold.co/40x40/718096/FFFFFF?text=EX' },
     ],
+    iosLink: 'https://apps.apple.com/app/id1234567890',
+    testingInstruction: '',
+    androidLink: 'https://play.google.com/store/apps/details?id=com.stellarnavigator',
+    googleGroupLink: 'https://groups.google.com/g/stellar-navigator-testers'
   },
   {
     id: 2,
     name: 'Aqua Planner',
-    creator: { name: 'Oceanic Builds', avatarUrl: 'https://placehold.co/40x40/4A5568/FFFFFF?text=O' },
+    creator: { name: 'Oceanic Builds', avatarUrl: 'https://placehold.co/40x40/4A5568/FFFFFF?text=O', slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1' },
     price: 'Free',
     coverImageUrl: 'https://placehold.co/1200x400/4A5568/FFFFFF?text=Aqua+Planner',
     iconUrl: 'https://placehold.co/150x150/4A5568/FFFFFF?text=AP',
@@ -63,11 +67,15 @@ const allApps: App[] = [
     joinedTesters: [
       { id: 1, name: 'BetaUser', avatarUrl: 'https://placehold.co/40x40/A0AEC0/FFFFFF?text=BU' },
     ],
+    iosLink: 'https://apps.apple.com/app/id2345678901',
+    testingInstruction: '',
+    androidLink: 'https://play.google.com/store/apps/details?id=com.aquaplanner',
+    googleGroupLink: 'https://groups.google.com/g/aqua-planner-testers'
   },
   {
     id: 3,
     name: 'Neon Racer',
-    creator: { name: 'SpeedForge', avatarUrl: 'https://placehold.co/40x40/7C3AED/FFFFFF?text=SF' },
+    creator: { name: 'SpeedForge', avatarUrl: 'https://placehold.co/40x40/7C3AED/FFFFFF?text=SF', slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1' },
     price: '$9.99',
     coins: 750,
     coverImageUrl: 'https://placehold.co/1200x400/7C3AED/FFFFFF?text=Neon+Racer',
@@ -90,11 +98,15 @@ const allApps: App[] = [
       { id: 2, name: 'NeonFan', avatarUrl: 'https://placehold.co/40x40/EC4899/FFFFFF?text=NF' },
       { id: 3, name: 'RaceReviewer', avatarUrl: 'https://placehold.co/40x40/EC4899/FFFFFF?text=RR' },
     ],
+    iosLink: 'https://apps.apple.com/app/id3456789012',
+    testingInstruction: '',
+    androidLink: 'https://play.google.com/store/apps/details?id=com.neonracer',
+    googleGroupLink: 'https://groups.google.com/g/neon-racer-testers'
   },
   {
     id: 4,
     name: 'Mindful Meditation',
-    creator: { name: 'Zen Studios', avatarUrl: 'https://placehold.co/40x40/059669/FFFFFF?text=ZS' },
+    creator: { name: 'Zen Studios', avatarUrl: 'https://placehold.co/40x40/059669/FFFFFF?text=ZS', slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1' },
     price: '$2.99',
     coins: 200,
     coverImageUrl: 'https://placehold.co/1200x400/059669/FFFFFF?text=Mindful+Meditation',
@@ -114,11 +126,15 @@ const allApps: App[] = [
       { id: 1, name: 'ZenMaster', avatarUrl: 'https://placehold.co/40x40/10B981/FFFFFF?text=ZM' },
       { id: 2, name: 'PeacefulSoul', avatarUrl: 'https://placehold.co/40x40/10B981/FFFFFF?text=PS' },
     ],
+    iosLink: 'https://apps.apple.com/app/id4567890123',
+    testingInstruction: '',
+    androidLink: 'https://play.google.com/store/apps/details?id=com.mindfulmeditation',
+    googleGroupLink: 'https://groups.google.com/g/mindful-meditation-testers'
   },
   {
     id: 5,
     name: 'Code Quest',
-    creator: { name: 'DevAcademy', avatarUrl: 'https://placehold.co/40x40/DC2626/FFFFFF?text=DA' },
+    creator: { name: 'DevAcademy', avatarUrl: 'https://placehold.co/40x40/DC2626/FFFFFF?text=DA', slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1' },
     price: 'Free',
     coverImageUrl: 'https://placehold.co/1200x400/DC2626/FFFFFF?text=Code+Quest',
     iconUrl: 'https://placehold.co/150x150/DC2626/FFFFFF?text=CQ',
@@ -139,11 +155,15 @@ const allApps: App[] = [
       { id: 2, name: 'CodeMaster', avatarUrl: 'https://placehold.co/40x40/F59E0B/FFFFFF?text=CM' },
       { id: 3, name: 'AlgorithmAce', avatarUrl: 'https://placehold.co/40x40/F59E0B/FFFFFF?text=AA' },
     ],
+    iosLink: 'https://apps.apple.com/app/id5678901234',
+    testingInstruction: '',
+    androidLink: 'https://play.google.com/store/apps/details?id=com.codequest',
+    googleGroupLink: 'https://groups.google.com/g/code-quest-testers'
   },
   {
     id: 6,
     name: 'Chef\'s Kitchen',
-    creator: { name: 'Culinary Craft', avatarUrl: 'https://placehold.co/40x40/EA580C/FFFFFF?text=CC' },
+    creator: { name: 'Culinary Craft', avatarUrl: 'https://placehold.co/40x40/EA580C/FFFFFF?text=CC', slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1' },
     price: '$6.99',
     coins: 450,
     coverImageUrl: 'https://placehold.co/1200x400/EA580C/FFFFFF?text=Chef+Kitchen',
@@ -166,6 +186,10 @@ const allApps: App[] = [
       { id: 2, name: 'FoodCritic', avatarUrl: 'https://placehold.co/40x40/EF4444/FFFFFF?text=FC' },
       { id: 3, name: 'CulinaryStudent', avatarUrl: 'https://placehold.co/40x40/EF4444/FFFFFF?text=CS' },
     ],
+    iosLink: 'https://apps.apple.com/app/id6789012345',
+    testingInstruction: '',
+    androidLink: 'https://play.google.com/store/apps/details?id=com.chefskitchen',
+    googleGroupLink: 'https://groups.google.com/g/chefs-kitchen-testers'
   },
 ];
 
