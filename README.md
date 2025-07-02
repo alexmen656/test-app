@@ -1,36 +1,115 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BetaBay 🚀
+Review Apps and submit apps for review
 
-## Getting Started
+## Project Structure
 
-First, run the development server:
+This repository contains the complete BetaBay platform with multiple components:
 
+### Frontend Components
+- **`public/`** - Main web application frontend
+- **`landing-page/`** - Marketing/landing page with Slack OAuth integration  
+- **`frontend-server.js`** - Simple static file server for frontend
+
+### Backend Components
+- **`backend/`** - Legacy backend (for reference)
+- **`apps-backend/`** - **🚀 NEW Main Platform Backend** - Complete testing platform API
+
+### Assets
+- **`assets/`** - Brand assets and images
+
+## Quick Start
+
+### 1. Main Platform Backend (apps-backend)
 ```bash
+cd apps-backend
+npm install
+cp .env.example .env
+# Configure your Slack OAuth credentials in .env
+npm run init-db
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Frontend
+```bash
+npm install
+npm run serve-frontend
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Landing Page
+```bash
+npm run serve-landing
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Features
 
-## Learn More
+### 🎯 Core Platform (apps-backend)
+- **Slack OAuth Integration** - Secure user authentication
+- **Test Post Management** - Create and manage app testing opportunities
+- **Coin Economy System** - Reward-based system for testers and developers
+- **Review & Rating System** - Rate and review tested applications
+- **User Profiles & Leaderboards** - Track participation and achievements
+- **File Upload Support** - Screenshots, app icons, and media
+- **Cross-domain Authentication** - JWT-like tokens for frontend integration
+- **Notification System** - Keep users informed of activity
 
-To learn more about Next.js, take a look at the following resources:
+### 📊 Database Schema
+- Users (Slack-based authentication)
+- Test Posts (app testing opportunities)  
+- Screenshots (linked media files)
+- Test Participants (many-to-many relationships)
+- Reviews (ratings and feedback)
+- Coin Transactions (complete audit trail)
+- Notifications (user engagement)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 🔐 Security & Performance
+- Helmet security headers
+- CORS configuration
+- OAuth state validation
+- SQL injection prevention
+- Image processing and optimization
+- Session management with secure cookies
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## API Documentation
 
-## Deploy on Vercel
+The main backend (`apps-backend`) provides a comprehensive RESTful API. See:
+- **`apps-backend/README.md`** - Complete API documentation
+- **`apps-backend/FRONTEND_INTEGRATION.md`** - Frontend integration guide
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Environment Setup
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Slack OAuth Setup**:
+   - Create a Slack app at [api.slack.com/apps](https://api.slack.com/apps)
+   - Add OAuth redirect URI: `http://localhost:3002/api/auth/slack/callback`
+   - Copy Client ID and Secret to `.env`
+
+2. **Environment Variables**:
+   ```env
+   SLACK_CLIENT_ID=your_client_id
+   SLACK_CLIENT_SECRET=your_client_secret  
+   SLACK_REDIRECT_URI=http://localhost:3002/api/auth/slack/callback
+   SESSION_SECRET=your-session-secret
+   ```
+
+## Development
+
+- **Backend**: `cd apps-backend && npm run dev` (Port 3002)
+- **Frontend**: `npm run serve-frontend` (Port 3000)  
+- **Landing**: `npm run serve-landing` (Port 3001)
+
+## Deployment
+
+### Backend (apps-backend)
+Deploy to Vercel, Railway, or any Node.js hosting platform. Set production environment variables.
+
+### Frontend
+Can be deployed as static files or integrated with the backend for a unified experience.
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes  
+4. Test thoroughly
+5. Submit a pull request
+
+For detailed development setup, see the individual README files in each component directory.
