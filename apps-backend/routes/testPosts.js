@@ -201,7 +201,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Create new test post
-router.post('/', authenticateUser, async (req, res) => {
+router.post('/', /* authenticateUser, */ async (req, res) => {
   try {
     // Validate input
     const { error, value } = testPostSchema.validate(req.body);
@@ -209,10 +209,13 @@ router.post('/', authenticateUser, async (req, res) => {
       return res.status(400).json({ error: error.details[0].message });
     }
     
-    // Check if user has enough coins
-    if (value.test_price > req.user.owned_coins) {
-      return res.status(400).json({ error: 'Insufficient coins to create this test post' });
-    }
+    // Note: Authentication is disabled, so we're using a default user ID
+    const userId = req.body.user_id || 'default-user-id'; // Use user_id from request body or a default
+    
+    // Check for coins is disabled since we don't have req.user
+    // if (value.test_price > req.user.owned_coins) {
+    //   return res.status(400).json({ error: 'Insufficient coins to create this test post' });
+    // }
     
     await db.initialize();
     
@@ -226,7 +229,7 @@ router.post('/', authenticateUser, async (req, res) => {
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `, [
       testPostId,
-      req.user.id,
+      userId,
       value.app_name,
       value.description,
       value.testing_link || null,
@@ -238,30 +241,30 @@ router.post('/', authenticateUser, async (req, res) => {
       value.expires_at || null
     ]);
     
-    // Deduct coins if test has a price
-    if (value.test_price > 0) {
-      await db.run('UPDATE users SET owned_coins = owned_coins - ? WHERE id = ?', [
-        value.test_price,
-        req.user.id
-      ]);
-      
-      // Create transaction record
-      const transactionId = uuidv4();
-      await db.run(`
-        INSERT INTO coin_transactions (
-          id, sender_user_id, receiver_user_id, amount, transaction_type,
-          reference_type, reference_id, description
-        ) VALUES (?, ?, NULL, ?, ?, ?, ?, ?)
-      `, [
-        transactionId,
-        req.user.id,
-        value.test_price,
-        'payment',
-        'test_post',
-        testPostId,
-        `Payment for creating test post: ${value.app_name}`
-      ]);
-    }
+    // Coin deduction is disabled since we don't have req.user
+    // if (value.test_price > 0) {
+    //   await db.run('UPDATE users SET owned_coins = owned_coins - ? WHERE id = ?', [
+    //     value.test_price,
+    //     req.user.id
+    //   ]);
+    //   
+    //   // Create transaction record
+    //   const transactionId = uuidv4();
+    //   await db.run(`
+    //     INSERT INTO coin_transactions (
+    //       id, sender_user_id, receiver_user_id, amount, transaction_type,
+    //       reference_type, reference_id, description
+    //     ) VALUES (?, ?, NULL, ?, ?, ?, ?, ?)
+    //   `, [
+    //     transactionId,
+    //     req.user.id,
+    //     value.test_price,
+    //     'payment',
+    //     'test_post',
+    //     testPostId,
+    //     `Payment for creating test post: ${value.app_name}`
+    //   ]);
+    // }
     
     // Get the created test post
     const createdPost = await db.get('SELECT * FROM test_posts WHERE id = ?', [testPostId]);
@@ -278,18 +281,17 @@ router.post('/', authenticateUser, async (req, res) => {
 });
 
 // Update test post
-router.put('/:id', authenticateUser, async (req, res) => {
+router.put('/:id', /* authenticateUser, */ async (req, res) => {
   try {
     await db.initialize();
     
-    // Check if test post exists and belongs to user
-    const testPost = await db.get('SELECT * FROM test_posts WHERE id = ? AND user_id = ?', [
-      req.params.id,
-      req.user.id
+    // Note: With auth disabled, we don't check if the post belongs to the user
+    const testPost = await db.get('SELECT * FROM test_posts WHERE id = ?', [
+      req.params.id
     ]);
     
     if (!testPost) {
-      return res.status(404).json({ error: 'Test post not found or not authorized' });
+      return res.status(404).json({ error: 'Test post not found' });
     }
     
     // Validate input
@@ -332,7 +334,7 @@ router.put('/:id', authenticateUser, async (req, res) => {
 });
 
 // Join test post as tester
-router.post('/:id/join', authenticateUser, async (req, res) => {
+router.post('/:id/join', /* authenticateUser, */ async (req, res) => {
   try {
     await db.initialize();
     
@@ -345,15 +347,19 @@ router.post('/:id/join', authenticateUser, async (req, res) => {
       return res.status(404).json({ error: 'Test post not found or not active' });
     }
     
-    // Check if user is not the owner
-    if (testPost.user_id === req.user.id) {
+    // Note: Auth is disabled, so we need a user ID from the request
+    const userId = req.body.user_id || 'test-user-id'; // Use user_id from request body or a default
+    const userName = req.body.user_name || 'Test User';
+    
+    // Check if user is not the owner - still check this even though auth is disabled
+    if (testPost.user_id === userId) {
       return res.status(400).json({ error: 'Cannot join your own test post' });
     }
     
     // Check if already joined
     const existingParticipant = await db.get(
       'SELECT * FROM test_participants WHERE test_post_id = ? AND user_id = ?',
-      [req.params.id, req.user.id]
+      [req.params.id, userId]
     );
     
     if (existingParticipant) {
@@ -375,7 +381,7 @@ router.post('/:id/join', authenticateUser, async (req, res) => {
     await db.run(`
       INSERT INTO test_participants (id, test_post_id, user_id)
       VALUES (?, ?, ?)
-    `, [participantId, req.params.id, req.user.id]);
+    `, [participantId, req.params.id, userId]);
     
     // Create notification for test owner
     const notificationId = uuidv4();
@@ -387,7 +393,7 @@ router.post('/:id/join', authenticateUser, async (req, res) => {
       notificationId,
       testPost.user_id,
       'New Tester Joined! 🎉',
-      `${req.user.display_name || req.user.username} joined your test for "${testPost.app_name}"`,
+      `${userName} joined your test for "${testPost.app_name}"`,
       'success',
       'test_post',
       req.params.id
@@ -402,9 +408,12 @@ router.post('/:id/join', authenticateUser, async (req, res) => {
 });
 
 // Get user's test posts
-router.get('/user/mine', authenticateUser, async (req, res) => {
+router.get('/user/mine', /* authenticateUser, */ async (req, res) => {
   try {
     await db.initialize();
+    
+    // Note: With auth disabled, we take the user_id from the query parameters
+    const userId = req.query.user_id || 'default-user-id';
     
     const testPosts = await db.all(`
       SELECT 
@@ -418,7 +427,7 @@ router.get('/user/mine', authenticateUser, async (req, res) => {
       WHERE tp.user_id = ?
       GROUP BY tp.id
       ORDER BY tp.created_at DESC
-    `, [req.user.id]);
+    `, [userId]);
     
     res.json(testPosts);
     
