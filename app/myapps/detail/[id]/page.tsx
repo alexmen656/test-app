@@ -1,79 +1,115 @@
 'use client'
 
-import React, { FC, useState, ChangeEvent } from 'react';
+import React, { FC, useState, ChangeEvent, useEffect } from 'react';
 import { NewAppData } from '@/types';
 import FormField from '@/components/FormField';
 import ImageUpload from '@/components/ImageUpload';
-import { allApps } from '@/public/MockData'; // Importing mock data for apps
 import { useParams, useRouter } from 'next/navigation';
 import { getBackendUrl } from '@/lib/api';
-import router from 'next/router';
 
 
 
 /**
  * The page containing the form to post a new application.
  */
-// Define the NewAppPageProps interface
-interface NewAppPageProps {
-    onCancel: () => void;
-    onCreate: () => void;
-}
-
-const NewAppPage: FC<NewAppPageProps> = ({ onCancel, onCreate }) => {
-    
+const NewAppPage: FC = () => {
+    const router = useRouter();
     const params = useParams();
     const isEditing = params.id !== 'new';
-
-    const app = allApps.find(app => app.id === parseInt(params.id as string))?? allApps[0]; // Fallback to the first app if not found
-
+    
     const [data, setData] = useState<NewAppData>({
-        name: app.name, description: app.description, videoUrl: app.videoUrl, iosLink: app.iosLink, androidLink: app.androidLink,
-        googleGroupLink: app.googleGroupLink, testingInstruction: app.testingInstruction, price: parseInt(app.price), icon: null,
-        coverImage: null, screenshots: []
+        name: '', 
+        description: '', 
+        videoUrl: '', 
+        iosLink: '', 
+        androidLink: '',
+        googleGroupLink: '', 
+        testingInstruction: '', 
+        price: 0, 
+        icon: null,
+        coverImage: null, 
+        screenshots: []
     });
     const [previews, setPreviews] = useState<{ icon?: string; coverImage?: string; screenshots: string[] }>({ screenshots: [] });
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    React.useEffect(() => {
-        if (isEditing) {
-            if (typeof app.iconUrl === 'string') {
-                setPreviews(prev => ({ ...prev, icon: app.iconUrl }));
+    // Daten aus dem Backend laden, wenn wir im Bearbeitungsmodus sind
+    useEffect(() => {
+        const fetchAppData = async () => {
+            if (!isEditing) return;
+            
+            setIsLoading(true);
+            setError(null);
+            
+            try {
+                const backendUrl = getBackendUrl();
+                const postId = params.id;
+                
+                // Token aus localStorage holen
+                const token = localStorage.getItem('betabay_token');
+                const headers: HeadersInit = {};
+                
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+                
+                // Daten vom Backend abrufen
+                const response = await fetch(`${backendUrl}/api/test-posts/${postId}`, {
+                    method: 'GET',
+                    headers: headers
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch app data: ${response.status}`);
+                }
+                
+                const appData = await response.json();
+                console.log('Fetched app data:', appData);
+                
+                // Daten in den State setzen
+                setData({
+                    name: appData.name || appData.app_name || '',
+                    description: appData.description || '',
+                    videoUrl: appData.videoUrl || appData.youtube_link || '',
+                    iosLink: appData.iosLink || appData.ios_link || '',
+                    androidLink: appData.androidLink || appData.android_link || '',
+                    googleGroupLink: appData.googleGroupLink || appData.google_group_link || '',
+                    testingInstruction: appData.testingInstruction || appData.testing_instruction || '',
+                    price: typeof appData.price === 'string' ? parseFloat(appData.price) : (appData.price || 0),
+                    icon: null,
+                    coverImage: null,
+                    screenshots: []
+                });
+                
+                // Vorschaubilder setzen, wenn vorhanden
+                const previewsUpdate: { icon?: string; coverImage?: string; screenshots: string[] } = { screenshots: [] };
+                
+                if (appData.iconUrl || appData.icon_url) {
+                    previewsUpdate.icon = appData.iconUrl || appData.icon_url;
+                }
+                
+                if (appData.coverImageUrl || appData.cover_image_url) {
+                    previewsUpdate.coverImage = appData.coverImageUrl || appData.cover_image_url;
+                }
+                
+                if (Array.isArray(appData.screenshots) || Array.isArray(appData.screenshot_urls)) {
+                    previewsUpdate.screenshots = appData.screenshots || appData.screenshot_urls || [];
+                }
+                
+                setPreviews(previewsUpdate);
+                
+            } catch (err) {
+                console.error('Error fetching app data:', err);
+                setError('Failed to load app data. Please try again.');
+            } finally {
+                setIsLoading(false);
             }
-            if (typeof app.coverImageUrl === 'string') {
-                setPreviews(prev => ({ ...prev, coverImage: app.coverImageUrl }));
-            }
-            if (Array.isArray(app.screenshots)) {
-                setPreviews(prev => ({
-                    ...prev,
-                    screenshots: app.screenshots
-                }));
-            } else if (typeof app.screenshots === 'string') {
-                setPreviews(prev => ({
-                    ...prev,
-                    screenshots: [URL.createObjectURL(new Blob([app.screenshots as unknown as string], { type: 'image/png' }))]
-                }));
-            }
-            setData({
-                name: typeof app.name === 'string' ? app.name : '',
-                description: typeof app.description === 'string' ? app.description : '',
-                videoUrl: typeof app.videoUrl === 'string' ? app.videoUrl : '',
-                iosLink: typeof app.iosLink === 'string' ? app.iosLink : '',
-                androidLink: typeof app.androidLink === 'string' ? app.androidLink : '',
-                googleGroupLink: typeof app.googleGroupLink === 'string' ? app.googleGroupLink : '',
-                testingInstruction: typeof app.testingInstruction === 'string' ? app.testingInstruction : '',
-                price: typeof app.price === 'string' ? parseFloat(app.price) : 0,
-                screenshots: []
-            });
-        } else {
-            setData({
-                name: '', description: '', videoUrl: '', iosLink: '', androidLink: '',
-                googleGroupLink: '', testingInstruction: '', price: 0, icon: null,
-                coverImage: null, screenshots: []
-            });
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isEditing, app.name]);
+        };
+        
+        fetchAppData();
+    }, [isEditing, params.id]);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value, type } = e.target;
@@ -112,12 +148,19 @@ const NewAppPage: FC<NewAppPageProps> = ({ onCancel, onCreate }) => {
             const jsonData = {
                 app_name: data.name,
                 description: data.description,
-                youtube_link: data.youtubeLink,
+                youtube_link: data.videoUrl,
                 ios_link: data.iosLink,
                 android_link: data.androidLink,
                 google_group_link: data.googleGroupLink,
                 testing_instruction: data.testingInstruction,
                 test_price: data.price,
+                
+                // User information from Slack
+                user_info: {
+                    username: localStorage.getItem('betabay_username') || '',
+                    profile_image: localStorage.getItem('betabay_profile_image') || '',
+                    user_id: localStorage.getItem('betabay_user_id') || ''
+                },
                 
                 // We'll need to handle file uploads separately or convert them to base64
                 // For this JSON implementation, we'll assume the backend can accept these as null
@@ -137,32 +180,39 @@ const NewAppPage: FC<NewAppPageProps> = ({ onCancel, onCreate }) => {
                 headers['Authorization'] = `Bearer ${token}`;
             }
             
+            // API endpoint und Methode basierend auf Bearbeitung oder Erstellung
+            const endpoint = isEditing 
+                ? `${backendUrl}/api/test-posts/${params.id}` 
+                : `${backendUrl}/api/test-posts`;
+                
+            const method = isEditing ? 'PUT' : 'POST';
+            
             // Send JSON data to backend
-            const response = await fetch(`${backendUrl}/api/test-posts`, {
-                method: 'POST',
+            const response = await fetch(endpoint, {
+                method: method,
                 headers: headers,
                 body: JSON.stringify(jsonData)
             });
             
             if (!response.ok) {
-                throw new Error(`Error creating app: ${response.status}`);
+                throw new Error(`Error ${isEditing ? 'updating' : 'creating'} app: ${response.status}`);
             }
             
             const result = await response.json();
-            console.log('App created successfully:', result);
+            console.log(`App ${isEditing ? 'updated' : 'created'} successfully:`, result);
             
             // Redirect to myapps page
             router.push('/myapps');
         } catch (error) {
-            console.error('Failed to create app:', error);
-            alert('Failed to create app. Please try again.');
+            console.error(`Failed to ${isEditing ? 'update' : 'create'} app:`, error);
+            alert(`Failed to ${isEditing ? 'update' : 'create'} app. Please try again.`);
         } finally {
             setIsSubmitting(false);
         }
     };
 
     const handleCancel = () => {
-       router.push('/myapps'); // Redirect to the My Apps page
+        router.push('/myapps'); // Redirect to the My Apps page
     };
 
     // Render the form with sections for core information, media & visuals, and testing & distribution
@@ -182,6 +232,24 @@ const NewAppPage: FC<NewAppPageProps> = ({ onCancel, onCreate }) => {
                     }
                 </p>
             </header>
+            
+            {isLoading ? (
+                <div className="flex justify-center items-center h-64">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                    <p className="ml-3 text-lg text-gray-600">Loading app data...</p>
+                </div>
+            ) : error ? (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-6">
+                    <p className="font-medium">Error</p>
+                    <p>{error}</p>
+                    <button 
+                        onClick={() => router.push('/myapps')}
+                        className="mt-2 px-4 py-2 bg-red-100 text-red-800 rounded-md hover:bg-red-200"
+                    >
+                        Return to My Apps
+                    </button>
+                </div>
+            ) : (
             <form onSubmit={handleSubmit} className="space-y-12">
                 <div className="p-8 bg-white border border-gray-200 rounded-2xl shadow-sm">
                     <h3 className="text-xl font-semibold text-gray-700 mb-6">Core Information</h3>
@@ -230,6 +298,7 @@ const NewAppPage: FC<NewAppPageProps> = ({ onCancel, onCreate }) => {
                     </button>
                 </div>
             </form>
+            )}
         </div>
     );
 }
