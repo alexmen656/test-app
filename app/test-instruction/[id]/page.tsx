@@ -1,7 +1,6 @@
 'use client';
 
-import { FC } from 'react';
-import { useParams } from 'next/navigation';
+import { FC, use } from 'react';
 import { App } from '@/types';
 
 // Import all apps data (you should move this to a separate data file)
@@ -218,11 +217,12 @@ const getTestInstructionData = (app: App) => {
 };
 
 interface TestInstructionPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 const TestInstructionPage: FC<TestInstructionPageProps> = ({ params }) => {
-  const appId = parseInt(params.id);
+  const resolvedParams = use(params);
+  const appId = parseInt(resolvedParams.id);
   const app = allApps.find(a => a.id === appId);
   
   // If app not found, show error
