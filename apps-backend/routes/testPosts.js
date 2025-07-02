@@ -17,6 +17,7 @@ const testPostSchema = Joi.object({
   testing_link: Joi.string().uri().allow('').optional(),
   ios_link: Joi.string().uri().allow('').optional(),
   android_link: Joi.string().uri().allow('').optional(),
+  testing_instruction: Joi.string().max(5000).allow('').optional(), // Longer test instructions
   test_price: Joi.number().integer().min(0).max(1000).default(0),
   instructions: Joi.string().max(2000).allow('').optional(),
   youtube_link: Joi.string().uri().allow('').optional(),
@@ -217,6 +218,7 @@ router.post('/', authenticateUser, async (req, res) => {
       testing_link: value.testing_link || null,
       android_link: value.android_link || null,
       ios_link: value.ios_link || null,
+      testing_instruction: value.testing_instruction || null,
       test_price: value.test_price,
       instructions: value.instructions || null,
       youtube_link: value.youtube_link || null,
@@ -277,6 +279,7 @@ router.put('/:id', authenticateUser, async (req, res) => {
           testing_link: value.testing_link || null,
           ios_link: value.ios_link || null,
           android_link: value.android_link || null,
+          testing_instruction: value.testing_instruction || null,
           instructions: value.instructions || null,
           youtube_link: value.youtube_link || null,
           google_group_link: value.google_group_link || null,
