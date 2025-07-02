@@ -11,6 +11,7 @@ A comprehensive backend for the BetaBay app testing platform.
 - **User Management**: Profile management, notifications, leaderboards
 - **File Upload**: Screenshot and icon upload with image processing
 - **Cross-domain Support**: JWT-like tokens for frontend integration
+- **MongoDB Support**: Cloud database for better scalability and Vercel compatibility
 
 ## Getting Started
 
@@ -18,6 +19,7 @@ A comprehensive backend for the BetaBay app testing platform.
 
 - Node.js 18+
 - npm or yarn
+- MongoDB Atlas account (for production/Vercel deployment)
 
 ### Installation
 
@@ -31,12 +33,12 @@ npm install
 cp .env.example .env
 ```
 
-3. Configure your Slack OAuth application and add credentials to `.env`
-
-4. Initialize the database:
-```bash
-npm run init-db
+3. Configure your MongoDB connection string in `.env`:
 ```
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/betabay?retryWrites=true&w=majority
+```
+
+4. Configure your Slack OAuth application and add credentials to `.env`
 
 5. Start the server:
 ```bash
@@ -44,6 +46,49 @@ npm run dev  # Development mode with auto-reload
 # or
 npm start    # Production mode
 ```
+
+### Database Configuration
+
+The application supports two database backends:
+
+#### MongoDB (Recommended for Production/Vercel)
+
+1. Create a MongoDB Atlas account and cluster
+2. Add your MongoDB connection string to `.env`:
+```
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/betabay?retryWrites=true&w=majority
+```
+3. Test your MongoDB connection:
+```bash
+node test-mongo.js
+```
+
+#### SQLite (Local Development Only)
+
+If no `MONGODB_URI` is provided, the application will default to SQLite.
+
+⚠️ **Important:** SQLite will not work in serverless environments like Vercel due to their read-only filesystem. See [SQLITE_READONLY.md](./SQLITE_READONLY.md) for details.
+
+### Fixing "SQLITE_READONLY" Error on Vercel
+
+If you encounter this error:
+```
+❌ Error: SQLITE_READONLY: attempt to write a readonly database
+```
+
+See [SQLITE_READONLY.md](./SQLITE_READONLY.md) for a complete explanation and solution.
+
+### Migrating from SQLite to MongoDB
+
+If you have existing data in SQLite that you want to migrate to MongoDB:
+
+1. Ensure both database configurations are set up in `.env`
+2. Run the migration script:
+```bash
+npm run migrate-to-mongodb
+```
+
+This will transfer all data from the SQLite database to MongoDB.
 
 ## Environment Variables
 
@@ -64,6 +109,9 @@ FRONTEND_URL=http://localhost:3000
 
 # Session Secret
 SESSION_SECRET=your-super-secret-session-key
+
+# MongoDB Connection
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/betabay?retryWrites=true&w=majority
 ```
 
 ## API Endpoints
@@ -111,7 +159,7 @@ SESSION_SECRET=your-super-secret-session-key
 
 ## Database Schema
 
-The backend uses SQLite with the following main tables:
+The backend uses MongoDB with the following main collections:
 
 - **users** - User profiles and authentication
 - **test_posts** - App testing opportunities
@@ -133,12 +181,7 @@ This starts the server with nodemon for auto-reloading on file changes.
 
 ### Database Management
 
-Initialize or reset the database:
-```bash
-npm run init-db
-```
-
-The database file will be created at `database/betabay_apps.db`.
+For MongoDB, use a GUI tool like MongoDB Compass or the Atlas web interface for database management.
 
 ### File Uploads
 
@@ -162,7 +205,7 @@ pm2 start server.js --name "betabay-apps-backend"
 ## Architecture
 
 - **Express.js** - Web framework
-- **SQLite** - Database (with prepared statements)
+- **MongoDB** - Database (with Mongoose ODM)
 - **Multer + Sharp** - File upload and image processing
 - **Helmet** - Security headers
 - **CORS** - Cross-origin resource sharing

@@ -1,9 +1,8 @@
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
-const Database = require('../database/db');
+const db = require('../database');
 
 const router = express.Router();
-const db = new Database();
 
 // Middleware to authenticate user
 const authenticateUser = async (req, res, next) => {

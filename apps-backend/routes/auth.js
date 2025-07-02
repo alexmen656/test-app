@@ -1,10 +1,9 @@
 const express = require('express');
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
-const Database = require('../database/db');
+const db = require('../database');
 
 const router = express.Router();
-const db = new Database();
 
 // Slack OAuth configuration
 const SLACK_OAUTH_URL = 'https://slack.com/oauth/v2/authorize';
@@ -93,67 +92,128 @@ router.get('/slack/callback', async (req, res) => {
     const slackUser = userResponse.data.user;
     
     // Check if user exists in database
-    await db.initialize();
-    let user = await db.get('SELECT * FROM users WHERE slack_user_id = ?', [slackUserId]);
+    let user;
     
-    if (!user) {
-      // Create new user
-      const userId = uuidv4();
-      await db.run(`
-        INSERT INTO users (
-          id, slack_user_id, username, display_name, email, avatar_url, 
-          slack_profile_link, owned_coins, last_login
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `, [
-        userId,
-        slackUserId,
-        slackUser.name,
-        slackUser.real_name || slackUser.name,
-        slackUser.profile.email,
-        slackUser.profile.image_512 || slackUser.profile.image_192,
-        `https://${teamName.toLowerCase()}.slack.com/team/${slackUserId}`,
-        100, // Starting coins
-        new Date().toISOString()
-      ]);
+    if (db.findOne) {
+      // MongoDB approach
+      user = await db.findOne('users', { slack_user_id: slackUserId });
       
-      // Create signup bonus transaction
-      const transactionId = uuidv4();
-      await db.run(`
-        INSERT INTO coin_transactions (
-          id, receiver_user_id, amount, transaction_type, reference_type, description
-        ) VALUES (?, ?, ?, ?, ?, ?)
-      `, [
-        transactionId,
-        userId,
-        100,
-        'bonus',
-        'signup_bonus',
-        'Welcome bonus for joining BetaBay!'
-      ]);
-      
-      // Create welcome notification
-      const notificationId = uuidv4();
-      await db.run(`
-        INSERT INTO notifications (
-          id, user_id, title, message, type
-        ) VALUES (?, ?, ?, ?, ?)
-      `, [
-        notificationId,
-        userId,
-        'Welcome to BetaBay! 🎉',
-        'You have received 100 coins as a welcome bonus. Start testing apps to earn more!',
-        'success'
-      ]);
-      
-      user = await db.get('SELECT * FROM users WHERE id = ?', [userId]);
-      console.log('✅ New user created:', user.username);
+      if (!user) {
+        // Create new user
+        const userId = uuidv4();
+        
+        // Insert user
+        await db.insert('users', {
+          id: userId,
+          slack_user_id: slackUserId,
+          username: slackUser.name,
+          display_name: slackUser.real_name || slackUser.name,
+          email: slackUser.profile.email,
+          avatar_url: slackUser.profile.image_512 || slackUser.profile.image_192,
+          slack_profile_link: `https://${teamName.toLowerCase()}.slack.com/team/${slackUserId}`,
+          owned_coins: 100, // Starting coins
+          last_login: new Date(),
+          created_at: new Date(),
+          updated_at: new Date(),
+          is_active: true
+        });
+        
+        // Create signup bonus transaction
+        await db.insert('coin_transactions', {
+          id: uuidv4(),
+          receiver_user_id: userId,
+          amount: 100,
+          transaction_type: 'bonus',
+          reference_type: 'signup_bonus',
+          description: 'Welcome bonus for joining BetaBay!',
+          status: 'completed',
+          created_at: new Date()
+        });
+        
+        // Create welcome notification
+        await db.insert('notifications', {
+          id: uuidv4(),
+          user_id: userId,
+          title: 'Welcome to BetaBay! 🎉',
+          message: 'You have received 100 coins as a welcome bonus. Start testing apps to earn more!',
+          type: 'success',
+          is_read: false,
+          created_at: new Date()
+        });
+        
+        user = await db.findOne('users', { id: userId });
+        console.log('✅ New user created:', user.username);
+      } else {
+        // Update last login
+        await db.update('users', 
+          { id: user.id }, 
+          { $set: { last_login: new Date(), updated_at: new Date() } }
+        );
+        console.log('✅ User login updated:', user.username);
+      }
     } else {
-      // Update last login
-      await db.run('UPDATE users SET last_login = ? WHERE id = ?', [
-        new Date().toISOString(),
-        user.id
-      ]);
-      console.log('✅ User login updated:', user.username);
+      // SQLite approach
+      user = await db.get('SELECT * FROM users WHERE slack_user_id = ?', [slackUserId]);
+      
+      if (!user) {
+        // Create new user
+        const userId = uuidv4();
+        await db.run(`
+          INSERT INTO users (
+            id, slack_user_id, username, display_name, email, avatar_url, 
+            slack_profile_link, owned_coins, last_login
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `, [
+          userId,
+          slackUserId,
+          slackUser.name,
+          slackUser.real_name || slackUser.name,
+          slackUser.profile.email,
+          slackUser.profile.image_512 || slackUser.profile.image_192,
+          `https://${teamName.toLowerCase()}.slack.com/team/${slackUserId}`,
+          100, // Starting coins
+          new Date().toISOString()
+        ]);
+        
+        // Create signup bonus transaction
+        const transactionId = uuidv4();
+        await db.run(`
+          INSERT INTO coin_transactions (
+            id, receiver_user_id, amount, transaction_type, reference_type, description
+          ) VALUES (?, ?, ?, ?, ?, ?)
+        `, [
+          transactionId,
+          userId,
+          100,
+          'bonus',
+          'signup_bonus',
+          'Welcome bonus for joining BetaBay!'
+        ]);
+        
+        // Create welcome notification
+        const notificationId = uuidv4();
+        await db.run(`
+          INSERT INTO notifications (
+            id, user_id, title, message, type
+          ) VALUES (?, ?, ?, ?, ?)
+        `, [
+          notificationId,
+          userId,
+          'Welcome to BetaBay! 🎉',
+          'You have received 100 coins as a welcome bonus. Start testing apps to earn more!',
+          'success'
+        ]);
+        
+        user = await db.get('SELECT * FROM users WHERE id = ?', [userId]);
+        console.log('✅ New user created:', user.username);
+      } else {
+        // Update last login
+        await db.run('UPDATE users SET last_login = ? WHERE id = ?', [
+          new Date().toISOString(),
+          user.id
+        ]);
+        console.log('✅ User login updated:', user.username);
+      }
     }
     
     // Create JWT token for frontend authentication
@@ -213,8 +273,15 @@ router.get('/user', async (req, res) => {
         }
         
         // Get fresh user data from database
-        await db.initialize();
-        const user = await db.get('SELECT * FROM users WHERE id = ?', [userData.id]);
+        let user;
+        
+        if (db.findOne) {
+          // MongoDB approach
+          user = await db.findOne('users', { id: userData.id });
+        } else {
+          // SQLite approach
+          user = await db.get('SELECT * FROM users WHERE id = ?', [userData.id]);
+        }
         
         if (!user) {
           return res.status(404).json({ error: 'User not found' });
@@ -231,8 +298,15 @@ router.get('/user', async (req, res) => {
     
     // Fallback to session-based auth
     if (req.session.user) {
-      await db.initialize();
-      const user = await db.get('SELECT * FROM users WHERE id = ?', [req.session.user.id]);
+      let user;
+      
+      if (db.findOne) {
+        // MongoDB approach
+        user = await db.findOne('users', { id: req.session.user.id });
+      } else {
+        // SQLite approach
+        user = await db.get('SELECT * FROM users WHERE id = ?', [req.session.user.id]);
+      }
       
       if (!user) {
         return res.status(404).json({ error: 'User not found' });

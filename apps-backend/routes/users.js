@@ -1,8 +1,7 @@
 const express = require('express');
-const Database = require('../database/db');
+const db = require('../database');
 
 const router = express.Router();
-const db = new Database();
 
 // Middleware to authenticate user
 const authenticateUser = async (req, res, next) => {
@@ -16,8 +15,16 @@ const authenticateUser = async (req, res, next) => {
         return res.status(401).json({ error: 'Token expired' });
       }
       
-      await db.initialize();
-      const user = await db.get('SELECT * FROM users WHERE id = ?', [userData.id]);
+      let user;
+      
+      if (db.findOne) {
+        // MongoDB approach
+        user = await db.findOne('users', { id: userData.id });
+      } else {
+        // SQLite approach
+        await db.initialize();
+        user = await db.get('SELECT * FROM users WHERE id = ?', [userData.id]);
+      }
       
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
@@ -28,8 +35,16 @@ const authenticateUser = async (req, res, next) => {
     }
     
     if (req.session.user) {
-      await db.initialize();
-      const user = await db.get('SELECT * FROM users WHERE id = ?', [req.session.user.id]);
+      let user;
+      
+      if (db.findOne) {
+        // MongoDB approach
+        user = await db.findOne('users', { id: req.session.user.id });
+      } else {
+        // SQLite approach
+        await db.initialize();
+        user = await db.get('SELECT * FROM users WHERE id = ?', [req.session.user.id]);
+      }
       
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
@@ -50,38 +65,82 @@ const authenticateUser = async (req, res, next) => {
 // Get user profile
 router.get('/profile', authenticateUser, async (req, res) => {
   try {
-    await db.initialize();
+    let userStats;
+    let recentTransactions;
+    let unreadNotifications;
     
-    // Get user with stats
-    const userStats = await db.get(`
-      SELECT 
-        u.*,
-        COUNT(DISTINCT tp.id) as total_test_posts,
-        COUNT(DISTINCT tpr.id) as tests_joined,
-        COUNT(DISTINCT r.id) as reviews_given,
-        AVG(r.review_score) as avg_review_score
-      FROM users u
-      LEFT JOIN test_posts tp ON u.id = tp.user_id
-      LEFT JOIN test_participants tpr ON u.id = tpr.user_id
-      LEFT JOIN reviews r ON u.id = r.reviewer_user_id
-      WHERE u.id = ?
-      GROUP BY u.id
-    `, [req.user.id]);
-    
-    // Get recent activities
-    const recentTransactions = await db.all(`
-      SELECT * FROM coin_transactions 
-      WHERE sender_user_id = ? OR receiver_user_id = ?
-      ORDER BY created_at DESC 
-      LIMIT 10
-    `, [req.user.id, req.user.id]);
-    
-    // Get unread notifications
-    const unreadNotifications = await db.all(`
-      SELECT * FROM notifications 
-      WHERE user_id = ? AND is_read = 0
-      ORDER BY created_at DESC
-    `, [req.user.id]);
+    if (db.findOne && db.find && db.count) {
+      // MongoDB approach
+      // Get user from authentication middleware
+      userStats = { ...req.user };
+      
+      // Get test posts count
+      const testPostsCount = await db.count('test_posts', { user_id: req.user.id });
+      userStats.total_test_posts = testPostsCount;
+      
+      // Get tests joined count
+      const testsJoinedCount = await db.count('test_participants', { user_id: req.user.id });
+      userStats.tests_joined = testsJoinedCount;
+      
+      // Get reviews given count and average score
+      const reviews = await db.find('reviews', { reviewer_user_id: req.user.id });
+      userStats.reviews_given = reviews.length;
+      
+      if (reviews.length > 0) {
+        const totalScore = reviews.reduce((sum, review) => sum + (review.review_score || 0), 0);
+        userStats.avg_review_score = totalScore / reviews.length;
+      } else {
+        userStats.avg_review_score = null;
+      }
+      
+      // Get recent transactions
+      recentTransactions = await db.find(
+        'coin_transactions', 
+        { $or: [{ sender_user_id: req.user.id }, { receiver_user_id: req.user.id }] },
+        { sort: { created_at: -1 }, limit: 10 }
+      );
+      
+      // Get unread notifications
+      unreadNotifications = await db.find(
+        'notifications',
+        { user_id: req.user.id, is_read: false },
+        { sort: { created_at: -1 } }
+      );
+    } else {
+      // SQLite approach
+      await db.initialize();
+      
+      // Get user with stats
+      userStats = await db.get(`
+        SELECT 
+          u.*,
+          COUNT(DISTINCT tp.id) as total_test_posts,
+          COUNT(DISTINCT tpr.id) as tests_joined,
+          COUNT(DISTINCT r.id) as reviews_given,
+          AVG(r.review_score) as avg_review_score
+        FROM users u
+        LEFT JOIN test_posts tp ON u.id = tp.user_id
+        LEFT JOIN test_participants tpr ON u.id = tpr.user_id
+        LEFT JOIN reviews r ON u.id = r.reviewer_user_id
+        WHERE u.id = ?
+        GROUP BY u.id
+      `, [req.user.id]);
+      
+      // Get recent activities
+      recentTransactions = await db.all(`
+        SELECT * FROM coin_transactions 
+        WHERE sender_user_id = ? OR receiver_user_id = ?
+        ORDER BY created_at DESC 
+        LIMIT 10
+      `, [req.user.id, req.user.id]);
+      
+      // Get unread notifications
+      unreadNotifications = await db.all(`
+        SELECT * FROM notifications 
+        WHERE user_id = ? AND is_read = 0
+        ORDER BY created_at DESC
+      `, [req.user.id]);
+    }
     
     // Remove sensitive data
     delete userStats.slack_user_id;
