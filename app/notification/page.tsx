@@ -44,12 +44,14 @@ const initialNotifications: Notification[] = [
 // --- NOTIFICATION ITEM COMPONENT ---
 interface NotificationItemProps {
     notification: Notification;
+    onClick?: (id: string) => void;
 }
 
-const NotificationItem: FC<NotificationItemProps> = ({ notification }) => (
+const NotificationItem: FC<NotificationItemProps> = ({ notification, onClick }) => (
     <div
         className={`flex items-start p-4 border-b border-gray-200 cursor-pointer transition-colors duration-200 ${notification.read ? 'bg-white' : 'bg-blue-50'
             }`}
+        onClick={onClick ? () => onClick(notification.id) : undefined}
     >
         {/* Status Dot */}
         {!notification.read && (
@@ -75,12 +77,6 @@ const NotificationPage: FC = () => {
     const [notifications, setNotifications] = useState<Notification[]>(initialNotifications);
 
     const unreadCount = notifications.filter(n => !n.read).length;
-
-    const handleNotificationClick = (id: string) => {
-        setNotifications(prev =>
-            prev.map(n => n.id === id ? { ...n, read: true } : n)
-        );
-    };
 
     const handleMarkAllRead = () => {
         setNotifications(prev =>
@@ -119,7 +115,7 @@ const NotificationPage: FC = () => {
                     <div className="text-center p-12 text-gray-500">
                         <Icon path="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" className="mx-auto h-12 w-12 text-gray-300" />
                         <h3 className="mt-4 text-lg font-medium">No notifications yet</h3>
-                        <p className="mt-1 text-sm">We'll let you know when something new comes up.</p>
+                        <p className="mt-1 text-sm">We&apos;ll let you know when something new comes up.</p>
                     </div>
                 )}
             </main>
