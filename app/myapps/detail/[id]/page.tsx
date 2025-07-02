@@ -1,6 +1,7 @@
 'use client'
 
 import React, { FC, useState, ChangeEvent, useEffect } from 'react';
+import Image from 'next/image';
 import { NewAppData } from '@/types';
 import FormField from '@/components/FormField';
 import ImageUpload from '@/components/ImageUpload';
@@ -271,7 +272,16 @@ const NewAppPage: FC = () => {
                         <ImageUpload label="Screenshots (Select multiple)" id="screenshots" onChange={handleFileChange} multiple />
                         {previews.screenshots.length > 0 && (
                             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
-                                {previews.screenshots.map((src, i) => <img key={i} src={src} className="w-full h-auto object-cover rounded-md" alt={`Screenshot ${i + 1}`} />)}
+                                {previews.screenshots.map((src, i) => (
+                                    <div key={i} className="relative w-full aspect-square rounded-md overflow-hidden">
+                                        <Image 
+                                            src={src} 
+                                            fill
+                                            className="object-cover" 
+                                            alt={`Screenshot ${i + 1}`} 
+                                        />
+                                    </div>
+                                ))}
                             </div>
                         )}
                         <FormField label="YouTube Link (Optional)" id="youtubeLink" placeholder="https://youtube.com/watch?v=..." value={data.videoUrl ?? ''} onChange={handleChange} />
@@ -292,9 +302,23 @@ const NewAppPage: FC = () => {
                 </div>
 
                 <div className="flex justify-end items-center gap-4 pt-4">
-                    <button type="button" onClick={handleCancel} className="px-6 py-2 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition">Cancel</button>
-                    <button type="submit" className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform hover:scale-105 transition">
-                        {isEditing ? 'Update App' : 'Post App'}
+                    <button 
+                        type="button" 
+                        onClick={handleCancel}
+                        disabled={isSubmitting} 
+                        className="px-6 py-2 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition disabled:opacity-50"
+                    >
+                        Cancel
+                    </button>
+                    <button 
+                        type="submit" 
+                        disabled={isSubmitting}
+                        className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform hover:scale-105 transition disabled:opacity-50 disabled:transform-none"
+                    >
+                        {isSubmitting 
+                            ? (isEditing ? 'Updating...' : 'Posting...') 
+                            : (isEditing ? 'Update App' : 'Post App')
+                        }
                     </button>
                 </div>
             </form>

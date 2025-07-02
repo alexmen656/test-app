@@ -1,6 +1,5 @@
 'use client'; // This directive is necessary for using hooks like useState
 
-import Image from 'next/image';
 import type { FC } from 'react';
 import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -26,7 +25,7 @@ import { getBackendUrl } from '@/lib/api';
  * This component displays featured apps and a searchable list of all apps.
  * It's designed to be placed within a layout that already provides a header.
  */
-const ExplorePageContent: FC<{ onSelectApp: (id: number) => void }> = ({ onSelectApp }) => {
+const ExplorePageContent: FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [apps, setApps] = useState<App[]>([]);
   const [loading, setLoading] = useState(true);
@@ -135,7 +134,7 @@ const ExplorePageContent: FC<{ onSelectApp: (id: number) => void }> = ({ onSelec
               <h2 className="text-2xl font-bold text-gray-800 mb-4">Featured Apps</h2>
               <div className="flex w-full gap-8 pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100" style={{ WebkitOverflowScrolling: 'touch' }}>
                 {featuredApps.length > 0 ? (
-                  featuredApps.map((app) => (
+                  featuredApps.map((app: App) => (
                     <AppCard key={app.id} app={app} />
                   ))
                 ) : (
@@ -160,7 +159,7 @@ const ExplorePageContent: FC<{ onSelectApp: (id: number) => void }> = ({ onSelec
               </div>
               <div className="space-y-3">
                 {filteredApps.length > 0 ? (
-                  filteredApps.map((app) => (
+                  filteredApps.map((app: App) => (
                     <AppListCard key={app.id} app={app} />
                   ))
                 ) : (
@@ -221,11 +220,7 @@ const ExplorePage: FC = () => {
   }
 
   console.log('ExplorePage: Authenticated, showing content...');
-  const handleSelectApp = (id: number) => {
-    router.push(`/explore/detail/${id}`);
-  };
-
-  return <ExplorePageContent onSelectApp={handleSelectApp} />;
+  return <ExplorePageContent />;
 };
 
 export default ExplorePage;

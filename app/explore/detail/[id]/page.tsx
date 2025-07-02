@@ -2,9 +2,9 @@
 
 import Image from 'next/image';
 import type { FC } from 'react';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ChevronLeft, MessageSquare, Star, Gem, Link } from 'lucide-react';
+import { ChevronLeft, MessageSquare, Star, Gem } from 'lucide-react';
 import { App } from '@/types';
 import { getBackendUrl } from '@/lib/api';
 

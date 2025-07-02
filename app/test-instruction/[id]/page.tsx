@@ -1,11 +1,14 @@
 'use client';
 
 import { FC, useState, useEffect } from 'react';
+import Image from 'next/image';
 import { App } from '@/types';
 import { useParams } from 'next/navigation';
 import { getBackendUrl } from '@/lib/api';
 
-interface TestInstructionPageProps {}
+interface TestInstructionPageProps {
+  // Props interface kept for future extension
+}
 
 const TestInstructionPage: FC<TestInstructionPageProps> = () => {
   const [reviews, setReviews] = useState<{ name: string; text: string; rating: string }[]>([]);
@@ -91,10 +94,6 @@ const TestInstructionPage: FC<TestInstructionPageProps> = () => {
     window.open(testInstructionData?.androidLink || testInstructionData?.android_link || '#', '_blank');
   };
 
-  const handleGoogleGroupsClick = () => {
-    window.open(testInstructionData?.googleGroupLink || testInstructionData?.google_group_link || '#', '_blank');
-  };
-
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-6 py-16">
@@ -108,11 +107,12 @@ const TestInstructionPage: FC<TestInstructionPageProps> = () => {
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden mb-12">
           <div className="px-8 py-10">
             <div className="flex items-center gap-6 mb-8">
-              <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-md">
-                <img 
+              <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-md relative">
+                <Image 
                   src={app?.iconUrl || app?.icon_url || '/vercel.svg'} 
                   alt={app?.name || app?.app_name || 'App icon'}
-                  className="w-full h-full object-cover"
+                  fill
+                  className="object-cover"
                 />
               </div>
               <div>
