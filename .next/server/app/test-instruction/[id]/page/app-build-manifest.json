@@ -1,23 +1,23 @@
 {
   "pages": {
     "/test-instruction/[id]/page": [
-      "static/chunks/node_modules_next_dist_1a6ee436._.js",
-      "static/chunks/app_favicon_ico_mjs_659ce808._.js",
-      "static/chunks/[root-of-the-server]__9d126714._.css",
-      "static/chunks/node_modules_next_6bab6250._.js",
-      "static/chunks/node_modules_react-icons_md_index_mjs_78df2b41._.js",
-      "static/chunks/node_modules_react-icons_lib_74ccc930._.js",
-      "static/chunks/_0a00a41f._.js",
-      "static/chunks/app_layout_tsx_c0237562._.js",
-      "static/chunks/_b26dad64._.js",
-      "static/chunks/app_test-instruction_[id]_page_tsx_1723eddd._.js",
-      "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_fd44f5a4._.js",
-      "static/chunks/node_modules_next_dist_compiled_2ce9398a._.js",
-      "static/chunks/node_modules_next_dist_client_8f19e6fb._.js",
-      "static/chunks/node_modules_next_dist_2ecbf5fa._.js",
-      "static/chunks/node_modules_@swc_helpers_cjs_00636ac3._.js",
-      "static/chunks/_e69f0d32._.js",
-      "static/chunks/_93808211._.js"
+      "static/chunks/1a28b_next_dist_4b2aa288._.js",
+      "static/chunks/Project_nextjs_beta-bay_app_favicon_ico_mjs_c433bdce._.js",
+      "static/chunks/[root-of-the-server]__aa3e1072._.css",
+      "static/chunks/1a28b_next_27ea497f._.js",
+      "static/chunks/1a28b_react-icons_md_index_mjs_8f600524._.js",
+      "static/chunks/1a28b_react-icons_lib_3f060c1f._.js",
+      "static/chunks/Project_nextjs_beta-bay_b878ba3a._.js",
+      "static/chunks/Project_nextjs_beta-bay_app_layout_tsx_3844d6b7._.js",
+      "static/chunks/Project_nextjs_beta-bay_125c226a._.js",
+      "static/chunks/Project_nextjs_beta-bay_app_test-instruction_[id]_page_tsx_2d47b9c7._.js",
+      "static/chunks/[turbopack]_browser_dev_hmr-client_hmr-client_ts_54234a7f._.js",
+      "static/chunks/1a28b_next_dist_compiled_9a329473._.js",
+      "static/chunks/1a28b_next_dist_client_955f1168._.js",
+      "static/chunks/1a28b_next_dist_0ca115eb._.js",
+      "static/chunks/1a28b_@swc_helpers_cjs_4ae62d01._.js",
+      "static/chunks/Project_nextjs_beta-bay_e69f0d32._.js",
+      "static/chunks/Project_nextjs_beta-bay_c4a327b1._.js"
     ]
   }
 }
