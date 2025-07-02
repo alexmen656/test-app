@@ -18,6 +18,9 @@ export default function SignInPage() {
       // Store token in localStorage
       localStorage.setItem('authToken', token);
       
+      // Die Benutzerdaten werden im useAuth-Hook aus der API geladen
+      // und im localStorage gespeichert, nachdem der Token gesetzt wurde
+      
       // Redirect to explore page or dashboard
       router.push('/explore');
     } else if (authStatus === 'error') {
