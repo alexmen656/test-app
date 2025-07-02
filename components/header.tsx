@@ -35,12 +35,12 @@ const Header = () => {
       Joined Tests
       </Link>
       <div className="flex max-w-xl items-center space-x-4">
-      <button className="relative">
+      <Link href="/notification" className="relative">
         <MdNotificationsNone className="text-2xl" />
         <span className="absolute top-0 right-0 bg-red-400 text-black text-xs rounded-full px-1">
-        3
+          3
         </span>
-      </button>
+      </Link>
       
       {isAuthenticated && user ? (
         <div className="relative">
