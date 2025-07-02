@@ -1,11 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 
-export default function HomePage() {
+// Create a client component that uses the search params
+function HomeContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { setAuthToken, debugStorage } = useAuth();
@@ -111,5 +112,19 @@ export default function HomePage() {
                 </div>
             </footer>
         </div>
+    );
+}
+
+// Main page component that uses Suspense boundary
+export default function HomePage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+            <div className="text-center">
+                <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                <p className="mt-4 text-gray-600 text-lg">Loading...</p>
+            </div>
+        </div>}>
+            <HomeContent />
+        </Suspense>
     );
 }
