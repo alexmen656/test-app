@@ -112,7 +112,7 @@ const NewAppPage: FC<NewAppPageProps> = ({ onCancel, onCreate }) => {
             const jsonData = {
                 app_name: data.name,
                 description: data.description,
-                youtube_link: data.youtubeLink,
+                youtube_link: data.videoUrl,
                 ios_link: data.iosLink,
                 android_link: data.androidLink,
                 google_group_link: data.googleGroupLink,
