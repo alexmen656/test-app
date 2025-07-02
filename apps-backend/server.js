@@ -7,8 +7,10 @@ const path = require('path');
 const fs = require('fs');
 require('dotenv').config();
 
-// Import custom modules
-const Database = require('./database/db');
+// Import the shared database instance
+const db = require('./database');
+
+// Import routes
 const authRoutes = require('./routes/auth');
 const testPostRoutes = require('./routes/testPosts');
 const userRoutes = require('./routes/users');
@@ -17,9 +19,6 @@ const reviewRoutes = require('./routes/reviews');
 
 const app = express();
 const PORT = process.env.PORT || 3002;
-
-// Initialize database
-const db = new Database();
 
 // Security middleware
 app.use(helmet({
@@ -107,13 +106,47 @@ app.use('/api/coins', coinRoutes);
 app.use('/api/reviews', reviewRoutes);
 
 // Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'OK',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    environment: process.env.NODE_ENV || 'development'
-  });
+app.get('/api/health', async (req, res) => {
+  try {
+    // Check if we're using MongoDB
+    const isMongoDb = !!db.client;
+    
+    // Check database connection
+    let dbStatus = 'unknown';
+    try {
+      // For MongoDB, we'll test a simple operation
+      if (isMongoDb) {
+        // Simple ping to test MongoDB connection
+        const result = await db.client.db().command({ ping: 1 });
+        dbStatus = result.ok ? 'connected' : 'error';
+      } else {
+        // For SQLite, just check if the connection is established
+        dbStatus = db.db ? 'connected' : 'error';
+      }
+    } catch (dbError) {
+      console.error('❌ Database health check failed:', dbError);
+      dbStatus = 'error';
+    }
+    
+    res.json({
+      status: 'OK',
+      message: 'BetaBay API is running',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      environment: process.env.NODE_ENV || 'development',
+      database: {
+        type: isMongoDb ? 'mongodb' : 'sqlite',
+        status: dbStatus
+      }
+    });
+  } catch (error) {
+    console.error('❌ Health check error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Health check failed',
+      error: error.message
+    });
+  }
 });
 
 // Error handling middleware

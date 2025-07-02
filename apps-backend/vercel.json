@@ -15,5 +15,9 @@
         "Access-Control-Allow-Origin": "*"
       }
     }
-  ]
+  ],
+  "env": {
+    "VERCEL": "true",
+    "NODE_ENV": "production"
+  }
 }
