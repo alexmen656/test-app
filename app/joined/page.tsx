@@ -73,7 +73,6 @@ export default function App() {
                         {myApps.map(app => (
                             <AppSquareCard key={app.id} app={app} route={`/test-instruction/${app.id}`} />
                         ))}
-                        <AddNewAppCard />
                     </div>
                 </main>
 
