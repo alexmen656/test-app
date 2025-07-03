@@ -40,9 +40,9 @@ const Header = () => {
     >
       <button className="flex items-center space-x-2" onClick={() => window.location.href = '/'}>
         <Image
-          src="https://placehold.co/200x50"
+          src="/BetaBay-Landscape.jpg"
           alt="Logo"
-          width={200}
+          width={100}
           height={50}
         />
       </button>

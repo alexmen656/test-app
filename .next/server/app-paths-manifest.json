@@ -1,8 +1,8 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/explore/page": "app/explore/page.js",
+  "/detail/[id]/page": "app/detail/[id]/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/joined/page": "app/joined/page.js",
+  "/myapps/detail/[id]/page": "app/myapps/detail/[id]/page.js",
   "/myapps/page": "app/myapps/page.js",
   "/notification/detail/[id]/page": "app/notification/detail/[id]/page.js",
   "/notification/page": "app/notification/page.js",

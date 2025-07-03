@@ -680,9 +680,9 @@ const Header = ()=>{
                 className: "flex items-center space-x-2",
                 onClick: ()=>window.location.href = '/',
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
-                    src: "https://placehold.co/200x50",
+                    src: "/BetaBay-Landscape.jpg",
                     alt: "Logo",
-                    width: 200,
+                    width: 100,
                     height: 50
                 }, void 0, false, {
                     fileName: "[project]/Project/nextjs/beta-bay/components/header.tsx",
