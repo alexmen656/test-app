@@ -89,7 +89,7 @@ interface DragDropUploadProps {
 export const DragDropUpload: React.FC<DragDropUploadProps> = ({
   onUpload,
   onError,
-  accept: _accept = 'image/*', // Prefix with underscore to indicate intentionally unused
+  accept, // We'll use this for file type validation
   className = '',
   children
 }) => {
@@ -102,6 +102,12 @@ export const DragDropUpload: React.FC<DragDropUploadProps> = ({
 
     const file = event.dataTransfer.files?.[0];
     if (!file) return;
+
+    // Validate file type if accept prop is provided
+    if (accept && !file.type.match(accept.replace('*', '.*'))) {
+      onError?.(`File type not allowed. Expected: ${accept}`);
+      return;
+    }
 
     try {
       const url = await upload(file);
