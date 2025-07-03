@@ -12,11 +12,56 @@ import { getBackendUrl } from '@/lib/api';
 const AppDetailPage: FC = () => {
     const router = useRouter();
     const { id } = useParams() as { id: string }; // Extract the dynamic route parameter
-    const appData = allApps[parseInt(id) - 1];
+
+
+    const [appData, setAppData] = useState<App | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     const currentUserId = 'a135d7e0-3d80-4ed1-b80c-a2fc1444308f'; // Replace with actual logic to get the logged-in user's username
+    const isCreator = appData?.creator?.id === currentUserId;
 
-    const isCreator = appData.creator.id === currentUserId;
+    // Laden der App-Daten vom Backend
+    useEffect(() => {
+        const fetchAppData = async () => {
+            setLoading(true);
+            setError(null);
+
+            try {
+                const backendUrl = getBackendUrl();
+
+                // Token aus localStorage holen
+                const token = localStorage.getItem('betabay_token');
+                const headers: HeadersInit = {};
+
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+
+                // Daten vom Backend abrufen
+                const response = await fetch(`${backendUrl}/api/test-posts/${id}`, {
+                    method: 'GET',
+                    headers: headers
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch app data: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Fetched app detail data:', data);
+
+                setAppData(data);
+            } catch (err) {
+                console.error('Error fetching app data:', err);
+                setError('Failed to load app data. Please try again.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchAppData();
+    }, [id]);
 
     return (
         <div className="h-screen overflow-y-auto flex-1 bg-gray-50 text-gray-800 animate-fade-in">
