@@ -121,10 +121,12 @@ const Header = () => {
               onClick={() => setShowUserMenu(!showUserMenu)}
               className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100"
             >
-              <img
+              <Image
                 src={user.image}
                 alt={user.name}
-                className="w-8 h-8 rounded-full"
+                width={30}
+                height={30}
+                className="rounded-full"
               />
               <span className="text-sm font-medium">{user.name}</span>
             </button>

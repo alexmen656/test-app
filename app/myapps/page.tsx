@@ -112,12 +112,6 @@ export default function App() {
         fetchApps();
     }, []);
 
-    // --- Event Handlers ---
-    const handleAppClick = (app: App) => {
-        // In a real app, you might navigate to the app's details page
-        window.location.href = `/detail/${app.id}`;
-    };
-
     // --- Render Method ---
     return (
         <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
