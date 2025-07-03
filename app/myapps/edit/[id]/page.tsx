@@ -228,9 +228,9 @@ const NewAppPage: FC = () => {
                 
                 // User information from Slack
                 user_info: {
-                    username: localStorage.getItem('betabay_username') || '',
-                    profile_image: localStorage.getItem('betabay_profile_image') || '',
-                    user_id: localStorage.getItem('betabay_user_id') || ''
+                    username: localStorage.getItem('betabay_username') || 'test',
+                    profile_image: localStorage.getItem('betabay_profile_image') || 'https://example.com/test',
+                    user_id: localStorage.getItem('betabay_user_id') || 'test'
                 },
                 
                 // Include uploaded file URLs - diese werden jetzt garantiert gesendet
