@@ -19,7 +19,7 @@ const AppDetailPage: FC<{ app: App }> = ({ app }) => {
             {/* Back button */}
             <button
                 onClick={() => {
-                    router.push('/explore');
+                    router.push('/');
                 }}
                 className="absolute top-6 left-6 z-20 flex items-center gap-2 rounded-full bg-white/70 px-4 py-2 text-sm font-semibold text-gray-800 shadow-md backdrop-blur-sm transition-all hover:bg-white hover:scale-105"
             >

@@ -22,7 +22,7 @@ export default function SignInPage() {
       // und im localStorage gespeichert, nachdem der Token gesetzt wurde
       
       // Redirect to explore page or dashboard
-      router.push('/explore');
+      router.push('/');
     } else if (authStatus === 'error') {
       setError('Authentication failed. Please try again.');
     }

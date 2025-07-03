@@ -206,7 +206,7 @@ const NewAppPage: FC<NewAppPageProps> = ({ onCancel, onCreate }) => {
                                 {previews.screenshots.map((src, i) => <img key={i} src={src} className="w-full h-auto object-cover rounded-md" alt={`Screenshot ${i + 1}`} />)}
                             </div>
                         )}
-                        <FormField label="YouTube Link (Optional)" id="youtubeLink" placeholder="https://youtube.com/watch?v=..." value={data.videoUrl ?? ''} onChange={handleChange} />
+                        <FormField label="YouTube Link (Optional)" id="videoUrl" placeholder="https://youtube.com/watch?v=..." value={data.videoUrl ?? ''} onChange={handleChange} />
                     </div>
                 </div>
 
