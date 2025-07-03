@@ -368,7 +368,7 @@ const NewAppPage: FC = () => {
                                 ))}
                             </div>
                         )}
-                        <FormField label="YouTube Link (Optional)" id="youtubeLink" placeholder="https://youtube.com/watch?v=..." value={data.videoUrl ?? ''} onChange={handleChange} />
+                        <FormField label="YouTube Link (Optional)" id="videoUrl" placeholder="https://youtube.com/watch?v=..." value={data.videoUrl ?? ''} onChange={handleChange} />
                     </div>
                 </div>
 

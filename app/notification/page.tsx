@@ -1,14 +1,7 @@
 "use client";
 import React, { FC, useState } from 'react';
-
-// --- TYPE DEFINITIONS (for self-containment) ---
-export interface Notification {
-    id: string;
-    title: string;
-    message: string;
-    timestamp: string;
-    read: boolean;
-}
+import { initialNotifications } from '@/public/MockData';
+import { Notification } from '@/types';
 
 // --- HELPER COMPONENTS (for self-containment) ---
 const Icon: FC<{ path: string; className?: string }> = ({ path, className = "h-6 w-6" }) => (
@@ -16,30 +9,6 @@ const Icon: FC<{ path: string; className?: string }> = ({ path, className = "h-6
         <path strokeLinecap="round" strokeLinejoin="round" d={path} />
     </svg>
 );
-
-const initialNotifications: Notification[] = [
-    {
-        id: "1",
-        title: "New message from John",
-        message: "Hey, are you available for a call?",
-        timestamp: "2023-10-01T12:00:00Z",
-        read: false
-    },
-    {
-        id: "2",
-        title: "Your app has been approved",
-        message: "Congratulations! Your app is now live.",
-        timestamp: "2023-10-02T08:30:00Z",
-        read: true
-    },
-    {
-        id: "3",
-        title: "Reminder: Meeting at 3 PM",
-        message: "Don't forget about the meeting later today.",
-        timestamp: "2023-10-02T10:00:00Z",
-        read: false
-    }
-];
 
 // --- NOTIFICATION ITEM COMPONENT ---
 interface NotificationItemProps {
@@ -49,8 +18,8 @@ interface NotificationItemProps {
 
 const NotificationItem: FC<NotificationItemProps> = ({ notification, onClick }) => (
     <div
-        className={`flex items-start p-4 border-b border-gray-200 cursor-pointer transition-colors duration-200 ${notification.read ? 'bg-white' : 'bg-blue-50'
-            }`}
+        className={`flex items-start my-10 p-4 border-b border-gray-200 cursor-pointer transition-colors duration-200 ${notification.read ? 'bg-white' : 'bg-blue-50'
+        }`}
         onClick={onClick ? () => onClick(notification.id) : undefined}
     >
         {/* Status Dot */}
@@ -87,7 +56,7 @@ const NotificationPage: FC = () => {
     // onBack is not used in this example, but you can add it if needed
 
     return (
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto my-10">
             <header className="flex justify-between items-center mb-8">
                 <div>
                     <h1 className="text-4xl font-bold text-gray-800">Notifications</h1>
