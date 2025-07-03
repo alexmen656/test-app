@@ -1,6 +1,7 @@
 'use client';
 import AppSquareCard from '@/components/AppSquareCard';
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import type { App } from '@/types';
 import { getBackendUrl } from '@/lib/api';
 
@@ -124,12 +125,13 @@ export default function App() {
 
                 {/* User Profile Section */}
                 <header className="flex items-center mb-8 sm:mb-12">
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-300 rounded-full mr-4 sm:mr-6 overflow-hidden">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-300 rounded-full mr-4 sm:mr-6 overflow-hidden relative">
                         {userProfile.profileImage ? (
-                            <img 
+                            <Image 
                                 src={userProfile.profileImage} 
                                 alt={userProfile.username}
-                                className="w-full h-full object-cover"
+                                fill
+                                className="object-cover"
                             />
                         ) : (
                             /* Fallback if no image is available */
