@@ -4,13 +4,11 @@ import React from 'react'
 import { initialNotifications } from '@/public/MockData'
 
 interface NotificationDetailPageProps {
-    params: {
-        id: string
-    }
+    params: Promise<{ id: string }>
 }
 
-const page = ({ params }: NotificationDetailPageProps) => {
-    const { id } = params
+const page = async ({ params }: NotificationDetailPageProps) => {
+    const { id } = await Promise.resolve(params)
     const allNotifications = initialNotifications
     const notification = allNotifications.find(n => n.id === id)
 

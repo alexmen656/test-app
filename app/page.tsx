@@ -1,7 +1,6 @@
 'use client'; // This directive is necessary for using hooks like useState
 
 import Image from 'next/image';
-import type { FC } from 'react';
 import { useState, useMemo, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import AppCard from '@/components/AppCard'; // Import the AppCard component
@@ -128,7 +127,7 @@ function HomeContent() {
                   </svg>
                 </div>
                 <p className="text-xl font-medium text-gray-900 mb-2">No apps found</p>
-                <p className="text-gray-500">Try adjusting your search for "{searchQuery}"</p>
+                <p className="text-gray-500">Try adjusting your search for &quot;{searchQuery}&quot;</p>
               </div>
             )}
           </div>
@@ -137,46 +136,6 @@ function HomeContent() {
     </main>
   );
 };
-
-// Wrapper component that handles authentication
-const ExplorePage: FC = () => {
-  const { isAuthenticated, isLoading, user } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    console.log('ExplorePage: isLoading =', isLoading, 'isAuthenticated =', isAuthenticated, 'user =', user);
-    
-    // Only redirect if we're done loading and definitely not authenticated
-    if (!isLoading && !isAuthenticated) {
-      console.log('ExplorePage: Redirecting to signin...');
-      router.push('/signin');
-    }
-  }, [isAuthenticated, isLoading, router, user]);
-
-  if (isLoading) {
-    console.log('ExplorePage: Showing loading state...');
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 text-lg">Loading your apps...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    console.log('ExplorePage: Not authenticated, will redirect...');
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-gray-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Redirecting to sign in...</p>
-        </div>
-      </div>
-    );
-  }
-}
 
   // Main page component that uses Suspense boundary
   export default function HomePage() {
