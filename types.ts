@@ -3,6 +3,7 @@ export interface App {
     name?: string;
     app_name?: string; // Backend field name
     creator?: {
+        id: string;
         name: string;
         avatarUrl: string;
         slackLink?: string;
