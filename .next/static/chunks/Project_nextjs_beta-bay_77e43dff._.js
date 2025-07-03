@@ -204,6 +204,7 @@ const allApps = [
         id: 1,
         name: 'Stellar Navigator',
         creator: {
+            id: '1',
             name: 'CosmoDev',
             avatarUrl: 'https://placehold.co/40x40/2D3748/FFFFFF?text=C',
             slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1'
@@ -266,6 +267,7 @@ const allApps = [
         id: 2,
         name: 'Aqua Planner',
         creator: {
+            id: '2',
             name: 'Oceanic Builds',
             avatarUrl: 'https://placehold.co/40x40/4A5568/FFFFFF?text=O',
             slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1'
@@ -315,6 +317,7 @@ const allApps = [
         id: 3,
         name: 'Neon Racer',
         creator: {
+            id: '3',
             name: 'SpeedForge',
             avatarUrl: 'https://placehold.co/40x40/7C3AED/FFFFFF?text=SF',
             slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1'
@@ -388,6 +391,7 @@ const allApps = [
         id: 4,
         name: 'Mindful Meditation',
         creator: {
+            id: '4',
             name: 'Zen Studios',
             avatarUrl: 'https://placehold.co/40x40/059669/FFFFFF?text=ZS',
             slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1'
@@ -449,6 +453,7 @@ const allApps = [
         id: 5,
         name: 'Code Quest',
         creator: {
+            id: '5',
             name: 'DevAcademy',
             avatarUrl: 'https://placehold.co/40x40/DC2626/FFFFFF?text=DA',
             slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1'
@@ -520,6 +525,7 @@ const allApps = [
         id: 6,
         name: 'Chef\'s Kitchen',
         creator: {
+            id: '6',
             name: 'Culinary Craft',
             avatarUrl: 'https://placehold.co/40x40/EA580C/FFFFFF?text=CC',
             slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1'

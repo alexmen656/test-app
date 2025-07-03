@@ -246,7 +246,7 @@ function App() {
     // --- Event Handlers ---
     const handleAppClick = (app)=>{
         // In a real app, you might navigate to the app's details page
-        window.location.href = `/myapps/detail/${app.id}`;
+        window.location.href = `/detail/${app.id}`;
     };
     // --- Render Method ---
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {

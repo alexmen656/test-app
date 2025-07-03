@@ -26,6 +26,8 @@ const AppDetailPage = ({ app })=>{
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRouter"])();
     const { id } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useParams"])(); // Extract the dynamic route parameter
     const appData = __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$public$2f$MockData$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["allApps"][parseInt(id) - 1];
+    const username = 'currentUser'; // Replace with actual logic to get the logged-in user's username
+    const isCreator = appData.creator.name === username;
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "h-screen overflow-y-auto flex-1 bg-gray-50 text-gray-800 animate-fade-in",
         children: [
@@ -39,14 +41,14 @@ const AppDetailPage = ({ app })=>{
                         size: 16
                     }, void 0, false, {
                         fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                        lineNumber: 26,
+                        lineNumber: 30,
                         columnNumber: 17
                     }, this),
                     "Back to Explore"
                 ]
             }, void 0, true, {
                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                lineNumber: 20,
+                lineNumber: 24,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -59,14 +61,14 @@ const AppDetailPage = ({ app })=>{
                         objectFit: "cover"
                     }, void 0, false, {
                         fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                        lineNumber: 32,
+                        lineNumber: 36,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "absolute inset-0 bg-black/20"
                     }, void 0, false, {
                         fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                        lineNumber: 38,
+                        lineNumber: 42,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -76,18 +78,18 @@ const AppDetailPage = ({ app })=>{
                             children: appData?.name || app.name
                         }, void 0, false, {
                             fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                            lineNumber: 40,
+                            lineNumber: 44,
                             columnNumber: 21
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                        lineNumber: 39,
+                        lineNumber: 43,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                lineNumber: 31,
+                lineNumber: 35,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -107,7 +109,7 @@ const AppDetailPage = ({ app })=>{
                                         className: "rounded-full"
                                     }, void 0, false, {
                                         fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                        lineNumber: 50,
+                                        lineNumber: 54,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -115,13 +117,13 @@ const AppDetailPage = ({ app })=>{
                                         children: appData.creator.name
                                     }, void 0, false, {
                                         fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                        lineNumber: 57,
+                                        lineNumber: 61,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                lineNumber: 49,
+                                lineNumber: 53,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -137,14 +139,14 @@ const AppDetailPage = ({ app })=>{
                                                 size: 16
                                             }, void 0, false, {
                                                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                lineNumber: 63,
+                                                lineNumber: 67,
                                                 columnNumber: 29
                                             }, this),
                                             " Message"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                        lineNumber: 60,
+                                        lineNumber: 64,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -155,7 +157,7 @@ const AppDetailPage = ({ app })=>{
                                                 children: appData.price
                                             }, void 0, false, {
                                                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                lineNumber: 66,
+                                                lineNumber: 70,
                                                 columnNumber: 29
                                             }, this),
                                             appData.coins && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -165,7 +167,7 @@ const AppDetailPage = ({ app })=>{
                                                         size: 16
                                                     }, void 0, false, {
                                                         fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                        lineNumber: 69,
+                                                        lineNumber: 73,
                                                         columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -173,31 +175,31 @@ const AppDetailPage = ({ app })=>{
                                                         children: appData.coins
                                                     }, void 0, false, {
                                                         fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                        lineNumber: 70,
+                                                        lineNumber: 74,
                                                         columnNumber: 37
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                lineNumber: 68,
+                                                lineNumber: 72,
                                                 columnNumber: 33
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                        lineNumber: 65,
+                                        lineNumber: 69,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                lineNumber: 59,
+                                lineNumber: 63,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                        lineNumber: 48,
+                        lineNumber: 52,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -213,7 +215,7 @@ const AppDetailPage = ({ app })=>{
                                                 children: "Description"
                                             }, void 0, false, {
                                                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                lineNumber: 82,
+                                                lineNumber: 86,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -221,13 +223,13 @@ const AppDetailPage = ({ app })=>{
                                                 children: appData.description
                                             }, void 0, false, {
                                                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                lineNumber: 83,
+                                                lineNumber: 87,
                                                 columnNumber: 29
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                        lineNumber: 81,
+                                        lineNumber: 85,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -238,7 +240,7 @@ const AppDetailPage = ({ app })=>{
                                                 children: "Screenshots"
                                             }, void 0, false, {
                                                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                lineNumber: 88,
+                                                lineNumber: 92,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -253,23 +255,23 @@ const AppDetailPage = ({ app })=>{
                                                             className: "transition-transform duration-300 hover:scale-105"
                                                         }, void 0, false, {
                                                             fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                            lineNumber: 95,
+                                                            lineNumber: 99,
                                                             columnNumber: 41
                                                         }, this)
                                                     }, index, false, {
                                                         fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                        lineNumber: 91,
+                                                        lineNumber: 95,
                                                         columnNumber: 37
                                                     }, this))
                                             }, void 0, false, {
                                                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                lineNumber: 89,
+                                                lineNumber: 93,
                                                 columnNumber: 29
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                        lineNumber: 87,
+                                        lineNumber: 91,
                                         columnNumber: 25
                                     }, this),
                                     appData.videoUrl && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -280,7 +282,7 @@ const AppDetailPage = ({ app })=>{
                                                 children: "Video"
                                             }, void 0, false, {
                                                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                lineNumber: 110,
+                                                lineNumber: 114,
                                                 columnNumber: 33
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -291,24 +293,24 @@ const AppDetailPage = ({ app })=>{
                                                     className: "w-full h-full"
                                                 }, void 0, false, {
                                                     fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                    lineNumber: 112,
+                                                    lineNumber: 116,
                                                     columnNumber: 37
                                                 }, this)
                                             }, void 0, false, {
                                                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                lineNumber: 111,
+                                                lineNumber: 115,
                                                 columnNumber: 33
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                        lineNumber: 109,
+                                        lineNumber: 113,
                                         columnNumber: 29
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                lineNumber: 79,
+                                lineNumber: 83,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("aside", {
@@ -321,7 +323,7 @@ const AppDetailPage = ({ app })=>{
                                                 children: "Join Test"
                                             }, void 0, false, {
                                                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                lineNumber: 126,
+                                                lineNumber: 130,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -330,13 +332,13 @@ const AppDetailPage = ({ app })=>{
                                                 children: "Join"
                                             }, void 0, false, {
                                                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                lineNumber: 127,
+                                                lineNumber: 131,
                                                 columnNumber: 29
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                        lineNumber: 125,
+                                        lineNumber: 129,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -351,7 +353,7 @@ const AppDetailPage = ({ app })=>{
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                lineNumber: 134,
+                                                lineNumber: 138,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -367,7 +369,7 @@ const AppDetailPage = ({ app })=>{
                                                                 className: "rounded-full"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                                lineNumber: 143,
+                                                                lineNumber: 147,
                                                                 columnNumber: 41
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -375,24 +377,24 @@ const AppDetailPage = ({ app })=>{
                                                                 children: tester.name
                                                             }, void 0, false, {
                                                                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                                lineNumber: 150,
+                                                                lineNumber: 154,
                                                                 columnNumber: 41
                                                             }, this)
                                                         ]
                                                     }, tester.id, true, {
                                                         fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                        lineNumber: 139,
+                                                        lineNumber: 143,
                                                         columnNumber: 37
                                                     }, this))
                                             }, void 0, false, {
                                                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                lineNumber: 137,
+                                                lineNumber: 141,
                                                 columnNumber: 29
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                        lineNumber: 133,
+                                        lineNumber: 137,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
@@ -407,7 +409,7 @@ const AppDetailPage = ({ app })=>{
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                lineNumber: 160,
+                                                lineNumber: 164,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -423,7 +425,7 @@ const AppDetailPage = ({ app })=>{
                                                                         children: review.reviewerName
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                                        lineNumber: 170,
+                                                                        lineNumber: 174,
                                                                         columnNumber: 45
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -434,7 +436,7 @@ const AppDetailPage = ({ app })=>{
                                                                                 children: review.score
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                                                lineNumber: 174,
+                                                                                lineNumber: 178,
                                                                                 columnNumber: 49
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$star$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Star$3e$__["Star"], {
@@ -442,19 +444,19 @@ const AppDetailPage = ({ app })=>{
                                                                                 fill: "currentColor"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                                                lineNumber: 177,
+                                                                                lineNumber: 181,
                                                                                 columnNumber: 49
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                                        lineNumber: 173,
+                                                                        lineNumber: 177,
                                                                         columnNumber: 45
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                                lineNumber: 169,
+                                                                lineNumber: 173,
                                                                 columnNumber: 41
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -462,48 +464,48 @@ const AppDetailPage = ({ app })=>{
                                                                 children: review.comment
                                                             }, void 0, false, {
                                                                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                                lineNumber: 183,
+                                                                lineNumber: 187,
                                                                 columnNumber: 41
                                                             }, this)
                                                         ]
                                                     }, review.id, true, {
                                                         fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                        lineNumber: 165,
+                                                        lineNumber: 169,
                                                         columnNumber: 37
                                                     }, this))
                                             }, void 0, false, {
                                                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                                lineNumber: 163,
+                                                lineNumber: 167,
                                                 columnNumber: 29
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                        lineNumber: 159,
+                                        lineNumber: 163,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                                lineNumber: 123,
+                                lineNumber: 127,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                        lineNumber: 78,
+                        lineNumber: 82,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-                lineNumber: 46,
+                lineNumber: 50,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/Project/nextjs/beta-bay/app/detail/[id]/page.tsx",
-        lineNumber: 18,
+        lineNumber: 22,
         columnNumber: 9
     }, this);
 };

@@ -12,14 +12,22 @@ import AppCard, { App } from '@/components/AppCard'; // Import the AppCard compo
 const AppDetailPage: FC<{ app: App }> = ({ app }) => {
     const router = useRouter();
     const { id } = useParams() as { id: string }; // Extract the dynamic route parameter
-    const appData = allApps[parseInt(id)-1];
+    const appData = allApps[parseInt(id) - 1];
+
+    const currentUserId = 'a135d7e0-3d80-4ed1-b80c-a2fc1444308f'; // Replace with actual logic to get the logged-in user's username
+
+    const isCreator = appData.creator.id === currentUserId;
 
     return (
         <div className="h-screen overflow-y-auto flex-1 bg-gray-50 text-gray-800 animate-fade-in">
             {/* Back button */}
             <button
                 onClick={() => {
-                    router.push('/');
+                    if(isCreator) {
+                        router.push('/myapps');
+                    } else {
+                        router.push('/');
+                    }
                 }}
                 className="absolute top-6 left-6 z-20 flex items-center gap-2 rounded-full bg-white/70 px-4 py-2 text-sm font-semibold text-gray-800 shadow-md backdrop-blur-sm transition-all hover:bg-white hover:scale-105"
             >
@@ -123,10 +131,21 @@ const AppDetailPage: FC<{ app: App }> = ({ app }) => {
                     <aside>
                         {/* Join Test */}
                         <section className="rounded-lg border border-gray-200 bg-white p-4">
-                            <h3 className="font-bold mb-3">Join Test</h3>
-                            <a href={`/test-instruction/${appData.id}`} className="block w-full text-center rounded-md bg-blue-600 py-2.5 font-semibold text-white transition-colors hover:bg-blue-700">
-                                Join
-                            </a>
+                            <h3 className="font-bold mb-3">
+                                {isCreator ? 'Manage App' : 'Join Test'}
+                            </h3>
+                            {isCreator ? (
+                                <button 
+                                    onClick={() => router.push(`/myapps/edit/${appData.id}`)}
+                                    className="block w-full text-center rounded-md bg-green-600 py-2.5 font-semibold text-white transition-colors hover:bg-green-700"
+                                >
+                                    Edit Profile
+                                </button>
+                            ) : (
+                                <a href={`/test-instruction/${appData.id}`} className="block w-full text-center rounded-md bg-blue-600 py-2.5 font-semibold text-white transition-colors hover:bg-blue-700">
+                                    Join
+                                </a>
+                            )}
                         </section>
 
                         {/* Joined Testers */}

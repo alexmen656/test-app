@@ -114,7 +114,7 @@ export default function App() {
     // --- Event Handlers ---
     const handleAppClick = (app: App) => {
         // In a real app, you might navigate to the app's details page
-        window.location.href = `/myapps/detail/${app.id}`;
+        window.location.href = `/detail/${app.id}`;
     };
 
     // --- Render Method ---

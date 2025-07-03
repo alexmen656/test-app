@@ -2,6 +2,7 @@ export interface App {
     id: number;
     name: string;
     creator: {
+        id: string;
         name: string;
         avatarUrl: string;
         slackLink: string;
