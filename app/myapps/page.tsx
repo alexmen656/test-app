@@ -151,7 +151,7 @@ export default function App() {
                             {Array.isArray(apps) && apps.length > 0 ? (
                                 // Apps anzeigen, wenn vorhanden
                                 apps.map((app) => (
-                                    <AppSquareCard key={app.id} app={app} route={`/detail/${app.id}`} />
+                                    <AppSquareCard key={app.id} app={app} route={`/myapps/edit/${app.id}`} />
                                 ))
                             ) : (
                                 // Nachricht anzeigen, wenn keine Apps vorhanden sind
