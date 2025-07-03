@@ -1,4 +1,5 @@
 import React from 'react'
+import Image from 'next/image'
 import type { App } from '@/types'; // Import the App type
 
 
@@ -10,11 +11,14 @@ const AppSquareCard = ({ app, route }: { app: App, route: string }) => {
     >
         {/* Cover Image */}
         {app.coverImageUrl ? (
-          <img
-            src={app.coverImageUrl}
-            alt={app.name}
-            className="w-full h-full object-cover"
-          />
+          <div className="relative w-full h-full">
+            <Image
+              src={app.coverImageUrl}
+              alt={app.name || 'App image'}
+              fill
+              className="object-cover"
+            />
+          </div>
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-400 to-purple-500">
             <span className="text-white text-lg font-semibold">{app.name}</span>

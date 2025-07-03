@@ -61,6 +61,7 @@ const Header = () => {
             onClick={() => setShowNotifications(!showNotifications)}
             className="relative"
           >
+
             <MdNotificationsNone className="text-2xl" />
             {initialNotifications.filter(n => !n.read).length > 0 && (
               <span className="absolute top-0 right-0 bg-red-400 text-black text-xs rounded-full px-1">

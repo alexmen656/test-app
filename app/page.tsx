@@ -2,41 +2,39 @@
 
 import Image from 'next/image';
 import type { FC } from 'react';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import AppCard from '@/components/AppCard'; // Import the AppCard component
 import { useAuth } from '@/hooks/useAuth';
-import { App } from '@/types'; // Import the App type from the explore page
-import AppListCard from '@/components/AppListCard';
-import { allApps } from '@/public/MockData'; // Import the mock data for apps
 
+// Create a client component that uses the search params
+function HomeContent() {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const { setAuthToken, debugStorage } = useAuth();
 
-// Define the structure for an app object
-
-// Mock data for the apps. In a real application, you would fetch this from an API.
-
-// --- DATA STRUCTURE AND MOCK DATA ---
-// Expanded data structure for the app details page.
- 
-// Expanded mock data for the apps.
-
-
-/**
- * ExplorePageContent Component
- * This component displays featured apps and a searchable list of all apps.
- * It's designed to be placed within a layout that already provides a header.
- */
-const ExplorePageContent: FC<{ onSelectApp: (id: number) => void }> = ({ onSelectApp }) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const featuredApps = allApps.slice(0, 4);
-  const filteredApps = useMemo(() => {
-    const lowercasedQuery = searchQuery.toLowerCase();
-    if (!lowercasedQuery) return allApps;
-    return allApps.filter(app =>
-      app.name.toLowerCase().includes(lowercasedQuery) ||
-      app.creator.name.toLowerCase().includes(lowercasedQuery)
-    );
-  }, [searchQuery]);
+    useEffect(() => {
+        const authStatus = searchParams.get('auth');
+        const token = searchParams.get('token');
+        
+        console.log('HomePage: authStatus =', authStatus, 'token =', token ? 'present' : 'missing');
+        
+        // Debug localStorage
+        debugStorage();
+        
+        if (authStatus === 'success' && token) {
+            console.log('HomePage: Storing token and redirecting...');
+            console.log('HomePage: Token preview =', token.substring(0, 50) + '...');
+            
+            // Use the auth hook to set the token
+            setAuthToken(token);
+            
+            // Redirect to explore page after a short delay
+            setTimeout(() => {
+                router.push('/explore');
+            }, 1000);
+        }
+    }, [searchParams, router, setAuthToken, debugStorage]);
 
   return (
     <main className="flex-1 text-gray-800 overflow-y-auto h-screen">
@@ -160,14 +158,18 @@ const ExplorePage: FC = () => {
         </div>
       </div>
     );
-  }
+}
 
-  console.log('ExplorePage: Authenticated, showing content...');
-  const handleSelectApp = (id: number) => {
-    router.push(`/explore/detail/${id}`);
-  };
-
-  return <ExplorePageContent onSelectApp={handleSelectApp} />;
-};
-
-export default ExplorePage;
+// Main page component that uses Suspense boundary
+export default function HomePage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+            <div className="text-center">
+                <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                <p className="mt-4 text-gray-600 text-lg">Loading...</p>
+            </div>
+        </div>}>
+            <HomeContent />
+        </Suspense>
+    );
+}
