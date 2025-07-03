@@ -61,7 +61,7 @@ class FileUploadAPI {
           } else {
             reject(new Error(response.error || 'Upload failed'));
           }
-        } catch (error) {
+        } catch (parseError) {
           reject(new Error('Invalid server response'));
         }
       });

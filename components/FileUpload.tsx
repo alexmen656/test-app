@@ -89,7 +89,7 @@ interface DragDropUploadProps {
 export const DragDropUpload: React.FC<DragDropUploadProps> = ({
   onUpload,
   onError,
-  accept = 'image/*',
+  accept: _accept = 'image/*', // Prefix with underscore to indicate intentionally unused
   className = '',
   children
 }) => {
