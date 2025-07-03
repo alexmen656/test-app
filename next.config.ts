@@ -13,6 +13,11 @@ const nextConfig: NextConfig = {
         hostname: "via.placeholder.com",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "avatars.slack-edge.com",
+        port: "",
+      },
     ], 
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',

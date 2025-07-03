@@ -3,15 +3,32 @@
 import Image from 'next/image';
 import type { FC } from 'react';
 import { useState, useMemo, useEffect, Suspense } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import AppCard from '@/components/AppCard'; // Import the AppCard component
 import { useAuth } from '@/hooks/useAuth';
+import AppListCard from '@/components/AppListCard'; // Import the AppListCard component
 
 // Create a client component that uses the search params
 function HomeContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const { setAuthToken, debugStorage } = useAuth();
+  const { setAuthToken, debugStorage } = useAuth();
+  
+    const featuredApps = useMemo(() => [
+        { id: 1, name: 'App One', creator: { id: 'creatorA', name: 'Creator A', avatarUrl: '/avatars/creatorA.jpg' } },
+        { id: 2, name: 'App Two', creator: { id: 'creatorB', name: 'Creator B', avatarUrl: '/avatars/creatorB.jpg' } },
+        { id: 3, name: 'App Three', creator: { id: 'creatorC', name: 'Creator C', avatarUrl: '/avatars/creatorC.jpg' } },
+    ], []);//mockdata
+  
+    const [searchQuery, setSearchQuery] = useState(''); // Add state for searchQuery
+
+    // Filter apps based on the search query
+    const filteredApps = useMemo(() => {
+        return featuredApps.filter(app =>
+            app.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            app.creator.name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }, [searchQuery, featuredApps]);
 
     useEffect(() => {
         const authStatus = searchParams.get('auth');
@@ -62,7 +79,6 @@ function HomeContent() {
             </div>
           </div>
         </section>
-
         {/* Featured Apps Section */}
         <section className="mb-12 px-6">
           <h2 className="text-2xl font-bold mb-6 text-gray-900">Featured Apps</h2>
@@ -76,6 +92,7 @@ function HomeContent() {
             </div>
           </div>
         </section>
+
 
         {/* Search & List Section */}
         <section className="mx-auto max-w-6xl px-6">
@@ -158,18 +175,19 @@ const ExplorePage: FC = () => {
         </div>
       </div>
     );
+  }
 }
 
-// Main page component that uses Suspense boundary
-export default function HomePage() {
+  // Main page component that uses Suspense boundary
+  export default function HomePage() {
     return (
-        <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-            <div className="text-center">
-                <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-                <p className="mt-4 text-gray-600 text-lg">Loading...</p>
-            </div>
-        </div>}>
-            <HomeContent />
-        </Suspense>
+      <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="mt-4 text-gray-600 text-lg">Loading...</p>
+        </div>
+      </div>}>
+        <HomeContent />
+      </Suspense>
     );
-}
+  }
