@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function SignInPage() {
+// Create a component that uses searchParams
+function SignInContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
@@ -22,7 +23,7 @@ export default function SignInPage() {
       // und im localStorage gespeichert, nachdem der Token gesetzt wurde
       
       // Redirect to explore page or dashboard
-      router.push('/explore');
+      router.push('/');
     } else if (authStatus === 'error') {
       setError('Authentication failed. Please try again.');
     }
@@ -90,7 +91,7 @@ export default function SignInPage() {
 
             <div className="text-center">
               <p className="text-sm text-gray-600">
-                Don't have Slack?{' '}
+                Don&apos;t have Slack?{' '}
                 <a 
                   href="https://slack.com" 
                   target="_blank" 
@@ -127,5 +128,21 @@ export default function SignInPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+// Main page component with Suspense boundary
+export default function SignInPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="mt-4 text-gray-600 text-lg">Loading...</p>
+        </div>
+      </div>
+    }>
+      <SignInContent />
+    </Suspense>
   );
 }

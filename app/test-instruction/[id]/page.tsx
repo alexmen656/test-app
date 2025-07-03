@@ -1,47 +1,96 @@
 'use client';
 
-import { FC, use, useState } from 'react';
+import { FC, useState, useEffect } from 'react';
+import Image from 'next/image';
 import { App } from '@/types';
-import { allApps } from '@/public/MockData'; // Corrected import path for mock data
+import { useParams } from 'next/navigation';
+import { getBackendUrl } from '@/lib/api';
 
-// Import all apps data (you should move this to a separate data file)
-// Function to generate app-specific test instructions
+// Since this component doesn't currently need props, we can remove the interface
+// and use React.FC directly
 
-
-
-interface TestInstructionPageProps {
-  params: Promise<{ id: string }>;
-}
-
-const TestInstructionPage: FC<TestInstructionPageProps> = ({ params }) => {
+const TestInstructionPage: FC = () => {
   const [reviews, setReviews] = useState<{ name: string; text: string; rating: string }[]>([]);
-  const resolvedParams = use(params);
-  const appId = parseInt(resolvedParams.id);
-  const app = allApps.find(a => a.id === appId);
+  const [app, setApp] = useState<App | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
-  // If app not found, show error
-  if (!app) {
+  const { id } = useParams() as { id: string };
+  const appId = parseInt(id);
+  
+  // Fetch app data from backend
+  useEffect(() => {
+    const fetchAppData = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        const backendUrl = getBackendUrl();
+        
+        // Get token from localStorage
+        const token = localStorage.getItem('betabay_token');
+        const headers: HeadersInit = {};
+        
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+        
+        // Fetch data from backend
+        const response = await fetch(`${backendUrl}/api/test-posts/${appId}`, {
+          method: 'GET',
+          headers: headers
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch app data: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('Fetched app data for test instructions:', data);
+        
+        setApp(data);
+      } catch (err) {
+        console.error('Error fetching app data:', err);
+        setError('Failed to load app data. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchAppData();
+  }, [appId]);
+  
+  // If loading, show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-xl text-gray-600">Loading app data...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // If error, show error state
+  if (error || !app) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-4xl font-light text-gray-900 mb-4">App Not Found</h1>
-          <p className="text-xl text-gray-600">The requested app does not exist.</p>
+          <p className="text-xl text-gray-600">{error || "The requested app does not exist."}</p>
         </div>
       </div>
     );
   }
 
-  const testInstructionData = allApps.find(a => a.id === appId);
+  const testInstructionData = app;
   const handleAppleClick = () => {
-    window.open(testInstructionData!.iosLink, '_blank');
+    window.open(testInstructionData?.iosLink || testInstructionData?.ios_link || '#', '_blank');
   };
 
   const handleGoogleClick = () => {
-    window.open(testInstructionData!.androidLink, '_blank');
-  };
-
-  const handleGoogleGroupsClick = () => {
-    window.open(testInstructionData!.googleGroupLink, '_blank');
+    window.open(testInstructionData?.androidLink || testInstructionData?.android_link || '#', '_blank');
   };
 
   return (
@@ -50,23 +99,24 @@ const TestInstructionPage: FC<TestInstructionPageProps> = ({ params }) => {
         {/* Header Section */}
         <div className="text-center mb-16">
           <h1 className="text-4xl font-light text-gray-900 mb-4 tracking-tight">Beta Testing</h1>
-          <p className="text-xl text-gray-600 font-light">{testInstructionData!.subtitle}</p>
+          <p className="text-xl text-gray-600 font-light">{testInstructionData?.subtitle || 'Test this application'}</p>
         </div>
         
         {/* App Hero Card */}
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden mb-12">
           <div className="px-8 py-10">
             <div className="flex items-center gap-6 mb-8">
-              <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-md">
-                <img 
-                  src={app.iconUrl} 
-                  alt={app.name}
-                  className="w-full h-full object-cover"
+              <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-md relative">
+                <Image 
+                  src={app?.iconUrl || app?.icon_url || '/vercel.svg'} 
+                  alt={app?.name || app?.app_name || 'App icon'}
+                  fill
+                  className="object-cover"
                 />
               </div>
               <div>
-                <h2 className="text-2xl font-semibold text-gray-900 mb-1">{app.name}</h2>
-                <p className="text-lg text-gray-600 mb-1">by {app.creator.name}</p>
+                <h2 className="text-2xl font-semibold text-gray-900 mb-1">{app?.name || app?.app_name || 'Unnamed App'}</h2>
+                <p className="text-lg text-gray-600 mb-1">by {app?.creator?.name || app?.user_info?.username || 'Unknown Creator'}</p>
                 <div className="flex items-center gap-4 text-sm text-gray-500">
                   <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full font-medium">Beta</span>
                 </div>
@@ -79,13 +129,13 @@ const TestInstructionPage: FC<TestInstructionPageProps> = ({ params }) => {
                 <div className="md:col-span-2">
                   <h3 className="text-xl font-semibold text-gray-900 mb-4">Testing Instructions</h3>
                   <div className="text-gray-700 leading-relaxed space-y-4">
-                    <p>Welcome to the beta testing program for {app.name}!</p>
+                    <p>Welcome to the beta testing program for {app?.name || app?.app_name || 'this app'}!</p>
                     <div>
                       <p className="font-medium mb-2">Focus Areas:</p>
                       <ul className="space-y-1 text-gray-600">
-                        {testInstructionData!.focusAreas.map((area, index) => (
+                        {testInstructionData?.focusAreas?.map((area, index) => (
                           <li key={index}>• {area}</li>
-                        ))}
+                        )) || <li>• General app testing</li>}
                       </ul>
                     </div>
                   </div>
@@ -94,15 +144,15 @@ const TestInstructionPage: FC<TestInstructionPageProps> = ({ params }) => {
                 <div className="space-y-6">
                   <div>
                     <p className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-1">Duration</p>
-                    <p className="text-2xl font-light text-gray-900">{testInstructionData!.testPeriod}</p>
+                    <p className="text-2xl font-light text-gray-900">{testInstructionData?.testPeriod || '2 weeks'}</p>
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-1">Feedback</p>
-                    <p className="text-sm text-gray-600 leading-relaxed">{testInstructionData!.feedbackInstructions}</p>
+                    <p className="text-sm text-gray-600 leading-relaxed">{testInstructionData?.feedbackInstructions || 'Please provide detailed feedback on any issues you encounter.'}</p>
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-1">Focus</p>
-                    <p className="text-sm text-gray-600 leading-relaxed">{testInstructionData!.testingFocus}</p>
+                    <p className="text-sm text-gray-600 leading-relaxed">{testInstructionData?.testingFocus || 'General usability and feature testing'}</p>
                   </div>
                 </div>
               </div>
@@ -150,7 +200,7 @@ const TestInstructionPage: FC<TestInstructionPageProps> = ({ params }) => {
               <h3 className="text-lg font-semibold text-blue-900 mb-3">Testing Guidelines</h3>
               <ul className="text-blue-800 space-y-2 leading-relaxed">
                 <li>This is a pre-release version with potential bugs and incomplete features</li>
-                <li>Focus on {testInstructionData!.testingFocus.toLowerCase()}</li>
+                <li>Focus on {(testInstructionData?.testingFocus || 'general usability').toLowerCase()}</li>
                 <li>Report crashes or major issues immediately through the feedback channels</li>
                 <li>Save progress may not transfer to the final release version</li>
               </ul>
