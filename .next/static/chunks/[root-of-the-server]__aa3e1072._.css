@@ -192,6 +192,8 @@
     --text-xs--line-height: calc(1 / .75);
     --text-sm: .875rem;
     --text-sm--line-height: calc(1.25 / .875);
+    --text-base: 1rem;
+    --text-base--line-height: calc(1.5 / 1);
     --text-lg: 1.125rem;
     --text-lg--line-height: calc(1.75 / 1.125);
     --text-xl: 1.25rem;
@@ -1067,6 +1069,10 @@
     background-color: var(--color-blue-50);
   }
 
+  .bg-blue-100 {
+    background-color: var(--color-blue-100);
+  }
+
   .bg-blue-500 {
     background-color: var(--color-blue-500);
   }
@@ -1346,6 +1352,11 @@
   .text-5xl {
     font-size: var(--text-5xl);
     line-height: var(--tw-leading, var(--text-5xl--line-height));
+  }
+
+  .text-base {
+    font-size: var(--text-base);
+    line-height: var(--tw-leading, var(--text-base--line-height));
   }
 
   .text-lg {

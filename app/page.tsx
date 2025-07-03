@@ -1,115 +1,120 @@
-'use client';
+'use client'; // This directive is necessary for using hooks like useState
 
-import Link from 'next/link';
-import { useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
+import type { FC } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import AppCard from '@/components/AppCard'; // Import the AppCard component
 import { useAuth } from '@/hooks/useAuth';
+import { App } from '@/types'; // Import the App type from the explore page
+import AppListCard from '@/components/AppListCard';
+import { allApps } from '@/public/MockData'; // Import the mock data for apps
 
-export default function HomePage() {
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const { setAuthToken, debugStorage } = useAuth();
 
-    useEffect(() => {
-        const authStatus = searchParams.get('auth');
-        const token = searchParams.get('token');
-        
-        console.log('HomePage: authStatus =', authStatus, 'token =', token ? 'present' : 'missing');
-        
-        // Debug localStorage
-        debugStorage();
-        
-        if (authStatus === 'success' && token) {
-            console.log('HomePage: Storing token and redirecting...');
-            console.log('HomePage: Token preview =', token.substring(0, 50) + '...');
-            
-            // Use the auth hook to set the token
-            setAuthToken(token);
-            
-            // Redirect to explore page after a short delay
-            setTimeout(() => {
-                router.push('/explore');
-            }, 1000);
-        }
-    }, [searchParams, router, setAuthToken, debugStorage]);
+// Define the structure for an app object
 
-    return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-            {/* Header */}
-            <header className="container mx-auto px-6 py-8">
-                <nav className="flex justify-between items-center">
-                    <div className="text-2xl font-bold text-gray-800">
-                        Beta Bay
-                    </div>
-                    <div className="space-x-6">
-                        <Link href="/features" className="text-gray-600 hover:text-gray-800">
-                            Features
-                        </Link>
-                        <Link href="/pricing" className="text-gray-600 hover:text-gray-800">
-                            Pricing
-                        </Link>
-                        <Link href="/contact" className="text-gray-600 hover:text-gray-800">
-                            Contact
-                        </Link>
-                        <Link href="/signin" className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-                            Sign In
-                        </Link>
-                    </div>
-                </nav>
-            </header>
+// Mock data for the apps. In a real application, you would fetch this from an API.
 
-            {/* Hero Section */}
-            <main className="container mx-auto px-6 py-16">
-                <div className="text-center max-w-4xl mx-auto">
-                    <h1 className="text-5xl font-bold text-gray-800 mb-6">
-                        Welcome to Beta Bay
-                    </h1>
-                    <p className="text-xl text-gray-600 mb-8">
-                        The ultimate platform for testing and launching your next big idea. 
-                        Get early feedback, iterate quickly, and build something amazing.
-                    </p>
-                    <div className="space-x-4">
-                        <Link href="/signin" className="bg-blue-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 transition inline-block">
-                            Get Started
-                        </Link>
-                        <button className="border border-gray-300 text-gray-700 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-gray-50 transition">
-                            Learn More
-                        </button>
-                    </div>
-                </div>
+// --- DATA STRUCTURE AND MOCK DATA ---
+// Expanded data structure for the app details page.
+ 
+// Expanded mock data for the apps.
 
-                {/* Features Grid */}
-                <div className="mt-24 grid md:grid-cols-3 gap-8">
-                    <div className="bg-white p-6 rounded-lg shadow-md">
-                        <div className="text-blue-600 text-3xl mb-4">🚀</div>
-                        <h3 className="text-xl font-semibold mb-3">Fast Deployment</h3>
-                        <p className="text-gray-600">
-                            Deploy your beta versions in minutes with our streamlined process.
-                        </p>
-                    </div>
-                    <div className="bg-white p-6 rounded-lg shadow-md">
-                        <div className="text-blue-600 text-3xl mb-4">📊</div>
-                        <h3 className="text-xl font-semibold mb-3">Real-time Analytics</h3>
-                        <p className="text-gray-600">
-                            Get instant insights on user behavior and feedback.
-                        </p>
-                    </div>
-                    <div className="bg-white p-6 rounded-lg shadow-md">
-                        <div className="text-blue-600 text-3xl mb-4">👥</div>
-                        <h3 className="text-xl font-semibold mb-3">Community Feedback</h3>
-                        <p className="text-gray-600">
-                            Connect with beta testers and gather valuable insights.
-                        </p>
-                    </div>
-                </div>
-            </main>
 
-            {/* Footer */}
-            <footer className="bg-gray-800 text-white py-12 mt-24">
-                <div className="container mx-auto px-6 text-center">
-                    <p>&copy; 2024 Beta Bay. All rights reserved.</p>
-                </div>
-            </footer>
-        </div>
+/**
+ * ExplorePageContent Component
+ * This component displays featured apps and a searchable list of all apps.
+ * It's designed to be placed within a layout that already provides a header.
+ */
+const ExplorePageContent: FC<{ onSelectApp: (id: number) => void }> = ({ onSelectApp }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const featuredApps = allApps.slice(0, 4);
+  const filteredApps = useMemo(() => {
+    const lowercasedQuery = searchQuery.toLowerCase();
+    if (!lowercasedQuery) return allApps;
+    return allApps.filter(app =>
+      app.name.toLowerCase().includes(lowercasedQuery) ||
+      app.creator.name.toLowerCase().includes(lowercasedQuery)
     );
-}
+  }, [searchQuery]);
+
+  return (
+    <main className="flex-1 bg-gray-100 text-gray-800  overflow-y-auto animate-fade-in h-screen my-10">
+      <div className="px-8 py-10">
+        {/* Top Grid Section */}
+            <section className="overflow-x-auto w-screen">
+            <div className="flex w-full gap-8 pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100" style={{ WebkitOverflowScrolling: 'touch' }}>
+              {featuredApps.map((app) => (
+              <AppCard key={app.id} app={app} />
+              ))}
+            </div>
+            </section>
+
+        <hr className="my-15  border-gray-200" />
+        {/* Search & List Section */}
+        <section className="mx-auto max-w-4xl">
+          <div className="mb-6 bg-white">
+            <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search by app name or creator..." className="w-full rounded-md border border-gray-300 bg-gray-100 px-4 py-3 text-lg text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div className="space-y-3">
+            {filteredApps.length > 0 ? (
+              filteredApps.map((app) => (
+                <AppListCard key={app.id} app={app} />
+              ))
+            ) : (
+              <div className="text-center py-10"><p className="text-lg text-gray-500">No apps found for &quot;{searchQuery}&quot;</p></div>
+            )}
+          </div>
+        </section>
+      </div>
+    </main>
+  );
+};
+
+// Wrapper component that handles authentication
+const ExplorePage: FC = () => {
+  const { isAuthenticated, isLoading, user } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    console.log('ExplorePage: isLoading =', isLoading, 'isAuthenticated =', isAuthenticated, 'user =', user);
+    
+    // Only redirect if we're done loading and definitely not authenticated
+    if (!isLoading && !isAuthenticated) {
+      console.log('ExplorePage: Redirecting to signin...');
+      router.push('/signin');
+    }
+  }, [isAuthenticated, isLoading, router, user]);
+
+  if (isLoading) {
+    console.log('ExplorePage: Showing loading state...');
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    console.log('ExplorePage: Not authenticated, will redirect...');
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Redirecting to sign in...</p>
+        </div>
+      </div>
+    );
+  }
+
+  console.log('ExplorePage: Authenticated, showing content...');
+  const handleSelectApp = (id: number) => {
+    router.push(`/explore/detail/${id}`);
+  };
+
+  return <ExplorePageContent onSelectApp={handleSelectApp} />;
+};
+
+export default ExplorePage;

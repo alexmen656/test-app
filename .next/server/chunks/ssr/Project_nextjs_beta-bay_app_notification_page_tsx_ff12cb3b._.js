@@ -10,7 +10,9 @@ __turbopack_context__.s({
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Project/nextjs/beta-bay/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react-jsx-dev-runtime.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Project/nextjs/beta-bay/node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$public$2f$MockData$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/Project/nextjs/beta-bay/public/MockData.tsx [app-ssr] (ecmascript)");
 "use client";
+;
 ;
 ;
 // --- HELPER COMPONENTS (for self-containment) ---
@@ -27,45 +29,23 @@ const Icon = ({ path, className = "h-6 w-6" })=>/*#__PURE__*/ (0, __TURBOPACK__i
             d: path
         }, void 0, false, {
             fileName: "[project]/Project/nextjs/beta-bay/app/notification/page.tsx",
-            lineNumber: 16,
+            lineNumber: 9,
             columnNumber: 9
         }, this)
     }, void 0, false, {
         fileName: "[project]/Project/nextjs/beta-bay/app/notification/page.tsx",
-        lineNumber: 15,
+        lineNumber: 8,
         columnNumber: 5
     }, this);
-const initialNotifications = [
-    {
-        id: "1",
-        title: "New message from John",
-        message: "Hey, are you available for a call?",
-        timestamp: "2023-10-01T12:00:00Z",
-        read: false
-    },
-    {
-        id: "2",
-        title: "Your app has been approved",
-        message: "Congratulations! Your app is now live.",
-        timestamp: "2023-10-02T08:30:00Z",
-        read: true
-    },
-    {
-        id: "3",
-        title: "Reminder: Meeting at 3 PM",
-        message: "Don't forget about the meeting later today.",
-        timestamp: "2023-10-02T10:00:00Z",
-        read: false
-    }
-];
 const NotificationItem = ({ notification })=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: `flex items-start p-4 border-b border-gray-200 cursor-pointer transition-colors duration-200 ${notification.read ? 'bg-white' : 'bg-blue-50'}`,
+        className: `flex items-start my-10 p-4 border-b border-gray-200 cursor-pointer transition-colors duration-200 ${notification.read ? 'bg-white' : 'bg-blue-50'}`,
+        onClick: ()=>window.location.href = `/notification/detail/${notification.id}`,
         children: [
             !notification.read && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "w-2.5 h-2.5 bg-blue-500 rounded-full mt-1.5 mr-4 flex-shrink-0"
             }, void 0, false, {
                 fileName: "[project]/Project/nextjs/beta-bay/app/notification/page.tsx",
-                lineNumber: 56,
+                lineNumber: 26,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -77,17 +57,17 @@ const NotificationItem = ({ notification })=>/*#__PURE__*/ (0, __TURBOPACK__impo
                         className: "h-5 w-5 text-gray-500"
                     }, void 0, false, {
                         fileName: "[project]/Project/nextjs/beta-bay/app/notification/page.tsx",
-                        lineNumber: 61,
+                        lineNumber: 31,
                         columnNumber: 17
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/Project/nextjs/beta-bay/app/notification/page.tsx",
-                    lineNumber: 60,
+                    lineNumber: 30,
                     columnNumber: 13
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/Project/nextjs/beta-bay/app/notification/page.tsx",
-                lineNumber: 59,
+                lineNumber: 29,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -98,7 +78,7 @@ const NotificationItem = ({ notification })=>/*#__PURE__*/ (0, __TURBOPACK__impo
                         children: notification.title
                     }, void 0, false, {
                         fileName: "[project]/Project/nextjs/beta-bay/app/notification/page.tsx",
-                        lineNumber: 66,
+                        lineNumber: 36,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -106,7 +86,7 @@ const NotificationItem = ({ notification })=>/*#__PURE__*/ (0, __TURBOPACK__impo
                         children: notification.message
                     }, void 0, false, {
                         fileName: "[project]/Project/nextjs/beta-bay/app/notification/page.tsx",
-                        lineNumber: 67,
+                        lineNumber: 37,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -114,24 +94,24 @@ const NotificationItem = ({ notification })=>/*#__PURE__*/ (0, __TURBOPACK__impo
                         children: notification.timestamp
                     }, void 0, false, {
                         fileName: "[project]/Project/nextjs/beta-bay/app/notification/page.tsx",
-                        lineNumber: 68,
+                        lineNumber: 38,
                         columnNumber: 13
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/Project/nextjs/beta-bay/app/notification/page.tsx",
-                lineNumber: 65,
+                lineNumber: 35,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/Project/nextjs/beta-bay/app/notification/page.tsx",
-        lineNumber: 50,
+        lineNumber: 19,
         columnNumber: 5
     }, this);
 // --- NOTIFICATION PAGE COMPONENT ---
 const NotificationPage = ()=>{
-    const [notifications, setNotifications] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(initialNotifications);
+    const [notifications, setNotifications] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(__TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$public$2f$MockData$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["initialNotifications"]);
     const unreadCount = notifications.filter((n)=>!n.read).length;
     const handleNotificationClick = (id)=>{
         setNotifications((prev)=>prev.map((n)=>n.id === id ? {
@@ -147,7 +127,7 @@ const NotificationPage = ()=>{
     };
     // onBack is not used in this example, but you can add it if needed
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "max-w-4xl mx-auto",
+        className: "max-w-4xl mx-auto my-10",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("header", {
                 className: "flex justify-between items-center mb-8",
@@ -159,7 +139,7 @@ const NotificationPage = ()=>{
                                 children: "Notifications"
                             }, void 0, false, {
                                 fileName: "[project]/Project/nextjs/beta-bay/app/notification/page.tsx",
-                                lineNumber: 97,
+                                lineNumber: 67,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -171,13 +151,13 @@ const NotificationPage = ()=>{
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Project/nextjs/beta-bay/app/notification/page.tsx",
-                                lineNumber: 98,
+                                lineNumber: 68,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Project/nextjs/beta-bay/app/notification/page.tsx",
-                        lineNumber: 96,
+                        lineNumber: 66,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -189,18 +169,18 @@ const NotificationPage = ()=>{
                             children: "Mark all as read"
                         }, void 0, false, {
                             fileName: "[project]/Project/nextjs/beta-bay/app/notification/page.tsx",
-                            lineNumber: 101,
+                            lineNumber: 71,
                             columnNumber: 21
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/Project/nextjs/beta-bay/app/notification/page.tsx",
-                        lineNumber: 100,
+                        lineNumber: 70,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/Project/nextjs/beta-bay/app/notification/page.tsx",
-                lineNumber: 95,
+                lineNumber: 65,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("main", {
@@ -209,7 +189,7 @@ const NotificationPage = ()=>{
                         notification: notification
                     }, notification.id, false, {
                         fileName: "[project]/Project/nextjs/beta-bay/app/notification/page.tsx",
-                        lineNumber: 113,
+                        lineNumber: 83,
                         columnNumber: 25
                     }, this)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "text-center p-12 text-gray-500",
@@ -219,7 +199,7 @@ const NotificationPage = ()=>{
                             className: "mx-auto h-12 w-12 text-gray-300"
                         }, void 0, false, {
                             fileName: "[project]/Project/nextjs/beta-bay/app/notification/page.tsx",
-                            lineNumber: 120,
+                            lineNumber: 90,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -227,7 +207,7 @@ const NotificationPage = ()=>{
                             children: "No notifications yet"
                         }, void 0, false, {
                             fileName: "[project]/Project/nextjs/beta-bay/app/notification/page.tsx",
-                            lineNumber: 121,
+                            lineNumber: 91,
                             columnNumber: 25
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -235,24 +215,24 @@ const NotificationPage = ()=>{
                             children: "We'll let you know when something new comes up."
                         }, void 0, false, {
                             fileName: "[project]/Project/nextjs/beta-bay/app/notification/page.tsx",
-                            lineNumber: 122,
+                            lineNumber: 92,
                             columnNumber: 25
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/Project/nextjs/beta-bay/app/notification/page.tsx",
-                    lineNumber: 119,
+                    lineNumber: 89,
                     columnNumber: 21
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/Project/nextjs/beta-bay/app/notification/page.tsx",
-                lineNumber: 110,
+                lineNumber: 80,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/Project/nextjs/beta-bay/app/notification/page.tsx",
-        lineNumber: 94,
+        lineNumber: 64,
         columnNumber: 9
     }, this);
 };

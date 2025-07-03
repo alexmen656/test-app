@@ -704,7 +704,7 @@ const Header = ()=>{
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
-                href: "/explore",
+                href: "/",
                 className: "px-4 py-2 hover:underline",
                 children: "Explore"
             }, void 0, false, {
@@ -795,18 +795,34 @@ const Header = ()=>{
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
                                         className: "max-h-48 overflow-y-auto",
-                                        children: __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$public$2f$MockData$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["initialNotifications"].map((notification)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
-                                                className: `px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer ${notification.read ? '' : 'bg-blue-50'}`,
-                                                onClick: ()=>{
-                                                    notification.read = true;
-                                                    setShowNotifications(false);
-                                                },
-                                                children: notification.title
-                                            }, notification.id, false, {
-                                                fileName: "[project]/Project/nextjs/beta-bay/components/header.tsx",
-                                                lineNumber: 88,
-                                                columnNumber: 19
-                                            }, this))
+                                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
+                                            children: [
+                                                __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$public$2f$MockData$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["initialNotifications"].slice(0, 3).map((notification)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
+                                                        className: `px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer ${notification.read ? '' : 'bg-blue-50'}`,
+                                                        onClick: ()=>{
+                                                            notification.read = true;
+                                                            setShowNotifications(false);
+                                                        },
+                                                        children: notification.title
+                                                    }, notification.id, false, {
+                                                        fileName: "[project]/Project/nextjs/beta-bay/components/header.tsx",
+                                                        lineNumber: 89,
+                                                        columnNumber: 23
+                                                    }, this)),
+                                                __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$public$2f$MockData$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["initialNotifications"].length > 2 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                                                    className: "w-full px-4 py-2 text-sm text-blue-600 hover:underline",
+                                                    onClick: ()=>{
+                                                        // Logic to load more notifications
+                                                        window.location.href = '/notification';
+                                                    },
+                                                    children: "Load More"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/Project/nextjs/beta-bay/components/header.tsx",
+                                                    lineNumber: 101,
+                                                    columnNumber: 23
+                                                }, this)
+                                            ]
+                                        }, void 0, true)
                                     }, void 0, false, {
                                         fileName: "[project]/Project/nextjs/beta-bay/components/header.tsx",
                                         lineNumber: 86,
@@ -837,7 +853,7 @@ const Header = ()=>{
                                         className: "w-8 h-8 rounded-full"
                                     }, void 0, false, {
                                         fileName: "[project]/Project/nextjs/beta-bay/components/header.tsx",
-                                        lineNumber: 110,
+                                        lineNumber: 123,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -845,13 +861,13 @@ const Header = ()=>{
                                         children: user.name
                                     }, void 0, false, {
                                         fileName: "[project]/Project/nextjs/beta-bay/components/header.tsx",
-                                        lineNumber: 115,
+                                        lineNumber: 128,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Project/nextjs/beta-bay/components/header.tsx",
-                                lineNumber: 106,
+                                lineNumber: 119,
                                 columnNumber: 13
                             }, this),
                             showUserMenu && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -865,7 +881,7 @@ const Header = ()=>{
                                                 children: user.name
                                             }, void 0, false, {
                                                 fileName: "[project]/Project/nextjs/beta-bay/components/header.tsx",
-                                                lineNumber: 121,
+                                                lineNumber: 134,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -873,7 +889,7 @@ const Header = ()=>{
                                                 children: user.email
                                             }, void 0, false, {
                                                 fileName: "[project]/Project/nextjs/beta-bay/components/header.tsx",
-                                                lineNumber: 122,
+                                                lineNumber: 135,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -881,13 +897,13 @@ const Header = ()=>{
                                                 children: user.team
                                             }, void 0, false, {
                                                 fileName: "[project]/Project/nextjs/beta-bay/components/header.tsx",
-                                                lineNumber: 123,
+                                                lineNumber: 136,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/Project/nextjs/beta-bay/components/header.tsx",
-                                        lineNumber: 120,
+                                        lineNumber: 133,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -896,19 +912,19 @@ const Header = ()=>{
                                         children: "Sign Out"
                                     }, void 0, false, {
                                         fileName: "[project]/Project/nextjs/beta-bay/components/header.tsx",
-                                        lineNumber: 125,
+                                        lineNumber: 138,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/Project/nextjs/beta-bay/components/header.tsx",
-                                lineNumber: 119,
+                                lineNumber: 132,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/Project/nextjs/beta-bay/components/header.tsx",
-                        lineNumber: 105,
+                        lineNumber: 118,
                         columnNumber: 11
                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$Project$2f$nextjs$2f$beta$2d$bay$2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
                         href: "/signin",
@@ -916,7 +932,7 @@ const Header = ()=>{
                         children: "Sign In"
                     }, void 0, false, {
                         fileName: "[project]/Project/nextjs/beta-bay/components/header.tsx",
-                        lineNumber: 135,
+                        lineNumber: 148,
                         columnNumber: 11
                     }, this)
                 ]

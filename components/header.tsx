@@ -46,7 +46,7 @@ const Header = () => {
           height={50}
         />
       </button>
-      <Link href="/explore" className="px-4 py-2 hover:underline">
+      <Link href="/" className="px-4 py-2 hover:underline">
         Explore
       </Link>
       <Link href="/myapps" className="px-4 py-2 hover:underline">
@@ -84,18 +84,31 @@ const Header = () => {
                 </button>
               </div>
               <ul className="max-h-48 overflow-y-auto">
-                {initialNotifications.map(notification => (
-                  <li
-                    key={notification.id}
-                    className={`px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer ${notification.read ? '' : 'bg-blue-50'}`}
-                    onClick={() => {
-                      notification.read = true;
-                      setShowNotifications(false);
-                    }}
-                  >
-                    {notification.title}
-                  </li>
-                ))}
+                    <>
+                    {initialNotifications.slice(0, 3).map(notification => (
+                      <li
+                      key={notification.id}
+                      className={`px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer ${notification.read ? '' : 'bg-blue-50'}`}
+                      onClick={() => {
+                        notification.read = true;
+                        setShowNotifications(false);
+                      }}
+                      >
+                      {notification.title}
+                      </li>
+                    ))}
+                    {initialNotifications.length > 2 && (
+                      <button
+                      className="w-full px-4 py-2 text-sm text-blue-600 hover:underline"
+                      onClick={() => {
+                        // Logic to load more notifications
+                        window.location.href = '/notification';
+                      }}
+                      >
+                      Load More
+                      </button>
+                    )}
+                    </>
               </ul>
             </div>
           )}
