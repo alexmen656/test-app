@@ -7,6 +7,7 @@ import FormField from '@/components/FormField';
 import ImageUpload from '@/components/ImageUpload';
 import { useParams, useRouter } from 'next/navigation';
 import { getBackendUrl } from '@/lib/api';
+import { useSimpleFileUpload } from '@/hooks/useFileUpload';
 
 
 
@@ -35,6 +36,8 @@ const NewAppPage: FC = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [uploadedUrls, setUploadedUrls] = useState<{ icon?: string; coverImage?: string; screenshots: string[] }>({ screenshots: [] });
+    const { upload, isUploading } = useSimpleFileUpload();
 
     // Daten aus dem Backend laden, wenn wir im Bearbeitungsmodus sind
     useEffect(() => {
@@ -86,20 +89,28 @@ const NewAppPage: FC = () => {
                 
                 // Vorschaubilder setzen, wenn vorhanden
                 const previewsUpdate: { icon?: string; coverImage?: string; screenshots: string[] } = { screenshots: [] };
+                const uploadedUrlsUpdate: { icon?: string; coverImage?: string; screenshots: string[] } = { screenshots: [] };
                 
                 if (appData.iconUrl || appData.icon_url) {
-                    previewsUpdate.icon = appData.iconUrl || appData.icon_url;
+                    const iconUrl = appData.iconUrl || appData.icon_url;
+                    previewsUpdate.icon = iconUrl;
+                    uploadedUrlsUpdate.icon = iconUrl;
                 }
                 
                 if (appData.coverImageUrl || appData.cover_image_url) {
-                    previewsUpdate.coverImage = appData.coverImageUrl || appData.cover_image_url;
+                    const coverUrl = appData.coverImageUrl || appData.cover_image_url;
+                    previewsUpdate.coverImage = coverUrl;
+                    uploadedUrlsUpdate.coverImage = coverUrl;
                 }
                 
                 if (Array.isArray(appData.screenshots) || Array.isArray(appData.screenshot_urls)) {
-                    previewsUpdate.screenshots = appData.screenshots || appData.screenshot_urls || [];
+                    const screenshots = appData.screenshots || appData.screenshot_urls || [];
+                    previewsUpdate.screenshots = screenshots;
+                    uploadedUrlsUpdate.screenshots = screenshots;
                 }
                 
                 setPreviews(previewsUpdate);
+                setUploadedUrls(uploadedUrlsUpdate);
                 
             } catch (err) {
                 console.error('Error fetching app data:', err);
@@ -117,19 +128,47 @@ const NewAppPage: FC = () => {
         setData(prev => ({ ...prev, [name]: type === 'number' ? parseFloat(value) : value }));
     };
 
-    const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
         const { name, files } = e.target;
         if (!files || files.length === 0) return;
 
-        if (name === 'screenshots') {
-            const newFiles = Array.from(files);
-            setData(prev => ({ ...prev, screenshots: [...prev.screenshots, ...newFiles] }));
-            const newPreviews = newFiles.map(file => URL.createObjectURL(file));
-            setPreviews(prev => ({ ...prev, screenshots: [...prev.screenshots, ...newPreviews] }));
-        } else {
-            const file = files[0];
-            setData(prev => ({ ...prev, [name]: file }));
-            setPreviews(prev => ({ ...prev, [name]: URL.createObjectURL(file) }));
+        try {
+            if (name === 'screenshots') {
+                const newFiles = Array.from(files);
+                
+                // Show preview immediately for better UX
+                const newPreviews = newFiles.map(file => URL.createObjectURL(file));
+                setPreviews(prev => ({ ...prev, screenshots: [...prev.screenshots, ...newPreviews] }));
+                
+                // Upload each file
+                for (const file of newFiles) {
+                    const url = await upload(file);
+                    if (url) {
+                        setUploadedUrls(prev => ({ ...prev, screenshots: [...prev.screenshots, url] }));
+                    }
+                }
+                
+                // Update file data for form submission
+                setData(prev => ({ ...prev, screenshots: [...prev.screenshots, ...newFiles] }));
+            } else {
+                const file = files[0];
+                
+                // Show preview immediately
+                const previewUrl = URL.createObjectURL(file);
+                setPreviews(prev => ({ ...prev, [name]: previewUrl }));
+                
+                // Upload file
+                const url = await upload(file);
+                if (url) {
+                    setUploadedUrls(prev => ({ ...prev, [name]: url }));
+                }
+                
+                // Update file data for form submission
+                setData(prev => ({ ...prev, [name]: file }));
+            }
+        } catch (error) {
+            console.error('File upload failed:', error);
+            alert('File upload failed. Please try again.');
         }
     };
 
@@ -163,12 +202,10 @@ const NewAppPage: FC = () => {
                     user_id: localStorage.getItem('betabay_user_id') || ''
                 },
                 
-                // We'll need to handle file uploads separately or convert them to base64
-                // For this JSON implementation, we'll assume the backend can accept these as null
-                // or you would need to implement a separate file upload endpoint
-                /*icon_url: null,*/
-                /*cover_image_url: null,*/
-                /*screenshot_urls: []*/
+                // Include uploaded file URLs
+                icon_url: uploadedUrls.icon || null,
+                cover_image_url: uploadedUrls.coverImage || null,
+                screenshot_urls: uploadedUrls.screenshots || []
             };
             
             // Optional: Get Token from localStorage if it exists
@@ -252,11 +289,32 @@ const NewAppPage: FC = () => {
                 </div>
             ) : (
             <form onSubmit={handleSubmit} className="space-y-12">
+                {/* Upload Status Banner */}
+                {isUploading && (
+                    <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-md mb-6">
+                        <div className="flex items-center">
+                            <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-blue-500 mr-3"></div>
+                            <p className="font-medium">Uploading files...</p>
+                        </div>
+                        <p className="text-sm mt-1">Please wait while your files are being uploaded.</p>
+                    </div>
+                )}
+
                 <div className="p-8 bg-white border border-gray-200 rounded-2xl shadow-sm">
                     <h3 className="text-xl font-semibold text-gray-700 mb-6">Core Information</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="md:col-span-1">
-                            <ImageUpload label="App Icon" id="icon" onChange={handleFileChange} previewUrl={previews.icon} /> 
+                            <ImageUpload 
+                                label="App Icon" 
+                                id="icon" 
+                                onChange={handleFileChange} 
+                                previewUrl={previews.icon}
+                            />
+                            {uploadedUrls.icon && (
+                                <div className="mt-2 text-sm text-green-600">
+                                    ✅ Icon uploaded successfully
+                                </div>
+                            )}
                         </div>
                         <div className="md:col-span-2 space-y-4">
                             <FormField label="App Name" id="name" placeholder="My Awesome App" value={data.name} onChange={handleChange} />
@@ -268,8 +326,34 @@ const NewAppPage: FC = () => {
                 <div className="p-8 bg-white border border-gray-200 rounded-2xl shadow-sm">
                     <h3 className="text-xl font-semibold text-gray-700 mb-6">Media & Visuals</h3>
                     <div className="space-y-6">
-                        <ImageUpload label="Cover Image" id="coverImage" onChange={handleFileChange} previewUrl={previews.coverImage} />
-                        <ImageUpload label="Screenshots (Select multiple)" id="screenshots" onChange={handleFileChange} multiple />
+                        <div>
+                            <ImageUpload 
+                                label="Cover Image" 
+                                id="coverImage" 
+                                onChange={handleFileChange} 
+                                previewUrl={previews.coverImage} 
+                            />
+                            {uploadedUrls.coverImage && (
+                                <div className="mt-2 text-sm text-green-600">
+                                    ✅ Cover image uploaded successfully
+                                </div>
+                            )}
+                        </div>
+                        
+                        <div>
+                            <ImageUpload 
+                                label="Screenshots (Select multiple)" 
+                                id="screenshots" 
+                                onChange={handleFileChange} 
+                                multiple 
+                            />
+                            {uploadedUrls.screenshots.length > 0 && (
+                                <div className="mt-2 text-sm text-green-600">
+                                    ✅ {uploadedUrls.screenshots.length} screenshot(s) uploaded successfully
+                                </div>
+                            )}
+                        </div>
+                        
                         {previews.screenshots.length > 0 && (
                             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
                                 {previews.screenshots.map((src, i) => (
@@ -312,12 +396,14 @@ const NewAppPage: FC = () => {
                     </button>
                     <button 
                         type="submit" 
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || isUploading}
                         className="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transform hover:scale-105 transition disabled:opacity-50 disabled:transform-none"
                     >
-                        {isSubmitting 
-                            ? (isEditing ? 'Updating...' : 'Posting...') 
-                            : (isEditing ? 'Update App' : 'Post App')
+                        {isUploading 
+                            ? 'Uploading files...'
+                            : isSubmitting 
+                                ? (isEditing ? 'Updating...' : 'Posting...') 
+                                : (isEditing ? 'Update App' : 'Post App')
                         }
                     </button>
                 </div>
