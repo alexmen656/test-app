@@ -23,7 +23,16 @@ const testPostSchema = Joi.object({
   youtube_link: Joi.string().uri().allow('').optional(),
   google_group_link: Joi.string().uri().allow('').optional(),
   max_testers: Joi.number().integer().min(1).max(100).default(10),
-  expires_at: Joi.date().greater('now').optional()
+  expires_at: Joi.date().greater('now').optional(),
+  // Neue Felder für File Upload URLs
+  icon_url: Joi.string().uri().allow(null, '').optional(),
+  cover_image_url: Joi.string().uri().allow(null, '').optional(),
+  screenshot_urls: Joi.array().items(Joi.string().uri()).optional(),
+  user_info: Joi.object({
+    username: Joi.string().optional(),
+    profile_image: Joi.string().uri().allow('').optional(),
+    user_id: Joi.string().optional()
+  }).optional()
 });
 
 // Middleware to authenticate user
@@ -188,6 +197,15 @@ router.get('/:id', async (req, res) => {
       testPost.avg_rating = null;
       testPost.review_count = 0;
     }
+
+    // Log für Debug-Zwecke - URL-Felder prüfen
+    console.log('📁 Test post retrieved with URLs:', {
+      id: testPost.id,
+      app_name: testPost.app_name,
+      icon_url: testPost.icon_url,
+      cover_image_url: testPost.cover_image_url,
+      screenshot_urls: testPost.screenshot_urls
+    });
     
     res.json(testPost);
     
@@ -225,10 +243,21 @@ router.post('/', authenticateUser, async (req, res) => {
       google_group_link: value.google_group_link || null,
       max_testers: value.max_testers,
       expires_at: value.expires_at || null,
+      // Neue Felder für Upload URLs
+      icon_url: value.icon_url || null,
+      cover_image_url: value.cover_image_url || null,
+      screenshot_urls: value.screenshot_urls || [],
       status: 'active',
       current_testers: 0,
       created_at: new Date(),
       updated_at: new Date()
+    });
+    
+    console.log('✅ Test post created with URLs:', {
+      testPostId,
+      icon_url: value.icon_url,
+      cover_image_url: value.cover_image_url,
+      screenshot_urls: value.screenshot_urls
     });
     
     // Get the created test post
@@ -285,10 +314,21 @@ router.put('/:id', authenticateUser, async (req, res) => {
           google_group_link: value.google_group_link || null,
           max_testers: value.max_testers,
           expires_at: value.expires_at || null,
+          // Neue Felder für Upload URLs
+          icon_url: value.icon_url || null,
+          cover_image_url: value.cover_image_url || null,
+          screenshot_urls: value.screenshot_urls || [],
           updated_at: new Date()
         }
       }
     );
+    
+    console.log('✅ Test post updated with URLs:', {
+      testPostId: req.params.id,
+      icon_url: value.icon_url,
+      cover_image_url: value.cover_image_url,
+      screenshot_urls: value.screenshot_urls
+    });
     
     // Get updated test post
     const updatedPost = await db.findOne('test_posts', { id: req.params.id });
@@ -409,6 +449,61 @@ router.get('/user/mine', authenticateUser, async (req, res) => {
   } catch (error) {
     console.error('❌ Error fetching user test posts:', error);
     res.status(500).json({ error: 'Failed to fetch test posts', details: error.message });
+  }
+});
+
+// File upload endpoint for app assets
+router.post('/upload', async (req, res) => {
+  try {
+    const multer = require('multer');
+    const storage = multer.memoryStorage();
+    const upload = multer({ 
+      storage: storage,
+      limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB limit
+      },
+      fileFilter: (req, file, cb) => {
+        // Allow images only
+        if (file.mimetype.startsWith('image/')) {
+          cb(null, true);
+        } else {
+          cb(new Error('Only image files are allowed'), false);
+        }
+      }
+    }).single('file');
+
+    upload(req, res, async (err) => {
+      if (err) {
+        console.error('❌ Upload error:', err);
+        return res.status(400).json({ error: err.message });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+      }
+
+      // In einer realen Implementierung würden Sie hier das File zu einem Cloud-Service hochladen
+      // Für jetzt geben wir eine Mock-URL zurück
+      const fileUrl = `https://betabay-uploads.s3.amazonaws.com/${Date.now()}-${req.file.originalname}`;
+      
+      console.log('✅ File uploaded successfully:', {
+        originalName: req.file.originalname,
+        mimetype: req.file.mimetype,
+        size: req.file.size,
+        url: fileUrl
+      });
+
+      res.json({
+        success: true,
+        url: fileUrl,
+        filename: req.file.originalname,
+        size: req.file.size
+      });
+    });
+
+  } catch (error) {
+    console.error('❌ Error in upload endpoint:', error);
+    res.status(500).json({ error: 'Upload failed', details: error.message });
   }
 });
 
