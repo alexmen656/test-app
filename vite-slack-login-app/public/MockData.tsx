@@ -4,7 +4,7 @@ const allApps: App[] = [
     {
         id: 1,
         name: 'Stellar Navigator',
-        creator: { name: 'CosmoDev', avatarUrl: 'https://placehold.co/40x40/2D3748/FFFFFF?text=C', slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1' },
+        creator: {id: '1', name: 'CosmoDev', avatarUrl: 'https://placehold.co/40x40/2D3748/FFFFFF?text=C', slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1' },
         price: '$4.99',
         coins: 500,
         coverImageUrl: 'https://placehold.co/1200x400/2D3748/FFFFFF?text=Stellar+Navigator',
@@ -44,7 +44,7 @@ const allApps: App[] = [
     {
         id: 2,
         name: 'Aqua Planner',
-        creator: { name: 'Oceanic Builds', avatarUrl: 'https://placehold.co/40x40/4A5568/FFFFFF?text=O', slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1' },
+        creator: { id: '2', name: 'Oceanic Builds', avatarUrl: 'https://placehold.co/40x40/4A5568/FFFFFF?text=O', slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1' },
         price: 'Free',
         coverImageUrl: 'https://placehold.co/1200x400/4A5568/FFFFFF?text=Aqua+Planner',
         iconUrl: 'https://placehold.co/150x150/4A5568/FFFFFF?text=AP',
@@ -80,7 +80,7 @@ const allApps: App[] = [
     {
         id: 3,
         name: 'Neon Racer',
-        creator: { name: 'SpeedForge', avatarUrl: 'https://placehold.co/40x40/7C3AED/FFFFFF?text=SF', slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1' },
+        creator: { id: '3', name: 'SpeedForge', avatarUrl: 'https://placehold.co/40x40/7C3AED/FFFFFF?text=SF', slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1' },
         price: '$9.99',
         coins: 750,
         coverImageUrl: 'https://placehold.co/1200x400/7C3AED/FFFFFF?text=Neon+Racer',
@@ -122,7 +122,7 @@ const allApps: App[] = [
     {
         id: 4,
         name: 'Mindful Meditation',
-        creator: { name: 'Zen Studios', avatarUrl: 'https://placehold.co/40x40/059669/FFFFFF?text=ZS', slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1' },
+        creator: { id: '4', name: 'Zen Studios', avatarUrl: 'https://placehold.co/40x40/059669/FFFFFF?text=ZS', slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1' },
         price: '$2.99',
         coins: 200,
         coverImageUrl: 'https://placehold.co/1200x400/059669/FFFFFF?text=Mindful+Meditation',
@@ -161,7 +161,7 @@ const allApps: App[] = [
     {
         id: 5,
         name: 'Code Quest',
-        creator: { name: 'DevAcademy', avatarUrl: 'https://placehold.co/40x40/DC2626/FFFFFF?text=DA', slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1' },
+        creator: { id: '5', name: 'DevAcademy', avatarUrl: 'https://placehold.co/40x40/DC2626/FFFFFF?text=DA', slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1' },
         price: 'Free',
         coverImageUrl: 'https://placehold.co/1200x400/DC2626/FFFFFF?text=Code+Quest',
         iconUrl: 'https://placehold.co/150x150/DC2626/FFFFFF?text=CQ',
@@ -201,7 +201,7 @@ const allApps: App[] = [
     {
         id: 6,
         name: 'Chef\'s Kitchen',
-        creator: { name: 'Culinary Craft', avatarUrl: 'https://placehold.co/40x40/EA580C/FFFFFF?text=CC', slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1' },
+        creator: { id: '6', name: 'Culinary Craft', avatarUrl: 'https://placehold.co/40x40/EA580C/FFFFFF?text=CC', slackLink: 'https://hackclub.slack.com/team/U071V9FM6K1' },
         price: '$6.99',
         coins: 450,
         coverImageUrl: 'https://placehold.co/1200x400/EA580C/FFFFFF?text=Chef+Kitchen',
