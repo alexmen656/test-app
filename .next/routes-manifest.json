@@ -49,6 +49,22 @@
       "namedRegex": "^/detail/(?<nxtPid>[^/]+?)(?:/)?$"
     },
     {
+      "page": "/explore/detail/[id]",
+      "regex": "^/explore/detail/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/explore/detail/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/myapps/detail/[id]",
+      "regex": "^/myapps/detail/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/myapps/detail/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
       "page": "/myapps/edit/[id]",
       "regex": "^/myapps/edit/([^/]+?)(?:/)?$",
       "routeKeys": {
