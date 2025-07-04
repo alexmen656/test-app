@@ -200,6 +200,7 @@ export function useAuth() {
     logout,
     refreshAuth,
     setAuthToken,
-    debugStorage
+    debugStorage,
+    isAuthenticated: !!user
   };
 }
