@@ -51,8 +51,8 @@ const DownloadGuidelinesPage: FC<DownloadGuidelinesPageProps> = ({ params }) => 
             <div className="flex items-center gap-8">
               <div className="w-24 h-24 rounded-[18px] overflow-hidden shadow-lg ring-4 ring-white/30">
                 <Image 
-                  src={app.iconUrl} 
-                  alt={app.name}
+                  src={app.iconUrl ?? '/default-app-icon.png'} 
+                  alt={app.name ?? 'App icon'}
                   width={96}
                   height={96}
                   className="w-full h-full object-cover"
@@ -60,7 +60,7 @@ const DownloadGuidelinesPage: FC<DownloadGuidelinesPageProps> = ({ params }) => 
               </div>
               <div>
                 <h2 className="text-3xl font-bold text-gray-900 mb-2">{app.name}</h2>
-                <p className="text-xl text-gray-600 mb-4">by {app.creator.name}</p>
+                <p className="text-xl text-gray-600 mb-4">by {app.creator?.name}</p>
                 <div className="flex items-center gap-4 text-sm">
                   <span className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold shadow-lg">
                     Beta

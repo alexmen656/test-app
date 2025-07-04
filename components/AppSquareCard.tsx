@@ -13,7 +13,7 @@ const AppSquareCard = ({ app, route }: { app: App, route: string }) => {
         {app.coverImageUrl ? (
           <Image
             src={app.coverImageUrl}
-            alt={app.name}
+            alt={app.name ?? 'App cover image'}
             width={300}
             height={300}
             className="w-full h-full object-cover"

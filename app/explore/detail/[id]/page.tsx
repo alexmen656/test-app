@@ -28,7 +28,7 @@ const AppDetailPage: FC = () => {
             {/* Cover Image */}
             <div className="relative h-56 md:h-72 w-full bg-gray-200">
                 <Image
-                    src={appData?.coverImageUrl}
+                    src={appData?.coverImageUrl ?? '/placeholder-image.png'}
                     alt={`${appData.name} cover image`}
                     layout="fill"
                     objectFit="cover"
@@ -46,17 +46,17 @@ const AppDetailPage: FC = () => {
                 <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 pb-6">
                     <div className="flex items-center gap-3">
                         <Image
-                            src={appData.creator.avatarUrl}
-                            alt={appData.creator.name}
+                            src={appData.creator?.avatarUrl ?? '/placeholder-avatar.png'}
+                            alt={appData.creator?.name ?? ''}
                             width={40}
                             height={40}
                             className="rounded-full"
                         />
-                        <span className="font-semibold text-gray-600">{appData.creator.name}</span>
+                        <span className="font-semibold text-gray-600">{appData.creator?.name}</span>
                     </div>
                     <div className="flex items-center gap-4">
                         <button onClick={() => {
-                            window.open(appData.creator.slackLink, '_blank');
+                            window.open(appData.creator?.slackLink, '_blank');
                         }} className="flex items-center gap-2 rounded-md bg-gray-200 px-4 py-2 font-semibold text-gray-700 transition-colors hover:bg-gray-300">
                             <MessageSquare size={16} /> Message
                         </button>
@@ -85,7 +85,7 @@ const AppDetailPage: FC = () => {
                         <section className="mt-8">
                             <h2 className="text-xl font-bold mb-4">Screenshots</h2>
                             <div className="flex gap-4 overflow-x-auto">
-                                {appData.screenshots.map((src, index) => (
+                                {appData.screenshots?.map((src, index) => (
                                     <div
                                         key={index}
                                         className="relative h-200 min-w-[400px] rounded-lg bg-gray-200 overflow-hidden"
@@ -130,10 +130,10 @@ const AppDetailPage: FC = () => {
                         {/* Joined Testers */}
                         <section className="mt-6">
                             <h3 className="text-lg font-bold mb-3">
-                                Joined Testers ({appData.joinedTesters.length})
+                                Joined Testers ({appData.joinedTesters?.length ?? 0})
                             </h3>
                             <div className="space-y-3">
-                                {appData.joinedTesters.map((tester) => (
+                                {appData.joinedTesters?.map((tester) => (
                                     <div
                                         key={tester.id}
                                         className="flex items-center gap-3 rounded-md bg-gray-100 p-2"
@@ -156,10 +156,10 @@ const AppDetailPage: FC = () => {
                         {/* Reviews */}
                         <section className="mt-8">
                             <h3 className="text-lg font-bold mb-4">
-                                Reviews ({appData.reviews.length})
+                                Reviews ({appData.reviews?.length ?? 0})
                             </h3>
                             <div className="space-y-4">
-                                {appData.reviews.map((review) => (
+                                {appData.reviews?.map((review) => (
                                     <div
                                         key={review.id}
                                         className="rounded-lg bg-white border border-gray-200 p-3"
