@@ -107,6 +107,19 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
     );
   }
 
+
+  // If app not found, show error
+  if (!app) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-light text-gray-900 mb-4">App Not Found</h1>
+          <p className="text-xl text-gray-600">The requested app does not exist.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-100 to-blue-100">
       <div className="max-w-4xl mx-auto px-6 py-20">
@@ -114,26 +127,26 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
         <div className="text-center mb-20">
           <h1 className="text-6xl font-extralight text-gray-900 mb-6 tracking-tight">Review Maker</h1>
           <p className="text-2xl text-gray-500 font-light max-w-2xl mx-auto leading-relaxed">
-            Share your valuable feedback about {app.name || app.app_name || 'this app'} and help shape its future
+            Share your valuable feedback about {app.name} and help shape its future
           </p>
         </div>
-        
+
         {/* App Info Card */}
         <div className="bg-white/80 backdrop-blur-sm rounded-[40px] shadow-xl border border-white/50 overflow-hidden mb-16">
           <div className="px-12 py-12">
             <div className="flex items-center gap-8">
               <div className="w-24 h-24 rounded-[18px] overflow-hidden shadow-lg ring-4 ring-white/30">
-                <Image 
-                  src={app.iconUrl || app.icon_url || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiBmaWxsPSIjNEE5MEUyIi8+Cjx0ZXh0IHg9Ijc1IiB5PSI4NSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+QXBwPC90ZXh0Pgo8L3N2Zz4K'} 
-                  alt={app.name || app.app_name || 'App Icon'}
+                <Image
+                  src={app.iconUrl ?? '/default-app-icon.png'}
+                  alt={app.name ?? 'App icon'}
                   width={96}
                   height={96}
                   className="w-full h-full object-cover"
                 />
               </div>
               <div>
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">{app.name || app.app_name || 'Unknown App'}</h2>
-                <p className="text-xl text-gray-600 mb-4">by {app.creator?.name || app.user_info?.username || 'Unknown Creator'}</p>
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">{app.name}</h2>
+                <p className="text-xl text-gray-600 mb-4">by {app.creator?.name}</p>
                 <div className="flex items-center gap-4 text-sm">
                   <span className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold shadow-lg">
                     Beta
@@ -160,7 +173,7 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
               console.log('Review submitted:', newReview);
               setReviews((prevReviews) => [...prevReviews, newReview]);
               e.currentTarget.reset();
-              
+
               // Show success message
               alert('Thank you for your review! Your feedback has been submitted successfully.');
             }}
@@ -178,7 +191,7 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
                 required
               />
             </div>
-            
+
             <div>
               <label htmlFor="rating" className="block text-lg font-bold text-gray-900 mb-4">
                 Overall Rating
@@ -197,7 +210,7 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
                 <option value="1">⭐ 1 - Terrible</option>
               </select>
             </div>
-            
+
             <div>
               <label htmlFor="reviewText" className="block text-lg font-bold text-gray-900 mb-4">
                 Your Detailed Review
@@ -211,12 +224,12 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
                 required
               ></textarea>
             </div>
-            
+
             {/* Review Guidelines */}
             <div className="bg-gradient-to-r from-green-100 to-blue-100 rounded-[24px] p-8 border border-green-200">
               <h4 className="text-lg font-bold text-green-900 mb-4 flex items-center gap-3">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                 </svg>
                 Review Guidelines
               </h4>
@@ -243,7 +256,7 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
                 </div>
               </div>
             </div>
-            
+
             <div className="text-center">
               <button
                 type="submit"
@@ -282,7 +295,7 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
               <div className="text-center py-16">
                 <div className="w-24 h-24 bg-gradient-to-r from-gray-200 to-gray-300 rounded-full flex items-center justify-center mx-auto mb-8">
                   <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-gray-400">
-                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                   </svg>
                 </div>
                 <p className="text-gray-600 text-xl mb-3">No reviews submitted yet.</p>
@@ -298,7 +311,7 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
             <div className="flex items-center justify-center gap-4 mb-8">
               <div className="w-16 h-16 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 flex items-center justify-center shadow-lg">
                 <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                 </svg>
               </div>
               <h3 className="text-3xl font-bold text-green-900">Ready to Complete?</h3>
@@ -330,7 +343,7 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
             className="group bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white font-semibold py-6 px-10 rounded-[20px] transition-all duration-300 flex items-center justify-center gap-4 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="group-hover:-translate-x-1 transition-transform duration-300">
-              <path d="M19 12H5M12 19l-7-7 7-7"/>
+              <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
             <span className="text-lg">Back to Download</span>
           </Link>
@@ -340,7 +353,7 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
             className="group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-6 px-10 rounded-[20px] transition-all duration-300 flex items-center justify-center gap-4 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="group-hover:scale-110 transition-transform duration-300">
-              <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+              <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
             </svg>
             <span className="text-lg">Back to Download</span>
           </Link>
@@ -348,6 +361,7 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
       </div>
     </div>
   );
+
 };
 
 export default ReviewMakerPage;
