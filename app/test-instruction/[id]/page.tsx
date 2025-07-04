@@ -5,15 +5,27 @@ import Image from 'next/image';
 import { App } from '@/types';
 import { useParams } from 'next/navigation';
 import { getBackendUrl } from '@/lib/api';
+import Link from 'next/link';
 
 // Since this component doesn't currently need props, we can remove the interface
 // and use React.FC directly
 
+// Dummy test instruction data as a fallback
+const defaultTestInstructionData = {
+  subtitle: 'Test this application',
+  focusAreas: ['General usability', 'Feature completeness', 'Performance'],
+  testPeriod: '2 weeks',
+  feedbackInstructions: 'Please provide detailed feedback on any issues you encounter.',
+  testingFocus: 'General usability and feature testing',
+};
+
 const TestInstructionPage: FC = () => {
-  const [reviews, setReviews] = useState<{ name: string; text: string; rating: string }[]>([]);
   const [app, setApp] = useState<App | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Use the default data for now; replace with fetched data if needed
+  const testInstructionData = defaultTestInstructionData;
   
   const { id } = useParams() as { id: string };
   const appId = parseInt(id);
@@ -84,14 +96,6 @@ const TestInstructionPage: FC = () => {
     );
   }
 
-  const testInstructionData = app;
-  const handleAppleClick = () => {
-    window.open(testInstructionData?.iosLink || testInstructionData?.ios_link || '#', '_blank');
-  };
-
-  const handleGoogleClick = () => {
-    window.open(testInstructionData?.androidLink || testInstructionData?.android_link || '#', '_blank');
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100">
