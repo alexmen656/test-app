@@ -203,7 +203,23 @@ const AppDetailPage: FC = () => {
                                         <h2 className="text-xl font-bold mb-4">Video</h2>
                                         <div className="aspect-video w-full rounded-lg overflow-hidden bg-black">
                                             <iframe
-                                                src={appData.videoUrl || appData.youtube_link || ''}
+                                                src={(() => {
+                                                    const videoUrl = appData.videoUrl || appData.youtube_link || '';
+                                                    
+                                                    // Convert YouTube URLs to embeddable format
+                                                    if (videoUrl.includes('youtube.com/watch?v=')) {
+                                                        const videoId = videoUrl.split('v=')[1]?.split('&')[0];
+                                                        return `https://www.youtube.com/embed/${videoId}`;
+                                                    } else if (videoUrl.includes('youtu.be/')) {
+                                                        const videoId = videoUrl.split('youtu.be/')[1]?.split('?')[0];
+                                                        return `https://www.youtube.com/embed/${videoId}`;
+                                                    } else if (videoUrl.includes('youtube.com/embed/')) {
+                                                        return videoUrl; // Already in embed format
+                                                    }
+                                                    
+                                                    // For other video sources, return as is
+                                                    return videoUrl;
+                                                })()}
                                                 className="w-full h-full"
                                                 frameBorder="0"
                                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
