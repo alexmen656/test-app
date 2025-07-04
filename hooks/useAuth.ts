@@ -69,7 +69,7 @@ export function useAuth() {
       const backendUrl = 'https://betbay-backend.vercel.app';//'https://betabay.vercel.app';
       
       console.log('useAuth: Making request to backend...');
-      const response = await fetch(`${backendUrl}/api/user`, {
+      const response = await fetch(`${backendUrl}/api/auth/user`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',

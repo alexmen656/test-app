@@ -75,7 +75,7 @@ class BetaBayApp {
                 headers['Authorization'] = `Bearer ${this.authToken}`;
             }
             
-            const response = await fetch(`${this.apiBaseUrl}/api/user`, {
+            const response = await fetch(`${this.apiBaseUrl}/api/auth/user`, {
                 headers,
                 credentials: 'include'
             });
