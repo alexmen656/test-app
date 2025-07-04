@@ -3,7 +3,6 @@ import Image from 'next/image'
 import type { App } from '@/types'; // Import the App type
 
 const AppListCard = ({ app }: { app: App }) => {
-  // Kompatibilität mit der Backend-API
   const name = app.name || app.app_name || "Unnamed App";
   const iconUrl = app.iconUrl || app.icon_url || "/vercel.svg"; // Fallback-Bild
   const price = app.price || app.test_price || "Free";
@@ -22,7 +21,14 @@ const AppListCard = ({ app }: { app: App }) => {
                     <p className="text-sm text-gray-500">{creatorName}</p>
                 </div>
             </div>
-            <p className="font-medium text-gray-700">{typeof price === 'number' ? `$${price}` : price}</p>
+            <div className="flex items-center bg-white border-2 border-yellow-400 text-gray-800 px-3 py-1.5 rounded-full transition-shadow">
+                <span className="w-5 h-5 mr-1.5 flex items-center justify-center rounded-full bg-yellow-400 text-white font-bold text-sm">
+                    h
+                </span>
+                <span className="font-bold text-sm text-gray-900">
+                    {app.price ? app.price : 'Free'}
+                </span>
+            </div>
         </div>
     )
 }
