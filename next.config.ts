@@ -23,6 +23,11 @@ const nextConfig: NextConfig = {
         hostname: "alex.polan.sk",
         port: "",
       },
+        {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        port: "",
+      },
     ], 
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
