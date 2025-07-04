@@ -7,15 +7,10 @@ import { useRouter, useParams } from 'next/navigation';
 import { ChevronLeft, MessageSquare, Star, Gem } from 'lucide-react';
 import { App } from '@/types';
 import { getBackendUrl } from '@/lib/api';
-import {allApps} from '@/public/MockData';
-
 
 const AppDetailPage: FC = () => {
     const router = useRouter();
     const { id } = useParams() as { id: string }; // Extract the dynamic route parameter
-
-    // Find the app in the mock data
-    const app = allApps.find(app => app.id === Number(id));
 
 
     const [appData, setAppData] = useState<App | null>(null);

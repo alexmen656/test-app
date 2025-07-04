@@ -3,12 +3,12 @@
   "/favicon.ico/route": "/favicon.ico",
   "/detail/[id]/page": "/detail/[id]",
   "/joined/page": "/joined",
-  "/notification/detail/[id]/page": "/notification/detail/[id]",
-  "/myapps/edit/[id]/page": "/myapps/edit/[id]",
-  "/myapps/page": "/myapps",
-  "/notification/page": "/notification",
-  "/page": "/",
   "/explore/page": "/explore",
+  "/myapps/page": "/myapps",
+  "/notification/detail/[id]/page": "/notification/detail/[id]",
+  "/notification/page": "/notification",
+  "/myapps/edit/[id]/page": "/myapps/edit/[id]",
+  "/page": "/",
   "/test-instruction/[id]/page": "/test-instruction/[id]",
   "/signin/page": "/signin"
 }
