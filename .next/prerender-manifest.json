@@ -1,12 +1,7 @@
 {
   "version": 4,
   "routes": {
-    "/favicon.ico": {
-      "initialHeaders": {
-        "cache-control": "public, max-age=0, must-revalidate",
-        "content-type": "image/x-icon",
-        "x-next-cache-tags": "_N_T_/layout,_N_T_/favicon.ico/layout,_N_T_/favicon.ico/route,_N_T_/favicon.ico"
-      },
+    "/joined": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -19,32 +14,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/favicon.ico",
-      "dataRoute": null,
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
-    "/": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "Next-Action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/",
-      "dataRoute": "/index.rsc",
+      "srcRoute": "/joined",
+      "dataRoute": "/joined.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -78,11 +49,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-<<<<<<< HEAD
     "/myapps": {
-=======
-    "/joined": {
->>>>>>> 228f86e89b9cc20d7054bde3331cdf0011b9c40d
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -95,13 +62,56 @@
         }
       ],
       "initialRevalidateSeconds": false,
-<<<<<<< HEAD
       "srcRoute": "/myapps",
       "dataRoute": "/myapps.rsc",
-=======
-      "srcRoute": "/joined",
-      "dataRoute": "/joined.rsc",
->>>>>>> 228f86e89b9cc20d7054bde3331cdf0011b9c40d
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/notification": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "Next-Action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/notification",
+      "dataRoute": "/notification.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "Next-Action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/",
+      "dataRoute": "/index.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -135,7 +145,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/notification": {
+    "/confirmation": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -148,8 +158,37 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/notification",
-      "dataRoute": "/notification.rsc",
+      "srcRoute": "/confirmation",
+      "dataRoute": "/confirmation.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/favicon.ico": {
+      "initialHeaders": {
+        "cache-control": "public, max-age=0, must-revalidate",
+        "content-type": "image/x-icon",
+        "x-next-cache-tags": "_N_T_/layout,_N_T_/favicon.ico/layout,_N_T_/favicon.ico/route,_N_T_/favicon.ico"
+      },
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "Next-Action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/favicon.ico",
+      "dataRoute": null,
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -163,14 +202,8 @@
   "dynamicRoutes": {},
   "notFoundRoutes": [],
   "preview": {
-<<<<<<< HEAD
-    "previewModeId": "b96767eb4c30283c44cdb587350303ce",
-    "previewModeSigningKey": "865c6bfe07390ab681f015bf533d48412c8314dabd04c42bcb711e1b26dcf07d",
-    "previewModeEncryptionKey": "4e9fd77635edffed4371ca3a044e47d15116d9aa695cf3d850a40f33d98cf329"
-=======
-    "previewModeId": "2c8cae6abfbd5dcc50468e555df166aa",
-    "previewModeSigningKey": "aa62b2ebcf7e186d17c87325585d0c0c58751a050d19a52636b2ae3e7315da4f",
-    "previewModeEncryptionKey": "2e74e640af5f343e9bff392f5ea8e887b0d05cfe455acec713a965889c926390"
->>>>>>> 228f86e89b9cc20d7054bde3331cdf0011b9c40d
+    "previewModeId": "ce3be15d803988b0cccb324e9841482f",
+    "previewModeSigningKey": "a796ce80ed0084afb41923aeb22c35723da08da506b4bc39de6a58b6188ce705",
+    "previewModeEncryptionKey": "5219725a1953c063293adb6513103e5719a042686f5bef339c013906713a3dde"
   }
 }

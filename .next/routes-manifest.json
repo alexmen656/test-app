@@ -15,6 +15,32 @@
   "headers": [],
   "dynamicRoutes": [
     {
+      "page": "/confirmation/[id]",
+      "regex": "^/confirmation/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/confirmation/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/confirmation/[id]/decline/[reviewId]",
+      "regex": "^/confirmation/([^/]+?)/decline/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid",
+        "nxtPreviewId": "nxtPreviewId"
+      },
+      "namedRegex": "^/confirmation/(?<nxtPid>[^/]+?)/decline/(?<nxtPreviewId>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/confirmation/[id]/finalize/[reviewId]",
+      "regex": "^/confirmation/([^/]+?)/finalize/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid",
+        "nxtPreviewId": "nxtPreviewId"
+      },
+      "namedRegex": "^/confirmation/(?<nxtPid>[^/]+?)/finalize/(?<nxtPreviewId>[^/]+?)(?:/)?$"
+    },
+    {
       "page": "/detail/[id]",
       "regex": "^/detail/([^/]+?)(?:/)?$",
       "routeKeys": {
@@ -45,6 +71,22 @@
         "nxtPid": "nxtPid"
       },
       "namedRegex": "^/test\\-instruction/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/test-instruction/[id]/download-guidelines",
+      "regex": "^/test\\-instruction/([^/]+?)/download\\-guidelines(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/test\\-instruction/(?<nxtPid>[^/]+?)/download\\-guidelines(?:/)?$"
+    },
+    {
+      "page": "/test-instruction/[id]/review-maker",
+      "regex": "^/test\\-instruction/([^/]+?)/review\\-maker(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/test\\-instruction/(?<nxtPid>[^/]+?)/review\\-maker(?:/)?$"
     }
   ],
   "staticRoutes": [
@@ -59,6 +101,12 @@
       "regex": "^/_not\\-found(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/confirmation",
+      "regex": "^/confirmation(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/confirmation(?:/)?$"
     },
     {
       "page": "/explore",

@@ -155,7 +155,7 @@ const TesterDetailPage = () => {
     const params = useParams();
     const testerId = params.id as string;
 
-    const [tester, setTester] = useState<Tester | null>(mockTesterData[testerId] || null);
+    const [tester] = useState<Tester | null>(mockTesterData[testerId] || null);
     const [expandedReview, setExpandedReview] = useState<number | null>(null);
 
     if (!tester) {
@@ -298,7 +298,7 @@ const TesterDetailPage = () => {
                             </svg>
                         </div>
                         <p className="text-xl font-medium text-gray-900 mb-2">No reviews submitted yet</p>
-                        <p className="text-gray-500">This tester hasn't submitted any reviews.</p>
+                        <p className="text-gray-500">This tester hasn&#39;t submitted any reviews.</p>
                     </div>
                 ) : (
                     <div className="space-y-6">
@@ -319,7 +319,7 @@ const TesterDetailPage = () => {
                                                     {review.score}/5 ⭐
                                                 </div>
                                             </div>
-                                            <p className="text-gray-800 text-lg leading-relaxed">{review.comment}</p>
+                                            <p className="text-gray-800 text-lg leading-relaxed">{review.comment.replace(/'/g, "&#39;")}</p>
                                         </div>
 
                                         <div className="flex flex-col gap-2 ml-6">

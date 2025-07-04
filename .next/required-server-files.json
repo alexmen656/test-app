@@ -117,7 +117,7 @@
         "transform": "lodash/{{member}}"
       }
     },
-    "outputFileTracingRoot": "/Users/alexpolan/betabay/test-app",
+    "outputFileTracingRoot": "/Users/pe/Project/nextjs/beta-bay",
     "experimental": {
       "nodeMiddleware": false,
       "cacheLife": {
@@ -300,10 +300,10 @@
     "bundlePagesRouterDependencies": false,
     "configFileName": "next.config.ts",
     "turbopack": {
-      "root": "/Users/alexpolan/betabay/test-app"
+      "root": "/Users/pe/Project/nextjs/beta-bay"
     }
   },
-  "appDir": "/Users/alexpolan/betabay/test-app",
+  "appDir": "/Users/pe/Project/nextjs/beta-bay",
   "relativeAppDir": "",
   "files": [
     ".next/routes-manifest.json",
