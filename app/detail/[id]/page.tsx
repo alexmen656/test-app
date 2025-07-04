@@ -67,7 +67,7 @@ const AppDetailPage: FC = () => {
             {/* Back button */}
             <button
                 onClick={() => {
-                    if (isCreator) {
+                    if(isCreator) {
                         router.push('/myapps');
                     } else {
                         router.push('/');
@@ -88,6 +88,7 @@ const AppDetailPage: FC = () => {
                 <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md m-10">
                     <p className="font-medium">Error</p>
                     <p>{error}</p>
+
                     <button
                         onClick={() => router.push('/explore')}
                         className="mt-2 px-4 py-2 bg-red-100 text-red-800 rounded-md hover:bg-red-200"
@@ -224,27 +225,26 @@ const AppDetailPage: FC = () => {
                                     </section>
                                 )}
                             </div>
-
-                            {/* Right Sidebar */}
-                            <aside>
-                                {/* Join Test */}
-                                <section className="rounded-lg border border-gray-200 bg-white p-4">
-                                    <h3 className="font-bold mb-3">
-                                        {isCreator ? 'Manage App' : 'Join Test'}
-                                    </h3>
-                                    {isCreator ? (
-                                        <button
-                                            onClick={() => router.push(`/myapps/edit/${appData.id}`)}
-                                            className="block w-full text-center rounded-md bg-green-600 py-2.5 font-semibold text-white transition-colors hover:bg-green-700"
-                                        >
-                                            Edit Profile
-                                        </button>
-                                    ) : (
-                                        <a href={`/test-instruction/${appData.id}`} className="block w-full text-center rounded-md bg-blue-600 py-2.5 font-semibold text-white transition-colors hover:bg-blue-700">
-                                            Join
-                                        </a>
-                                    )}
-                                </section>
+                    {/* Right Sidebar */}
+                    <aside>
+                        {/* Join Test */}
+                        <section className="rounded-lg border border-gray-200 bg-white p-4">
+                            <h3 className="font-bold mb-3">
+                                {isCreator ? 'Manage App' : 'Join Test'}
+                            </h3>
+                            {isCreator ? (
+                                <button 
+                                    onClick={() => router.push(`/myapps/edit/${appData.id}`)}
+                                    className="block w-full text-center rounded-md bg-green-600 py-2.5 font-semibold text-white transition-colors hover:bg-green-700"
+                                >
+                                    Edit Profile
+                                </button>
+                            ) : (
+                                <a href={`/test-instruction/${appData.id}`} className="block w-full text-center rounded-md bg-blue-600 py-2.5 font-semibold text-white transition-colors hover:bg-blue-700">
+                                    Join
+                                </a>
+                            )}
+                        </section>
 
                                 {/* Joined Testers */}
                                 {appData.joinedTesters && appData.joinedTesters.length > 0 && (
