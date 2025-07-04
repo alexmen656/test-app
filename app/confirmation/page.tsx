@@ -101,20 +101,7 @@ const mockReviews: Review[] = [
 ];
 
 const ReviewsPage = () => {
-    const [reviews, setReviews] = useState(mockReviews);
-
-    const handleConfirm = (id: number) => {
-        alert(`Review ${id} confirmed as valid.`);
-    };
-
-    const handleFlag = (id: number) => {
-        setReviews((prevReviews) =>
-            prevReviews.map((review) =>
-                review.id === id ? { ...review, flagged: true } : review
-            )
-        );
-        alert(`Review ${id} flagged for further inspection.`);
-    };
+    const [reviews] = useState(mockReviews);
     return (
         <div className="max-w-4xl mx-auto my-10">
             <h1 className="text-3xl font-bold mb-6">Testers</h1>
