@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 1732.3 980.5">
+  <!-- Generator: Adobe Illustrator 29.3.1, SVG Export Plug-In . SVG Version: 2.1.0 Build 151)  -->
+  <defs>
+    <style>
+      .st0 {
+        font-size: 100.7px;
+      }
+
+      .st0, .st1, .st2, .st3 {
+        isolation: isolate;
+      }
+
+      .st0, .st1, .st3 {
+        font-family: DealerplateCalifornia-Regular, Dealerplate;
+      }
+
+      .st1 {
+        font-size: 350px;
+      }
+
+      .st1, .st3 {
+        fill: #00447f;
+      }
+
+      .st3 {
+        font-size: 120px;
+      }
+
+      .st4 {
+        fill: #fffb0a;
+      }
+    </style>
+  </defs>
+  <image class="st2" width="6126" height="3566" transform="translate(262 0) scale(.2)" xlink:href="plate-betabay-1.png"/>
+  <g class="st2">
+    <text class="st1" transform="translate(513.8 639.8)"><tspan x="0" y="0">BE</tspan></text>
+    <text class="st1" transform="translate(780.5 639.8)"><tspan x="0" y="0">T</tspan></text>
+    <text class="st1" transform="translate(901.6 639.8)"><tspan x="0" y="0">A </tspan></text>
+    <text class="st1" transform="translate(1101.5 639.8)"><tspan x="0" y="0">B</tspan></text>
+    <text class="st1" transform="translate(1231.3 639.8)"><tspan x="0" y="0">A</tspan></text>
+    <text class="st1" transform="translate(1347.2 639.8)"><tspan x="0" y="0">Y</tspan></text>
+  </g>
+  <g class="st2">
+    <text class="st3" transform="translate(446.9 274.8)"><tspan x="0" y="0">HCB</tspan></text>
+  </g>
+  <rect class="st4" x="1383.5" y="160.6" width="187.8" height="107.8"/>
+  <g class="st2">
+    <text class="st0" transform="translate(1401.7 256.1)"><tspan x="0" y="0">2025</tspan></text>
+  </g>
+</svg>
