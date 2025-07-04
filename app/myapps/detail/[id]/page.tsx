@@ -23,8 +23,8 @@ const NewAppPage: FC = () => {
     const app = allApps.find(app => app.id === parseInt(params.id as string))?? allApps[0]; // Fallback to the first app if not found
 
     const [data, setData] = useState<NewAppData>({
-        name: app.name, description: app.description, videoUrl: app.videoUrl, iosLink: app.iosLink, androidLink: app.androidLink,
-        googleGroupLink: app.googleGroupLink, testingInstruction: app.testingInstruction, price: parseInt(app.price), icon: null,
+        name: app.name ?? '', description: app.description ?? '', videoUrl: app.videoUrl ?? '', iosLink: app.iosLink ?? '', androidLink: app.androidLink ?? '',
+        googleGroupLink: app.googleGroupLink ?? '', testingInstruction: app.testingInstruction ?? '', price: parseInt((app.price ?? '').toString()), icon: null,
         coverImage: null, screenshots: []
     });
     const [previews, setPreviews] = useState<{ icon?: string; coverImage?: string; screenshots: string[] }>({ screenshots: [] });
@@ -40,7 +40,7 @@ const NewAppPage: FC = () => {
             if (Array.isArray(app.screenshots)) {
                 setPreviews(prev => ({
                     ...prev,
-                    screenshots: app.screenshots
+                    screenshots: Array.isArray(app.screenshots) ? app.screenshots : []
                 }));
             } else if (typeof app.screenshots === 'string') {
                 setPreviews(prev => ({
