@@ -4,7 +4,7 @@ import Image from 'next/image';
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ChevronLeft, MessageSquare, Star, Gem } from 'lucide-react';
+import { ChevronLeft, MessageSquare, Star } from 'lucide-react';
 import { App } from '@/types';
 import { getBackendUrl } from '@/lib/api';
 
@@ -16,8 +16,6 @@ const AppDetailPage: FC = () => {
     const [appData, setAppData] = useState<App | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [coinBalance, setCoinBalance] = useState<number>(0);
-    const [coinLoading, setCoinLoading] = useState(true);
 
     const currentUserId = 'a135d7e0-3d80-4ed1-b80c-a2fc1444308f';
     const isCreator = appData?.creator?.id === currentUserId;
@@ -63,42 +61,6 @@ const AppDetailPage: FC = () => {
 
         fetchAppData();
     }, [id]);
-
-    // Fetch user's coin balance
-    useEffect(() => {
-        async function fetchCoinBalance() {
-            try {
-                setCoinLoading(true);
-                const backendUrl = getBackendUrl();
-                const token = localStorage.getItem('betabay_token');
-
-                if (!token) {
-                    setCoinLoading(false);
-                    return;
-                }
-
-                const response = await fetch(`${backendUrl}/api/coins/balance`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    setCoinBalance(data.balance || 0);
-                } else {
-                    console.log('Failed to fetch coin balance:', response.status);
-                }
-            } catch (error) {
-                console.error('Error fetching coin balance:', error);
-            } finally {
-                setCoinLoading(false);
-            }
-        }
-
-        fetchCoinBalance();
-    }, []);
 
     return (
         <div className="h-screen overflow-y-auto flex-1 bg-gray-50 text-gray-800 animate-fade-in">
@@ -187,7 +149,7 @@ const AppDetailPage: FC = () => {
                                         h
                                     </span>
                                     <span className="font-bold text-lg text-gray-900">
-                                        {coinLoading ? '...' : coinBalance.toLocaleString()}
+                                        {appData.price ? appData.price : 'Free'}
                                     </span>
                                 </div>
                             </div>

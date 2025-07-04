@@ -1,53 +1,12 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import Image from 'next/image'
 import type { App } from '@/types'; // Import the App type
-import { getBackendUrl } from '@/lib/api';
 
 const AppCard: React.FC<{ app: App }> = ({ app }) => {
-    // Coin balance state
-    const [coinBalance, setCoinBalance] = useState<number>(0);
-    const [coinLoading, setCoinLoading] = useState(true);
-
-    // Fetch user's coin balance
-    useEffect(() => {
-        async function fetchCoinBalance() {
-            try {
-                setCoinLoading(true);
-                const backendUrl = getBackendUrl();
-                const token = localStorage.getItem('betabay_token');
-
-                if (!token) {
-                    setCoinLoading(false);
-                    return;
-                }
-
-                const response = await fetch(`${backendUrl}/api/coins/balance`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    setCoinBalance(data.balance || 0);
-                } else {
-                    console.log('Failed to fetch coin balance:', response.status);
-                }
-            } catch (error) {
-                console.error('Error fetching coin balance:', error);
-            } finally {
-                setCoinLoading(false);
-            }
-        }
-
-        fetchCoinBalance();
-    }, []);
 
     // Kompatibilität mit der Backend-API
     const name = app.name || app.app_name || "Unnamed App";
     const coverImageUrl = app.coverImageUrl || app.cover_image_url || "/vercel.svg"; // Fallback-Bild
-    const price = app.price || app.test_price || "Free";
 
     // Creator-Info aus verschiedenen möglichen Quellen
     const creatorName = app.creator?.name || app.user_info?.username || "Unknown Creator";
@@ -73,7 +32,7 @@ const AppCard: React.FC<{ app: App }> = ({ app }) => {
                                 h
                             </span>
                             <span className="font-bold text-lg text-gray-900">
-                                {coinLoading ? '...' : coinBalance.toLocaleString()}
+                                {app.price ? app.price : 'Free'}
                             </span>
                         </div>
                     </div>
