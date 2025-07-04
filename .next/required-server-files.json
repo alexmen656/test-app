@@ -73,6 +73,11 @@
           "protocol": "https",
           "hostname": "avatars.slack-edge.com",
           "port": ""
+        },
+        {
+          "protocol": "https",
+          "hostname": "alex.polan.sk",
+          "port": ""
         }
       ],
       "unoptimized": false
