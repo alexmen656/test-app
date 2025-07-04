@@ -5,13 +5,17 @@ const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
 const Joi = require('joi');
+const jwt = require('jsonwebtoken');
 const db = require('../database');
 
 const router = express.Router();
 
+// JWT Secret (in production this should be in environment variables)
+const JWT_SECRET = process.env.JWT_SECRET || 'betabay-secret-key-2024';
+
 // Validation schemas
 const testPostSchema = Joi.object({
-  user_id: Joi.string().optional(), // Allow user_id in the request body for testing
+  slack_user_id: Joi.string().optional(), // Allow slack_user_id in the request body for testing
   app_name: Joi.string().min(3).max(100).required(),
   description: Joi.string().min(10).max(1000).required(),
   testing_link: Joi.string().uri().allow('').optional(),
@@ -31,50 +35,81 @@ const testPostSchema = Joi.object({
   user_info: Joi.object({
     username: Joi.string().optional(),
     profile_image: Joi.string().uri().allow('').optional(),
-    user_id: Joi.string().optional()
+    slack_user_id: Joi.string().optional()
   }).optional()
 });
 
-// Middleware to authenticate user
+// Middleware to authenticate user via JWT with Slack ID
 const authenticateUser = async (req, res, next) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
     
-    if (token) {
-      const userData = JSON.parse(Buffer.from(token, 'base64').toString());
-      
-      if (userData.exp && userData.exp < Date.now()) {
-        return res.status(401).json({ error: 'Token expired' });
-      }
-      
-      // MongoDB approach
-      const user = await db.findOne('users', { id: userData.id });
-      
-      if (!user) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-      
-      req.user = user;
-      return next();
+    if (!token) {
+      return res.status(401).json({ error: 'Authentication token required' });
     }
     
-    if (req.session && req.session.user) {
-      // MongoDB approach
-      const user = await db.findOne('users', { id: req.session.user.id });
-      
-      if (!user) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-      
-      req.user = user;
-      return next();
+    // Verify JWT token
+    let decoded;
+    try {
+      decoded = jwt.verify(token, JWT_SECRET);
+    } catch (jwtError) {
+      return res.status(401).json({ error: 'Invalid or expired token' });
     }
     
-    return res.status(401).json({ error: 'Authentication required' });
+    // Extract Slack user info from JWT payload
+    const { slack_user_id, username, display_name, profile_image, email } = decoded;
+    
+    if (!slack_user_id) {
+      return res.status(401).json({ error: 'Invalid token: missing slack_user_id' });
+    }
+    
+    // Find or create user based on Slack ID
+    let user = await db.findOne('users', { slack_user_id: slack_user_id });
+    
+    if (!user) {
+      // Auto-create user from Slack data
+      const userId = uuidv4();
+      user = {
+        id: userId,
+        slack_user_id: slack_user_id,
+        username: username || `user_${slack_user_id}`,
+        display_name: display_name || username || `User ${slack_user_id}`,
+        email: email || `${slack_user_id}@slack.local`,
+        avatar_url: profile_image || null,
+        owned_coins: 100,
+        is_active: true,
+        created_at: new Date(),
+        updated_at: new Date()
+      };
+      
+      await db.insert('users', user);
+      console.log(`✅ Auto-created user from Slack: ${username} (${slack_user_id})`);
+    } else {
+      // Update user info from latest JWT data
+      await db.update('users', 
+        { slack_user_id: slack_user_id },
+        { 
+          $set: {
+            username: username || user.username,
+            display_name: display_name || user.display_name,
+            email: email || user.email,
+            avatar_url: profile_image || user.avatar_url,
+            updated_at: new Date()
+          }
+        }
+      );
+      
+      // Refresh user data
+      user = await db.findOne('users', { slack_user_id: slack_user_id });
+    }
+    
+    req.user = user;
+    req.slack_user_id = slack_user_id;
+    return next();
     
   } catch (error) {
     console.error('❌ Authentication error:', error);
-    return res.status(401).json({ error: 'Invalid authentication' });
+    return res.status(401).json({ error: 'Authentication failed' });
   }
 };
 
@@ -516,6 +551,39 @@ router.post('/upload', async (req, res) => {
   } catch (error) {
     console.error('❌ Error in upload endpoint:', error);
     res.status(500).json({ error: 'Upload failed', details: error.message });
+  }
+});
+
+// Helper endpoint to generate JWT tokens for testing (remove in production)
+router.post('/auth/generate-token', async (req, res) => {
+  try {
+    const { slack_user_id, username, display_name, profile_image, email } = req.body;
+    
+    if (!slack_user_id) {
+      return res.status(400).json({ error: 'slack_user_id is required' });
+    }
+    
+    const payload = {
+      slack_user_id,
+      username: username || `user_${slack_user_id}`,
+      display_name: display_name || username || `User ${slack_user_id}`,
+      profile_image: profile_image || null,
+      email: email || `${slack_user_id}@slack.local`,
+      iat: Math.floor(Date.now() / 1000),
+      exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) // 24 hours
+    };
+    
+    const token = jwt.sign(payload, JWT_SECRET);
+    
+    res.json({
+      token,
+      payload,
+      message: 'JWT token generated successfully'
+    });
+    
+  } catch (error) {
+    console.error('❌ Error generating JWT token:', error);
+    res.status(500).json({ error: 'Failed to generate token' });
   }
 });
 
