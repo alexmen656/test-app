@@ -1,9 +1,13 @@
 const express = require('express');
 const axios = require('axios');
+const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../database');
 
 const router = express.Router();
+
+// JWT Secret (same as in testPosts.js)
+const JWT_SECRET = process.env.JWT_SECRET || 'betabay-secret-key-2024';
 
 // Slack OAuth configuration
 const SLACK_OAUTH_URL = 'https://slack.com/oauth/v2/authorize';
@@ -217,16 +221,23 @@ router.get('/slack/callback', async (req, res) => {
     }
     
     // Create JWT token for frontend authentication
-    const userToken = Buffer.from(JSON.stringify({
-      id: user.id,
+    const jwtPayload = {
       slack_user_id: user.slack_user_id,
       username: user.username,
       display_name: user.display_name,
       email: user.email,
-      avatar_url: user.avatar_url,
-      owned_coins: user.owned_coins,
-      exp: Date.now() + 24 * 60 * 60 * 1000 // 24 hours
-    })).toString('base64');
+      profile_image: user.avatar_url,
+      iat: Math.floor(Date.now() / 1000),
+      exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) // 24 hours
+    };
+    
+    const userToken = jwt.sign(jwtPayload, JWT_SECRET);
+    
+    console.log('✅ JWT token created for user:', user.username);
+    console.log('Token payload:', { 
+      slack_user_id: user.slack_user_id, 
+      username: user.username 
+    });
     
     // Store user in session as fallback
     req.session.user = {
@@ -260,39 +271,44 @@ router.get('/slack/callback', async (req, res) => {
 // Get current user info
 router.get('/user', async (req, res) => {
   try {
-    // Check for token-based auth first
+    // Check for JWT token-based auth first
     const token = req.headers.authorization?.replace('Bearer ', '') || req.query.token;
     
     if (token) {
       try {
-        const userData = JSON.parse(Buffer.from(token, 'base64').toString());
+        // Verify JWT token
+        const decoded = jwt.verify(token, JWT_SECRET);
         
-        // Check if token is expired
-        if (userData.exp && userData.exp < Date.now()) {
-          return res.status(401).json({ error: 'Token expired' });
+        if (!decoded.slack_user_id) {
+          return res.status(401).json({ error: 'Invalid token: missing slack_user_id' });
         }
         
-        // Get fresh user data from database
+        // Get fresh user data from database using Slack ID
         let user;
         
         if (db.findOne) {
           // MongoDB approach
-          user = await db.findOne('users', { id: userData.id });
+          user = await db.findOne('users', { slack_user_id: decoded.slack_user_id });
         } else {
           // SQLite approach
-          user = await db.get('SELECT * FROM users WHERE id = ?', [userData.id]);
+          user = await db.get('SELECT * FROM users WHERE slack_user_id = ?', [decoded.slack_user_id]);
         }
         
         if (!user) {
           return res.status(404).json({ error: 'User not found' });
         }
         
-        // Remove sensitive data
-        delete user.slack_user_id;
-        return res.json(user);
+        // Return user data in format expected by frontend
+        return res.json({
+          id: user.slack_user_id, // Frontend expects this as the user ID
+          name: user.display_name || user.username,
+          email: user.email,
+          image: user.avatar_url,
+          team: 'BetaBay Team'
+        });
         
-      } catch (error) {
-        return res.status(401).json({ error: 'Invalid token' });
+      } catch (jwtError) {
+        return res.status(401).json({ error: 'Invalid or expired token' });
       }
     }
     

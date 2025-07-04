@@ -22,6 +22,7 @@ export function useAuth() {
       console.log('useAuth: Initial check - localStorage available =', typeof(Storage) !== "undefined");
       console.log('useAuth: Current tokens in storage =', {
         authToken: localStorage.getItem('authToken') ? 'present' : 'missing',
+        betabayToken: localStorage.getItem('betabay_token') ? 'present' : 'missing',
         authTokenTime: localStorage.getItem('authTokenTime')
       });
       checkAuthStatus();
@@ -29,19 +30,6 @@ export function useAuth() {
     
     return () => clearTimeout(timer);
   }, []);
-
-  // Remove storage event listener as it causes race conditions
-  // useEffect(() => {
-  //   const handleStorageChange = (e: StorageEvent) => {
-  //     if (e.key === 'authToken') {
-  //       console.log('useAuth: Token changed in storage, rechecking auth...');
-  //       checkAuthStatus();
-  //     }
-  //   };
-
-  //   window.addEventListener('storage', handleStorageChange);
-  //   return () => window.removeEventListener('storage', handleStorageChange);
-  // }, []);
 
   const checkAuthStatus = async () => {
     // Prevent multiple parallel auth checks
@@ -53,7 +41,7 @@ export function useAuth() {
     setIsCheckingAuth(true);
     
     try {
-      const token = localStorage.getItem('authToken');
+      const token = localStorage.getItem('authToken') || localStorage.getItem('betabay_token');
       
       console.log('useAuth: Checking auth status, token =', token ? 'present' : 'missing');
       console.log('useAuth: Token value =', token ? token.substring(0, 20) + '...' : 'null');
@@ -66,10 +54,10 @@ export function useAuth() {
         return;
       }
 
-      const backendUrl = 'https://betabay.vercel.app';
+      const backendUrl = 'https://betbay-backend.vercel.app';
       
       console.log('useAuth: Making request to backend...');
-      const response = await fetch(`${backendUrl}/api/user`, {
+      const response = await fetch(`${backendUrl}/api/auth/user`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -121,11 +109,11 @@ export function useAuth() {
   const logout = async () => {
     console.log('useAuth: Logging out...');
     try {
-      const token = localStorage.getItem('authToken');
-      const backendUrl = 'https://betabay.vercel.app';
+      const token = localStorage.getItem('authToken') || localStorage.getItem('betabay_token');
+      const backendUrl = 'https://betbay-backend.vercel.app';
       
       if (token) {
-        await fetch(`${backendUrl}/api/logout`, {
+        await fetch(`${backendUrl}/api/auth/logout`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -137,7 +125,11 @@ export function useAuth() {
       console.error('Logout error:', err);
     } finally {
       localStorage.removeItem('authToken');
+      localStorage.removeItem('betabay_token');
       localStorage.removeItem('authTokenTime');
+      localStorage.removeItem('betabay_username');
+      localStorage.removeItem('betabay_profile_image');
+      localStorage.removeItem('betabay_user_id');
       setUser(null);
       setError(null);
       setIsLoading(false);
@@ -160,12 +152,17 @@ export function useAuth() {
     }
     
     try {
-      // Store token with additional verification
+      // Store token with both names for consistency
       localStorage.setItem('authToken', token);
+      localStorage.setItem('betabay_token', token); // Also store as betabay_token for consistency
       
       // Verify it was stored
       const storedToken = localStorage.getItem('authToken');
-      console.log('useAuth: Token stored successfully =', storedToken === token);
+      const storedBetabayToken = localStorage.getItem('betabay_token');
+      console.log('useAuth: Token stored successfully:', {
+        authToken: storedToken ? 'stored' : 'failed',
+        betabayToken: storedBetabayToken ? 'stored' : 'failed'
+      });
       
       // Also store a timestamp
       localStorage.setItem('authTokenTime', Date.now().toString());
@@ -189,6 +186,7 @@ export function useAuth() {
     console.log('=== localStorage Debug ===');
     console.log('localStorage available:', typeof(Storage) !== "undefined");
     console.log('authToken:', localStorage.getItem('authToken'));
+    console.log('betabay_token:', localStorage.getItem('betabay_token'));
     console.log('authTokenTime:', localStorage.getItem('authTokenTime'));
     console.log('All localStorage keys:', Object.keys(localStorage));
     console.log('========================');
@@ -198,10 +196,11 @@ export function useAuth() {
     user,
     isLoading,
     error,
+    checkAuthStatus,
     logout,
     refreshAuth,
     setAuthToken,
     debugStorage,
-    isAuthenticated: !!user,
+    isAuthenticated: !!user
   };
 }

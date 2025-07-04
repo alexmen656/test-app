@@ -33,7 +33,7 @@ function SignInContent() {
     setIsLoading(true);
     setError('');
     
-    const backendUrl = 'https://betabay.vercel.app';//process.env.NEXT_PUBLIC_BACKEND_URL || 
+    const backendUrl = 'https://betbay-backend.vercel.app';//https://betabay.vercel.app//process.env.NEXT_PUBLIC_BACKEND_URL || 
     
     window.location.href = `${backendUrl}/api/auth/slack`;
   };

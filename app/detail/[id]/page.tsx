@@ -102,8 +102,8 @@ const AppDetailPage: FC = () => {
                         <Image
                             src={appData.coverImageUrl || appData.cover_image_url || '/vercel.svg'}
                             alt={`${appData.name || appData.app_name || 'App'} cover image`}
-                            layout="fill"
-                            objectFit="cover"
+                            fill
+                            style={{ objectFit: 'cover' }}
                         />
                         <div className="absolute inset-0 bg-black/20"></div>
                         <div className="absolute bottom-0 left-0 p-8">
@@ -167,26 +167,29 @@ const AppDetailPage: FC = () => {
                                 {/* Screenshots */}
                                 <section className="mt-8">
                                     <h2 className="text-xl font-bold mb-4">Screenshots</h2>
-                                    {appData.screenshots?.length || appData.screenshot_urls?.length ? (
-                                        <div className="flex gap-4 overflow-x-auto">
-                                            {(appData.screenshots || appData.screenshot_urls || []).map((src, index) => (
-                                                <div
-                                                    key={index}
-                                                    className="relative h-200 min-w-[400px] rounded-lg bg-gray-200 overflow-hidden"
-                                                >
-                                                    <Image
-                                                        src={src}
-                                                        alt={`Screenshot ${index + 1}`}
-                                                        layout="fill"
-                                                        objectFit="cover"
-                                                        className="transition-transform duration-300 hover:scale-105"
-                                                    />
-                                                </div>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <p className="text-gray-500">No screenshots available.</p>
-                                    )}
+                                    {(() => {
+                                        const screenshots = appData.screenshot_urls || appData.screenshots || [];
+                                        return screenshots.length > 0 ? (
+                                            <div className="flex gap-4 overflow-x-auto">
+                                                {screenshots.map((src, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className="relative h-96 min-w-[300px] rounded-lg bg-gray-200 overflow-hidden flex-shrink-0"
+                                                    >
+                                                        <Image
+                                                            src={src}
+                                                            alt={`Screenshot ${index + 1}`}
+                                                            fill
+                                                            style={{ objectFit: 'cover' }}
+                                                            className="transition-transform duration-300 hover:scale-105"
+                                                        />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <p className="text-gray-500">No screenshots available.</p>
+                                        );
+                                    })()}
                                 </section>
 
                                 {/* Video */}
@@ -195,7 +198,23 @@ const AppDetailPage: FC = () => {
                                         <h2 className="text-xl font-bold mb-4">Video</h2>
                                         <div className="aspect-video w-full rounded-lg overflow-hidden bg-black">
                                             <iframe
-                                                src={appData.videoUrl || appData.youtube_link || ''}
+                                                src={(() => {
+                                                    const videoUrl = appData.videoUrl || appData.youtube_link || '';
+                                                    
+                                                    // Convert YouTube URLs to embeddable format
+                                                    if (videoUrl.includes('youtube.com/watch?v=')) {
+                                                        const videoId = videoUrl.split('v=')[1]?.split('&')[0];
+                                                        return `https://www.youtube.com/embed/${videoId}`;
+                                                    } else if (videoUrl.includes('youtu.be/')) {
+                                                        const videoId = videoUrl.split('youtu.be/')[1]?.split('?')[0];
+                                                        return `https://www.youtube.com/embed/${videoId}`;
+                                                    } else if (videoUrl.includes('youtube.com/embed/')) {
+                                                        return videoUrl; // Already in embed format
+                                                    }
+                                                    
+                                                    // For other video sources, return as is
+                                                    return videoUrl;
+                                                })()}
                                                 className="w-full h-full"
                                                 frameBorder="0"
                                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
