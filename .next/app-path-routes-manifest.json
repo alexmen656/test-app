@@ -2,13 +2,13 @@
   "/_not-found/page": "/_not-found",
   "/favicon.ico/route": "/favicon.ico",
   "/detail/[id]/page": "/detail/[id]",
-  "/explore/page": "/explore",
   "/joined/page": "/joined",
-  "/myapps/edit/[id]/page": "/myapps/edit/[id]",
-  "/notification/page": "/notification",
-  "/myapps/page": "/myapps",
-  "/page": "/",
   "/notification/detail/[id]/page": "/notification/detail/[id]",
+  "/myapps/edit/[id]/page": "/myapps/edit/[id]",
+  "/myapps/page": "/myapps",
+  "/notification/page": "/notification",
+  "/page": "/",
+  "/explore/page": "/explore",
   "/test-instruction/[id]/page": "/test-instruction/[id]",
   "/signin/page": "/signin"
 }

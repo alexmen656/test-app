@@ -140,13 +140,27 @@ const NewAppPage: FC = () => {
                 const newPreviews = newFiles.map(file => URL.createObjectURL(file));
                 setPreviews(prev => ({ ...prev, screenshots: [...prev.screenshots, ...newPreviews] }));
                 
-                // Upload each file
+                // Upload each file sequentially to ensure all URLs are captured
+                const uploadedScreenshots: string[] = [];
                 for (const file of newFiles) {
-                    const url = await upload(file);
-                    if (url) {
-                        setUploadedUrls(prev => ({ ...prev, screenshots: [...prev.screenshots, url] }));
+                    try {
+                        const url = await upload(file);
+                        if (url) {
+                            uploadedScreenshots.push(url);
+                            console.log('Screenshot uploaded successfully:', url);
+                        }
+                    } catch (uploadError) {
+                        console.error('Failed to upload screenshot:', uploadError);
+                        alert(`Failed to upload one of the screenshots. Please try again.`);
+                        return; // Stop if any upload fails
                     }
                 }
+                
+                // Update uploaded URLs with all new screenshots
+                setUploadedUrls(prev => ({ 
+                    ...prev, 
+                    screenshots: [...prev.screenshots, ...uploadedScreenshots] 
+                }));
                 
                 // Update file data for form submission
                 setData(prev => ({ ...prev, screenshots: [...prev.screenshots, ...newFiles] }));
@@ -157,10 +171,21 @@ const NewAppPage: FC = () => {
                 const previewUrl = URL.createObjectURL(file);
                 setPreviews(prev => ({ ...prev, [name]: previewUrl }));
                 
-                // Upload file
-                const url = await upload(file);
-                if (url) {
-                    setUploadedUrls(prev => ({ ...prev, [name]: url }));
+                try {
+                    // Upload file
+                    const url = await upload(file);
+                    if (url) {
+                        setUploadedUrls(prev => ({ ...prev, [name]: url }));
+                        console.log(`${name} uploaded successfully:`, url);
+                    } else {
+                        throw new Error('Upload failed - no URL returned');
+                    }
+                } catch (uploadError) {
+                    console.error(`Failed to upload ${name}:`, uploadError);
+                    alert(`Failed to upload ${name}. Please try again.`);
+                    // Reset preview on failed upload
+                    setPreviews(prev => ({ ...prev, [name]: undefined }));
+                    return;
                 }
                 
                 // Update file data for form submission
@@ -176,6 +201,12 @@ const NewAppPage: FC = () => {
         e.preventDefault();
         if (!data.name.trim()) {
             alert("App Name is required.");
+            return;
+        }
+        
+        // Warten bis alle Uploads abgeschlossen sind
+        if (isUploading) {
+            alert("Please wait for all file uploads to complete before submitting.");
             return;
         }
         
@@ -197,16 +228,23 @@ const NewAppPage: FC = () => {
                 
                 // User information from Slack
                 user_info: {
-                    username: localStorage.getItem('betabay_username') || '',
-                    profile_image: localStorage.getItem('betabay_profile_image') || '',
-                    user_id: localStorage.getItem('betabay_user_id') || ''
+                    username: localStorage.getItem('betabay_username') || 'test',
+                    profile_image: localStorage.getItem('betabay_profile_image') || 'https://example.com/test',
+                    user_id: localStorage.getItem('betabay_user_id') || 'test'
                 },
                 
-                // Include uploaded file URLs
+                // Include uploaded file URLs - diese werden jetzt garantiert gesendet
                 icon_url: uploadedUrls.icon || null,
                 cover_image_url: uploadedUrls.coverImage || null,
                 screenshot_urls: uploadedUrls.screenshots || []
             };
+            
+            // Debug: Log der gesendeten URLs
+            console.log('Sending file URLs to backend:', {
+                icon_url: jsonData.icon_url,
+                cover_image_url: jsonData.cover_image_url,
+                screenshot_urls: jsonData.screenshot_urls
+            });
             
             // Optional: Get Token from localStorage if it exists
             const token = localStorage.getItem('betabay_token');
@@ -258,7 +296,7 @@ const NewAppPage: FC = () => {
   
 
     return (
-        <div className="max-w-5xl mx-auto mb-10">
+        <div className="max-w-5xl mx-auto md:px-5 px-2 mb-10">
             <header className="my-10">
                 <h1 className="text-4xl font-bold text-gray-800">
                     {isEditing ? 'Edit App' : 'Post a New App'}
