@@ -4,7 +4,7 @@ import Image from 'next/image';
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ChevronLeft, MessageSquare, Star, Gem } from 'lucide-react';
+import { ChevronLeft, MessageSquare, Star } from 'lucide-react';
 import { App } from '@/types';
 import { getBackendUrl } from '@/lib/api';
 
@@ -88,7 +88,8 @@ const AppDetailPage: FC = () => {
                 <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md m-10">
                     <p className="font-medium">Error</p>
                     <p>{error}</p>
-                    <button 
+
+                    <button
                         onClick={() => router.push('/explore')}
                         className="mt-2 px-4 py-2 bg-red-100 text-red-800 rounded-md hover:bg-red-200"
                     >
@@ -144,18 +145,13 @@ const AppDetailPage: FC = () => {
                                         <MessageSquare size={16} /> Message
                                     </button>
                                 )}
-                                <div className="flex items-center gap-2 rounded-md bg-green-100 px-4 py-2">
-                                    <span className="font-bold text-green-700">
-                                        {typeof appData.price === 'number' ? `$${appData.price}` : 
-                                         typeof appData.test_price === 'number' ? `$${appData.test_price}` : 
-                                         appData.price || appData.test_price || 'Free'}
+                                <div className="flex items-center bg-white border-2 border-yellow-400 text-gray-800 px-4 py-2 rounded-full transition-shadow">
+                                    <span className="w-7 h-7 mr-2 flex items-center justify-center rounded-full bg-yellow-400 text-white font-bold text-lg">
+                                        h
                                     </span>
-                                    {appData.coins && (
-                                        <div className="flex items-center gap-1 text-yellow-600">
-                                            <Gem size={16} />
-                                            <span className="font-semibold">{appData.coins}</span>
-                                        </div>
-                                    )}
+                                    <span className="font-bold text-lg text-gray-900">
+                                        {appData.price ? appData.price : 'Free'}
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -229,7 +225,6 @@ const AppDetailPage: FC = () => {
                                     </section>
                                 )}
                             </div>
-
                     {/* Right Sidebar */}
                     <aside>
                         {/* Join Test */}
