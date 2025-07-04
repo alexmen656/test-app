@@ -37,11 +37,6 @@ const testPostSchema = Joi.object({
 
 // Middleware to authenticate user
 const authenticateUser = async (req, res, next) => {
-  // Authentication is currently disabled - automatically passing through
-  req.user = { id: 'dummy-user-id' }; // Set a dummy user ID for testing
-  return next();
-  
-  /* Original authentication code (disabled)
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
     
@@ -63,7 +58,7 @@ const authenticateUser = async (req, res, next) => {
       return next();
     }
     
-    if (req.session.user) {
+    if (req.session && req.session.user) {
       // MongoDB approach
       const user = await db.findOne('users', { id: req.session.user.id });
       
@@ -81,7 +76,6 @@ const authenticateUser = async (req, res, next) => {
     console.error('❌ Authentication error:', error);
     return res.status(401).json({ error: 'Invalid authentication' });
   }
-  */
 };
 
 // Get all test posts (public)
@@ -115,12 +109,21 @@ router.get('/', async (req, res) => {
     
     // Enhance posts with additional data
     for (const post of testPosts) {
-      // Get user data
+      // Get user data and add as user_info object
       const user = await db.findOne('users', { id: post.user_id });
       if (user) {
         post.username = user.username;
         post.display_name = user.display_name;
         post.avatar_url = user.avatar_url;
+        
+        // Add user_info object for frontend compatibility
+        post.user_info = {
+          user_id: user.id,
+          username: user.username,
+          display_name: user.display_name,
+          profile_image: user.avatar_url,
+          email: user.email
+        };
       }
       
       // Get screenshots
@@ -168,12 +171,21 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Test post not found' });
     }
     
-    // Get user data
+    // Get user data and add it as user_info object
     const user = await db.findOne('users', { id: testPost.user_id });
     if (user) {
       testPost.username = user.username;
       testPost.display_name = user.display_name;
       testPost.avatar_url = user.avatar_url;
+      
+      // Add user_info object for frontend compatibility
+      testPost.user_info = {
+        user_id: user.id,
+        username: user.username,
+        display_name: user.display_name,
+        profile_image: user.avatar_url,
+        email: user.email
+      };
     }
     
     // Get screenshots
