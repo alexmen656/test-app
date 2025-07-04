@@ -15,6 +15,14 @@
   "headers": [],
   "dynamicRoutes": [
     {
+      "page": "/detail/[id]",
+      "regex": "^/detail/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/detail/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
       "page": "/explore/detail/[id]",
       "regex": "^/explore/detail/([^/]+?)(?:/)?$",
       "routeKeys": {
@@ -29,6 +37,22 @@
         "nxtPid": "nxtPid"
       },
       "namedRegex": "^/myapps/detail/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/myapps/edit/[id]",
+      "regex": "^/myapps/edit/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/myapps/edit/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/notification/detail/[id]",
+      "regex": "^/notification/detail/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/notification/detail/(?<nxtPid>[^/]+?)(?:/)?$"
     },
     {
       "page": "/test-instruction/[id]",

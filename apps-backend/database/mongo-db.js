@@ -34,7 +34,10 @@ const testPostSchema = new mongoose.Schema({
   instructions: String,
   youtube_link: String,
   google_group_link: String,
+  // Upload URL Felder
   icon_url: String,
+  cover_image_url: String,
+  screenshot_urls: [String], // Array von Screenshot URLs
   status: { 
     type: String, 
     default: 'active', 

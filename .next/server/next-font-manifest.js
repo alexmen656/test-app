@@ -1,1 +1,1 @@
-self.__NEXT_FONT_MANIFEST='{"pages":{},"app":{"/Users/sayan/Downloads/test-app-main-2/app/layout":["static/media/569ce4b8f30dc480-s.p.woff2","static/media/93f479601ee12b01-s.p.woff2"]},"appUsingSizeAdjust":true,"pagesUsingSizeAdjust":false}';
+self.__NEXT_FONT_MANIFEST='{"pages":{},"app":{"/Users/pe/Project/nextjs/beta-bay/app/layout":["static/media/569ce4b8f30dc480-s.p.woff2","static/media/93f479601ee12b01-s.p.woff2"]},"appUsingSizeAdjust":true,"pagesUsingSizeAdjust":false}';

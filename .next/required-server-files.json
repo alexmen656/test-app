@@ -68,6 +68,11 @@
           "protocol": "https",
           "hostname": "via.placeholder.com",
           "port": ""
+        },
+        {
+          "protocol": "https",
+          "hostname": "avatars.slack-edge.com",
+          "port": ""
         }
       ],
       "unoptimized": false
@@ -107,7 +112,7 @@
         "transform": "lodash/{{member}}"
       }
     },
-    "outputFileTracingRoot": "",
+    "outputFileTracingRoot": "/Users/pe/Project/nextjs/beta-bay",
     "experimental": {
       "nodeMiddleware": false,
       "cacheLife": {
@@ -165,7 +170,7 @@
       "middlewarePrefetch": "flexible",
       "optimisticClientCache": true,
       "manualClientBasePath": false,
-      "cpus": 11,
+      "cpus": 7,
       "memoryBasedWorkersCount": false,
       "imgOptConcurrency": null,
       "imgOptTimeoutInSeconds": 7,
@@ -288,9 +293,12 @@
     },
     "htmlLimitedBots": "Mediapartners-Google|Slurp|DuckDuckBot|baiduspider|yandex|sogou|bitlybot|tumblr|vkShare|quora link preview|redditbot|ia_archiver|Bingbot|BingPreview|applebot|facebookexternalhit|facebookcatalog|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|SkypeUriPreview|Yeti",
     "bundlePagesRouterDependencies": false,
-    "configFileName": "next.config.ts"
+    "configFileName": "next.config.ts",
+    "turbopack": {
+      "root": "/Users/pe/Project/nextjs/beta-bay"
+    }
   },
-  "appDir": "/Users/sayan/Downloads/test-app-main-2",
+  "appDir": "/Users/pe/Project/nextjs/beta-bay",
   "relativeAppDir": "",
   "files": [
     ".next/routes-manifest.json",

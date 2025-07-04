@@ -1,15 +1,18 @@
 {
   "/_not-found/page": "/_not-found",
   "/favicon.ico/route": "/favicon.ico",
+  "/detail/[id]/page": "/detail/[id]",
   "/explore/detail/[id]/page": "/explore/detail/[id]",
+  "/explore/page": "/explore",
   "/joined/page": "/joined",
   "/myapps/detail/[id]/page": "/myapps/detail/[id]",
-  "/explore/page": "/explore",
+  "/myapps/edit/[id]/page": "/myapps/edit/[id]",
   "/myapps/page": "/myapps",
+  "/notification/detail/[id]/page": "/notification/detail/[id]",
   "/notification/page": "/notification",
   "/page": "/",
-  "/test-instruction/[id]/page": "/test-instruction/[id]",
   "/test-instruction/[id]/download-guidelines/page": "/test-instruction/[id]/download-guidelines",
+  "/test-instruction/[id]/page": "/test-instruction/[id]",
   "/test-instruction/[id]/review-maker/page": "/test-instruction/[id]/review-maker",
   "/signin/page": "/signin"
 }
