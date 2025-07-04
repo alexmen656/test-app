@@ -7,18 +7,22 @@ import { useRouter, useParams } from 'next/navigation';
 import { ChevronLeft, MessageSquare, Star, Gem } from 'lucide-react';
 import { App } from '@/types';
 import { getBackendUrl } from '@/lib/api';
+import {allApps} from '@/public/MockData';
 
 
 const AppDetailPage: FC = () => {
     const router = useRouter();
     const { id } = useParams() as { id: string }; // Extract the dynamic route parameter
 
+    // Find the app in the mock data
+    const app = allApps.find(app => app.id === Number(id));
+
 
     const [appData, setAppData] = useState<App | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    const currentUserId = 'a135d7e0-3d80-4ed1-b80c-a2fc1444308f'; // Replace with actual logic to get the logged-in user's username
+    const currentUserId = 'a135d7e0-3d80-4ed1-b80c-a2fc1444308f';
     const isCreator = appData?.creator?.id === currentUserId;
 
     // Laden der App-Daten vom Backend
