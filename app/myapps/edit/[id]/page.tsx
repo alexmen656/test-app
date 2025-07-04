@@ -258,7 +258,7 @@ const NewAppPage: FC = () => {
   
 
     return (
-        <div className="max-w-5xl mx-auto mb-10">
+        <div className="max-w-5xl mx-auto md:px-5 px-2 mb-10">
             <header className="my-10">
                 <h1 className="text-4xl font-bold text-gray-800">
                     {isEditing ? 'Edit App' : 'Post a New App'}
