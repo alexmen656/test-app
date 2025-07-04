@@ -1,10 +1,14 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/detail/[id]/page": "app/detail/[id]/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/joined/page": "app/joined/page.js",
-  "/myapps/page": "app/myapps/page.js",
+  "/explore/page": "app/explore/page.js",
+  "/myapps/edit/[id]/page": "app/myapps/edit/[id]/page.js",
+  "/notification/page": "app/notification/page.js",
   "/page": "app/page.js",
-  "/signin/page": "app/signin/page.js",
-  "/test-instruction/[id]/page": "app/test-instruction/[id]/page.js"
+  "/notification/detail/[id]/page": "app/notification/detail/[id]/page.js",
+  "/test-instruction/[id]/page": "app/test-instruction/[id]/page.js",
+  "/myapps/page": "app/myapps/page.js",
+  "/detail/[id]/page": "app/detail/[id]/page.js",
+  "/signin/page": "app/signin/page.js"
 }

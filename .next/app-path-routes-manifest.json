@@ -1,14 +1,14 @@
 {
   "/_not-found/page": "/_not-found",
   "/favicon.ico/route": "/favicon.ico",
-  "/detail/[id]/page": "/detail/[id]",
   "/joined/page": "/joined",
-  "/notification/detail/[id]/page": "/notification/detail/[id]",
+  "/explore/page": "/explore",
   "/myapps/edit/[id]/page": "/myapps/edit/[id]",
-  "/myapps/page": "/myapps",
   "/notification/page": "/notification",
   "/page": "/",
-  "/explore/page": "/explore",
+  "/notification/detail/[id]/page": "/notification/detail/[id]",
   "/test-instruction/[id]/page": "/test-instruction/[id]",
+  "/myapps/page": "/myapps",
+  "/detail/[id]/page": "/detail/[id]",
   "/signin/page": "/signin"
 }

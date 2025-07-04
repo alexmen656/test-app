@@ -73,6 +73,11 @@
           "protocol": "https",
           "hostname": "avatars.slack-edge.com",
           "port": ""
+        },
+        {
+          "protocol": "https",
+          "hostname": "alex.polan.sk",
+          "port": ""
         }
       ],
       "unoptimized": false
@@ -112,7 +117,7 @@
         "transform": "lodash/{{member}}"
       }
     },
-    "outputFileTracingRoot": "/Users/pe/Project/nextjs/beta-bay",
+    "outputFileTracingRoot": "/Users/alexpolan/betabay/test-app",
     "experimental": {
       "nodeMiddleware": false,
       "cacheLife": {
@@ -295,10 +300,10 @@
     "bundlePagesRouterDependencies": false,
     "configFileName": "next.config.ts",
     "turbopack": {
-      "root": "/Users/pe/Project/nextjs/beta-bay"
+      "root": "/Users/alexpolan/betabay/test-app"
     }
   },
-  "appDir": "/Users/pe/Project/nextjs/beta-bay",
+  "appDir": "/Users/alexpolan/betabay/test-app",
   "relativeAppDir": "",
   "files": [
     ".next/routes-manifest.json",
