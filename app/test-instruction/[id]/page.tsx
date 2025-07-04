@@ -86,11 +86,9 @@ const TestInstructionPage: FC = () => {
   }
 
   // Use the real app data from API
-  const testInstructionData = app;
   const appName = app?.name || app?.app_name || 'Unnamed App';
   const creatorName = app?.creator?.name || app?.user_info?.username || 'Unknown Creator';
   const iconUrl = app?.iconUrl || app?.icon_url;
-  const coverImageUrl = app?.coverImageUrl || app?.cover_image_url;
   const iosLink = app?.iosLink || app?.ios_link;
   const androidLink = app?.androidLink || app?.android_link;
   const testingInstruction = app?.testingInstruction || app?.testing_instruction;
