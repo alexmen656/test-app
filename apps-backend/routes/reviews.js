@@ -1,10 +1,14 @@
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const Joi = require('joi');
+const jwt = require('jsonwebtoken');
 const db = require('../database');
 const { awardCoins } = require('./coins');
 
 const router = express.Router();
+
+// JWT Secret (same as in testPosts.js and auth.js)
+const JWT_SECRET = process.env.JWT_SECRET || 'betabay-secret-key-2024';
 
 // Validation schema for reviews
 const reviewSchema = Joi.object({
@@ -13,62 +17,53 @@ const reviewSchema = Joi.object({
   comment: Joi.string().max(1000).allow('').optional()
 });
 
-// Middleware to authenticate user
+// Middleware to authenticate user via JWT
 const authenticateUser = async (req, res, next) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
     
-    if (token) {
-      const userData = JSON.parse(Buffer.from(token, 'base64').toString());
-      
-      if (userData.exp && userData.exp < Date.now()) {
-        return res.status(401).json({ error: 'Token expired' });
-      }
-      
-      let user;
-      
-      if (db.findOne) {
-        // MongoDB approach
-        user = await db.findOne('users', { id: userData.id });
-      } else {
-        // SQLite approach
-        await db.initialize();
-        user = await db.get('SELECT * FROM users WHERE id = ?', [userData.id]);
-      }
-      
-      if (!user) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-      
-      req.user = user;
-      return next();
+    if (!token) {
+      return res.status(401).json({ error: 'Authentication token required' });
     }
     
-    if (req.session.user) {
-      let user;
-      
-      if (db.findOne) {
-        // MongoDB approach
-        user = await db.findOne('users', { id: req.session.user.id });
-      } else {
-        // SQLite approach
-        await db.initialize();
-        user = await db.get('SELECT * FROM users WHERE id = ?', [req.session.user.id]);
-      }
-      
-      if (!user) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-      
-      req.user = user;
-      return next();
+    // Verify JWT token
+    let decoded;
+    try {
+      decoded = jwt.verify(token, JWT_SECRET);
+    } catch (jwtError) {
+      return res.status(401).json({ error: 'Invalid or expired token' });
     }
     
-    return res.status(401).json({ error: 'Authentication required' });
+    // Extract Slack user info from JWT payload
+    const { slack_user_id } = decoded;
+    
+    if (!slack_user_id) {
+      return res.status(401).json({ error: 'Invalid token: missing slack_user_id' });
+    }
+    
+    // Find user based on Slack ID
+    let user;
+    
+    if (db.findOne) {
+      // MongoDB approach
+      user = await db.findOne('users', { slack_user_id: slack_user_id });
+    } else {
+      // SQLite approach
+      await db.initialize();
+      user = await db.get('SELECT * FROM users WHERE slack_user_id = ?', [slack_user_id]);
+    }
+    
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    
+    req.user = user;
+    req.slack_user_id = slack_user_id;
+    return next();
     
   } catch (error) {
     console.error('❌ Authentication error:', error);
-    return res.status(401).json({ error: 'Invalid authentication' });
+    return res.status(401).json({ error: 'Authentication failed' });
   }
 };
 

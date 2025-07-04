@@ -23,7 +23,7 @@ const testApps = [
     user_info: {
       username: "taskmaster_dev",
       profile_image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face",
-      user_id: "user_taskmaster_001"
+      slack_user_id: "U01TASKMASTER123"
     }
   },
   {
@@ -46,7 +46,7 @@ const testApps = [
     user_info: {
       username: "fitness_innovate",
       profile_image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
-      user_id: "user_fitness_002"
+      slack_user_id: "U02FITNESS456"
     }
   },
   {
@@ -69,7 +69,7 @@ const testApps = [
     user_info: {
       username: "edutech_labs",
       profile_image: "https://images.unsplash.com/photo-1494790108755-2616b25a4b7a?w=150&h=150&fit=crop&crop=face",
-      user_id: "user_edu_003"
+      slack_user_id: "U04EDU012345"
     }
   },
   {
@@ -92,7 +92,7 @@ const testApps = [
     user_info: {
       username: "creative_studio",
       profile_image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
-      user_id: "user_creative_004"
+      slack_user_id: "U03CREATIVE789"
     }
   },
   {
@@ -115,7 +115,7 @@ const testApps = [
     user_info: {
       username: "zen_developers",
       profile_image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face",
-      user_id: "user_zen_005"
+      slack_user_id: "U05ZEN678901"
     }
   },
   {
@@ -138,7 +138,7 @@ const testApps = [
     user_info: {
       username: "culinary_tech",
       profile_image: "https://images.unsplash.com/photo-1564564321837-a57b7070ac4f?w=150&h=150&fit=crop&crop=face",
-      user_id: "user_culinary_006"
+      slack_user_id: "U06CULINARY234"
     }
   }
 ];
@@ -149,24 +149,42 @@ async function addTestApps() {
     
     for (const app of testApps) {
       const testPostId = uuidv4();
-      const userId = app.user_info.user_id;
+      const slackUserId = app.user_info.slack_user_id;
+      let userId = uuidv4(); // Generate a unique user ID
       
       // First, ensure user exists
-      const existingUser = await db.findOne('users', { id: userId });
+      const existingUser = await db.findOne('users', { slack_user_id: slackUserId });
       if (!existingUser) {
-        await db.insert('users', {
-          id: userId,
-          slack_user_id: `slack_${userId}`, // Required field
-          username: app.user_info.username,
-          display_name: app.user_info.username,
-          email: `${app.user_info.username}@example.com`,
-          avatar_url: app.user_info.profile_image,
-          owned_coins: 100,
-          created_at: new Date(),
-          updated_at: new Date(),
-          is_active: true
-        });
-        console.log(`✅ Created user: ${app.user_info.username}`);
+        try {
+          await db.insert('users', {
+            id: userId,
+            slack_user_id: slackUserId,
+            username: app.user_info.username,
+            display_name: app.user_info.username,
+            email: `${app.user_info.username}@slack.local`,
+            avatar_url: app.user_info.profile_image,
+            owned_coins: 100,
+            created_at: new Date(),
+            updated_at: new Date(),
+            is_active: true
+          });
+          console.log(`✅ Created user: ${app.user_info.username} (Slack: ${slackUserId})`);
+        } catch (userError) {
+          if (userError.code === 11000) {
+            // Duplicate key error - user might already exist with different slack_user_id
+            console.log(`⚠️ User ${app.user_info.username} already exists, using existing user`);
+            const existingByUsername = await db.findOne('users', { username: app.user_info.username });
+            if (existingByUsername) {
+              userId = existingByUsername.id;
+            }
+          } else {
+            throw userError;
+          }
+        }
+      } else {
+        // Use existing user's ID
+        userId = existingUser.id;
+        console.log(`✅ Using existing user: ${app.user_info.username} (Slack: ${slackUserId})`);
       }
       
       // Create the test post
@@ -193,7 +211,7 @@ async function addTestApps() {
         updated_at: new Date()
       });
       
-      console.log(`✅ Created test post: ${app.app_name} (ID: ${testPostId})`);
+      console.log(`✅ Created test post: ${app.app_name} (ID: ${testPostId}) for Slack user: ${slackUserId}`);
     }
     
     console.log('🎉 Successfully added all test apps!');
