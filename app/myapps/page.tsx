@@ -36,17 +36,55 @@ export default function App() {
         username: 'Username',
         profileImage: ''
     });
+    const [coinBalance, setCoinBalance] = useState<number>(0);
+    const [coinLoading, setCoinLoading] = useState(true);
 
     // Fetch user profile data
     useEffect(() => {
         // Get user data from localStorage (set during login/authentication)
         const username = localStorage.getItem('betabay_username') || 'Username';
         const profileImage = localStorage.getItem('betabay_profile_image') || '';
-        
+
         setUserProfile({
             username,
             profileImage
         });
+    }, []);
+
+    // Fetch user's coin balance
+    useEffect(() => {
+        async function fetchCoinBalance() {
+            try {
+                setCoinLoading(true);
+                const backendUrl = getBackendUrl();
+                const token = localStorage.getItem('betabay_token');
+
+                if (!token) {
+                    setCoinLoading(false);
+                    return;
+                }
+
+                const response = await fetch(`${backendUrl}/api/coins/balance`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setCoinBalance(data.balance || 0);
+                } else {
+                    console.log('Failed to fetch coin balance:', response.status);
+                }
+            } catch (error) {
+                console.error('Error fetching coin balance:', error);
+            } finally {
+                setCoinLoading(false);
+            }
+        }
+
+        fetchCoinBalance();
     }, []);
 
     // Fetch apps from the backend
@@ -55,27 +93,27 @@ export default function App() {
             try {
                 setLoading(true);
                 const backendUrl = getBackendUrl();
-                
+
                 // Optional: Get token from localStorage if it exists
                 const token = localStorage.getItem('betabay_token');
                 const headers: HeadersInit = {};
-                
+
                 if (token) {
                     headers['Authorization'] = `Bearer ${token}`;
                 }
-                
+
                 const response = await fetch(`${backendUrl}/api/test-posts`, {
                     method: 'GET',
                     headers: headers
                 });
-                
+
                 if (!response.ok) {
                     throw new Error(`Error fetching apps: ${response.status}`);
                 }
-                
+
                 const data = await response.json();
                 console.log("API response:", data); // Debugging
-                
+
                 // Überprüfen, ob data ein Array ist oder ein Objekt mit einer Array-Eigenschaft
                 if (Array.isArray(data)) {
                     setApps(data);
@@ -97,7 +135,7 @@ export default function App() {
                     // Keine erkennbare Datenstruktur
                     setApps([]);
                 }
-                
+
                 setError(null);
             } catch (error) {
                 console.error('Failed to fetch apps:', error);
@@ -108,7 +146,7 @@ export default function App() {
                 setLoading(false);
             }
         }
-        
+
         fetchApps();
     }, []);
 
@@ -118,23 +156,35 @@ export default function App() {
             <div className="container mx-auto p-4 sm:p-6 lg:p-8">
 
                 {/* User Profile Section */}
-                <header className="flex items-center mb-8 sm:mb-12">
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-300 rounded-full mr-4 sm:mr-6 overflow-hidden relative">
-                        {userProfile.profileImage ? (
-                            <Image 
-                                src={userProfile.profileImage} 
-                                alt={userProfile.username}
-                                fill
-                                className="object-cover"
-                            />
-                        ) : (
-                            /* Fallback if no image is available */
-                            <div className="w-full h-full flex items-center justify-center bg-blue-500 text-white text-xl font-bold">
-                                {userProfile.username.charAt(0).toUpperCase()}
-                            </div>
-                        )}
+                <header className="flex items-center justify-between mb-8 sm:mb-12">
+                    <div className="flex items-center">
+                        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-300 rounded-full mr-4 sm:mr-6 overflow-hidden relative">
+                            {userProfile.profileImage ? (
+                                <Image
+                                    src={userProfile.profileImage}
+                                    alt={userProfile.username}
+                                    fill
+                                    className="object-cover"
+                                />
+                            ) : (
+                                /* Fallback if no image is available */
+                                <div className="w-full h-full flex items-center justify-center bg-blue-500 text-white text-xl font-bold">
+                                    {userProfile.username.charAt(0).toUpperCase()}
+                                </div>
+                            )}
+                        </div>
+                        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">{userProfile.username}</h1>
                     </div>
-                    <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">{userProfile.username}</h1>
+
+                    {/* Coin Balance Display */}
+                    <div className="flex items-center bg-white border-2 border-yellow-400 text-gray-800 px-4 py-2 rounded-full transition-shadow">
+                        <span className="w-7 h-7 mr-2 flex items-center justify-center rounded-full bg-yellow-400 text-white font-bold text-lg">
+                            h
+                        </span>
+                        <span className="font-bold text-lg text-gray-900">
+                            {coinLoading ? '...' : coinBalance.toLocaleString()}
+                        </span>
+                    </div>
                 </header>
 
                 {/* Apps Section */}

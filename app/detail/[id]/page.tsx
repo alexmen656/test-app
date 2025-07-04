@@ -16,6 +16,8 @@ const AppDetailPage: FC = () => {
     const [appData, setAppData] = useState<App | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [coinBalance, setCoinBalance] = useState<number>(0);
+    const [coinLoading, setCoinLoading] = useState(true);
 
     const currentUserId = 'a135d7e0-3d80-4ed1-b80c-a2fc1444308f';
     const isCreator = appData?.creator?.id === currentUserId;
@@ -62,12 +64,48 @@ const AppDetailPage: FC = () => {
         fetchAppData();
     }, [id]);
 
+    // Fetch user's coin balance
+    useEffect(() => {
+        async function fetchCoinBalance() {
+            try {
+                setCoinLoading(true);
+                const backendUrl = getBackendUrl();
+                const token = localStorage.getItem('betabay_token');
+
+                if (!token) {
+                    setCoinLoading(false);
+                    return;
+                }
+
+                const response = await fetch(`${backendUrl}/api/coins/balance`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setCoinBalance(data.balance || 0);
+                } else {
+                    console.log('Failed to fetch coin balance:', response.status);
+                }
+            } catch (error) {
+                console.error('Error fetching coin balance:', error);
+            } finally {
+                setCoinLoading(false);
+            }
+        }
+
+        fetchCoinBalance();
+    }, []);
+
     return (
         <div className="h-screen overflow-y-auto flex-1 bg-gray-50 text-gray-800 animate-fade-in">
             {/* Back button */}
             <button
                 onClick={() => {
-                    if(isCreator) {
+                    if (isCreator) {
                         router.push('/myapps');
                     } else {
                         router.push('/');
@@ -88,7 +126,7 @@ const AppDetailPage: FC = () => {
                 <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md m-10">
                     <p className="font-medium">Error</p>
                     <p>{error}</p>
-                    <button 
+                    <button
                         onClick={() => router.push('/explore')}
                         className="mt-2 px-4 py-2 bg-red-100 text-red-800 rounded-md hover:bg-red-200"
                     >
@@ -144,18 +182,13 @@ const AppDetailPage: FC = () => {
                                         <MessageSquare size={16} /> Message
                                     </button>
                                 )}
-                                <div className="flex items-center gap-2 rounded-md bg-green-100 px-4 py-2">
-                                    <span className="font-bold text-green-700">
-                                        {typeof appData.price === 'number' ? `$${appData.price}` : 
-                                         typeof appData.test_price === 'number' ? `$${appData.test_price}` : 
-                                         appData.price || appData.test_price || 'Free'}
+                                <div className="flex items-center bg-white border-2 border-yellow-400 text-gray-800 px-4 py-2 rounded-full transition-shadow">
+                                    <span className="w-7 h-7 mr-2 flex items-center justify-center rounded-full bg-yellow-400 text-white font-bold text-lg">
+                                        h
                                     </span>
-                                    {appData.coins && (
-                                        <div className="flex items-center gap-1 text-yellow-600">
-                                            <Gem size={16} />
-                                            <span className="font-semibold">{appData.coins}</span>
-                                        </div>
-                                    )}
+                                    <span className="font-bold text-lg text-gray-900">
+                                        {coinLoading ? '...' : coinBalance.toLocaleString()}
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -211,26 +244,26 @@ const AppDetailPage: FC = () => {
                                 )}
                             </div>
 
-                    {/* Right Sidebar */}
-                    <aside>
-                        {/* Join Test */}
-                        <section className="rounded-lg border border-gray-200 bg-white p-4">
-                            <h3 className="font-bold mb-3">
-                                {isCreator ? 'Manage App' : 'Join Test'}
-                            </h3>
-                            {isCreator ? (
-                                <button 
-                                    onClick={() => router.push(`/myapps/edit/${appData.id}`)}
-                                    className="block w-full text-center rounded-md bg-green-600 py-2.5 font-semibold text-white transition-colors hover:bg-green-700"
-                                >
-                                    Edit Profile
-                                </button>
-                            ) : (
-                                <a href={`/test-instruction/${appData.id}`} className="block w-full text-center rounded-md bg-blue-600 py-2.5 font-semibold text-white transition-colors hover:bg-blue-700">
-                                    Join
-                                </a>
-                            )}
-                        </section>
+                            {/* Right Sidebar */}
+                            <aside>
+                                {/* Join Test */}
+                                <section className="rounded-lg border border-gray-200 bg-white p-4">
+                                    <h3 className="font-bold mb-3">
+                                        {isCreator ? 'Manage App' : 'Join Test'}
+                                    </h3>
+                                    {isCreator ? (
+                                        <button
+                                            onClick={() => router.push(`/myapps/edit/${appData.id}`)}
+                                            className="block w-full text-center rounded-md bg-green-600 py-2.5 font-semibold text-white transition-colors hover:bg-green-700"
+                                        >
+                                            Edit Profile
+                                        </button>
+                                    ) : (
+                                        <a href={`/test-instruction/${appData.id}`} className="block w-full text-center rounded-md bg-blue-600 py-2.5 font-semibold text-white transition-colors hover:bg-blue-700">
+                                            Join
+                                        </a>
+                                    )}
+                                </section>
 
                                 {/* Joined Testers */}
                                 {appData.joinedTesters && appData.joinedTesters.length > 0 && (
