@@ -4,7 +4,7 @@ class BetaBayApp {
         this.apps = [];
         this.authToken = null;
         // API Base URL - change this to your deployed backend URL
-        this.apiBaseUrl = 'https://betabay.vercel.app';
+        this.apiBaseUrl = 'https://betbay-backend.vercel.app';//'https://betabay.vercel.app';
         this.init();
     }
 

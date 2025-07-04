@@ -29,7 +29,7 @@ app.use(helmet({
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       imgSrc: ["'self'", "data:", "https:", "blob:"],
       scriptSrc: ["'self'"],
-      connectSrc: ["'self'", "https://slack.com", "https://betabay.vercel.app"],
+      connectSrc: ["'self'", "https://slack.com", "https://betabay.vercel.app", "https://betbay-backend.vercel.app"],
     },
   },
 }));
@@ -41,6 +41,7 @@ app.use(cors({
     'http://localhost:3001', 
     'http://localhost:5173',
     'https://betabay.vercel.app',
+    'https://betbay-backend.vercel.app',
     'https://betabay-apps.vercel.app'
   ],
   credentials: true,
