@@ -1,385 +1,299 @@
 'use client';
 
-import { FC, useState, useEffect } from 'react';
+import { FC, use, useState, useEffect } from 'react';
+import { allApps } from '@/public/MockData';
+import Link from 'next/link';
 import Image from 'next/image';
 import { App } from '@/types';
-import { useParams } from 'next/navigation';
 import { getBackendUrl } from '@/lib/api';
 
-// Since this component doesn't currently need props, we can remove the interface
-// and use React.FC directly
+interface TestInstructionPageProps {
+  params: Promise<{ id: string }>;
+}
 
-const TestInstructionPage: FC = () => {
-  const [reviews, setReviews] = useState<{ name: string; text: string; rating: string }[]>([]);
+const TestInstructionPage: FC<TestInstructionPageProps> = ({ params }) => {
+  const resolvedParams = use(params);
+  const appId = resolvedParams.id;
   const [app, setApp] = useState<App | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
-  const { id } = useParams() as { id: string };
-  
-  // Fetch app data from backend
+
+  // Try to fetch app data from backend first, fallback to mock data
   useEffect(() => {
     const fetchAppData = async () => {
       setLoading(true);
       setError(null);
-      
+
       try {
+        // First try to parse as numeric ID for mock data
+        const numericId = parseInt(appId);
+        if (!isNaN(numericId)) {
+          const mockApp = allApps.find(a => a.id === numericId);
+          if (mockApp) {
+            setApp(mockApp);
+            setLoading(false);
+            return;
+          }
+        }
+
+        // If not found in mock data or not numeric, try backend API
         const backendUrl = getBackendUrl();
-        
-        // Get token from localStorage
         const token = localStorage.getItem('betabay_token');
         const headers: HeadersInit = {};
-        
+
         if (token) {
           headers['Authorization'] = `Bearer ${token}`;
         }
-        
-        // Fetch data from backend using the ID directly (no parsing needed)
-        const response = await fetch(`${backendUrl}/api/test-posts/${id}`, {
-          method: 'GET',
-          headers: headers
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Failed to fetch app data: ${response.status}`);
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
+        try {
+          const response = await fetch(`${backendUrl}/api/test-posts/${appId}`, {
+            method: 'GET',
+            headers: headers,
+            signal: controller.signal
+          });
+
+          clearTimeout(timeoutId);
+
+          if (!response.ok) {
+            throw new Error(`Failed to fetch app data: ${response.status}`);
+          }
+
+          const data = await response.json();
+          setApp(data);
+          setLoading(false);
+        } catch (fetchError) {
+          clearTimeout(timeoutId);
+          throw fetchError;
         }
-        
-        const data = await response.json();
-        console.log('Fetched app data for test instructions:', data);
-        
-        setApp(data);
       } catch (err) {
         console.error('Error fetching app data:', err);
-        setError('Failed to load app data. Please try again.');
-      } finally {
+        setError('Failed to load app data');
         setLoading(false);
       }
     };
-    
-    if (id) {
-      fetchAppData();
-    }
-  }, [id]);
-  
-  // If loading, show loading state
+
+    fetchAppData();
+  }, [appId]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-xl text-gray-600">Loading app data...</p>
         </div>
       </div>
     );
   }
-  
-  // If error, show error state
+
   if (error || !app) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-4xl font-light text-gray-900 mb-4">App Not Found</h1>
-          <p className="text-xl text-gray-600">{error || "The requested app does not exist."}</p>
+          <p className="text-xl text-gray-600">{error || 'The requested app does not exist.'}</p>
+          <Link 
+            href="/"
+            className="mt-6 inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Go Back Home
+          </Link>
+        </div>
+      </div>
+    );
+  }
+  
+  // If app not found, show error
+  if (!app) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-light text-gray-900 mb-4">App Not Found</h1>
+          <p className="text-xl text-gray-600">The requested app does not exist.</p>
         </div>
       </div>
     );
   }
 
-  // Use the real app data from API
-  const appName = app?.name || app?.app_name || 'Unnamed App';
-  const creatorName = app?.creator?.name || app?.user_info?.username || 'Unknown Creator';
-  const iconUrl = app?.iconUrl || app?.icon_url;
-  const iosLink = app?.iosLink || app?.ios_link;
-  const androidLink = app?.androidLink || app?.android_link;
-  const testingInstruction = app?.testingInstruction || app?.testing_instruction;
-  const description = app?.description;
-  
-  const handleAppleClick = () => {
-    if (iosLink) {
-      window.open(iosLink, '_blank');
-    } else {
-      alert('iOS testing link is not available for this app.');
-    }
-  };
-
-  const handleGoogleClick = () => {
-    if (androidLink) {
-      window.open(androidLink, '_blank');
-    } else {
-      alert('Android testing link is not available for this app.');
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-6 py-16">
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100">
+      <div className="max-w-5xl mx-auto px-6 py-20">
         {/* Header Section */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-light text-gray-900 mb-4 tracking-tight">Beta Testing</h1>
-          <p className="text-xl text-gray-600 font-light">{description || `Test ${appName}`}</p>
+        <div className="text-center mb-20">
+          <h1 className="text-6xl font-extralight text-gray-900 mb-6 tracking-tight">Beta Testing</h1>
+          <p className="text-2xl text-gray-500 font-light max-w-3xl mx-auto leading-relaxed">
+            Join the exclusive beta program and help shape the future of innovative apps
+          </p>
         </div>
         
         {/* App Hero Card */}
-        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden mb-12">
-          <div className="px-8 py-10">
-            <div className="flex items-center gap-6 mb-8">
-              <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-md relative bg-gray-100">
-                {iconUrl ? (
-                  <Image 
-                    src={iconUrl} 
-                    alt={`${appName} icon`}
-                    fill
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-400 to-purple-500">
-                    <span className="text-white text-lg font-semibold">
-                      {appName.charAt(0).toUpperCase()}
-                    </span>
-                  </div>
-                )}
+        <div className="bg-white/80 backdrop-blur-sm rounded-[40px] shadow-xl border border-white/50 overflow-hidden mb-16">
+          <div className="px-12 py-16">
+            <div className="flex items-center gap-10 mb-12">
+              <div className="w-36 h-36 rounded-[24px] overflow-hidden shadow-lg ring-4 ring-white/30">
+                <Image 
+                  src={app.iconUrl || app.icon_url || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiBmaWxsPSIjNEE5MEUyIi8+Cjx0ZXh0IHg9Ijc1IiB5PSI4NSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+QXBwPC90ZXh0Pgo8L3N2Zz4K'} 
+                  alt={app.name || app.app_name || 'App Icon'}
+                  width={144}
+                  height={144}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div>
-                <h2 className="text-2xl font-semibold text-gray-900 mb-1">{appName}</h2>
-                <p className="text-lg text-gray-600 mb-1">by {creatorName}</p>
-                <div className="flex items-center gap-4 text-sm text-gray-500">
-                  <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full font-medium">Beta</span>
-                  {app?.test_price && (
-                    <span className="px-3 py-1 bg-green-50 text-green-600 rounded-full font-medium">
-                      ${app.test_price} reward
-                    </span>
-                  )}
+                <h2 className="text-4xl font-bold text-gray-900 mb-3">{app.name || app.app_name || 'Unknown App'}</h2>
+                <p className="text-xl text-gray-600 mb-4">by {app.creator?.name || app.user_info?.username || 'Unknown Creator'}</p>
+                <div className="flex items-center gap-4 text-sm">
+                  <span className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold shadow-lg">
+                    Beta
+                  </span>
                 </div>
               </div>
             </div>
             
-            {/* Instructions Card */}
-            <div className="bg-gray-50 rounded-2xl p-8">
-              <div className="grid md:grid-cols-3 gap-8">
-                <div className="md:col-span-2">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Testing Instructions</h3>
-                  <div className="text-gray-700 leading-relaxed space-y-4">
-                    <p>Welcome to the beta testing program for {appName}!</p>
-                    
-                    {testingInstruction ? (
-                      <div className="bg-white p-4 rounded-lg border-l-4 border-blue-500">
-                        <p className="font-medium mb-2">Specific Instructions:</p>
-                        <p className="text-gray-600 whitespace-pre-wrap">{testingInstruction}</p>
-                      </div>
-                    ) : (
-                      <div>
-                        <p className="font-medium mb-2">General Testing Guidelines:</p>
-                        <ul className="space-y-1 text-gray-600">
-                          <li>• Test all major features and functionality</li>
-                          <li>• Report any bugs or crashes you encounter</li>
-                          <li>• Provide feedback on user experience</li>
-                          <li>• Check app performance and loading times</li>
-                        </ul>
-                      </div>
-                    )}
+            {/* App Description */}
+            <div className="bg-gradient-to-r from-blue-100 to-purple-100 rounded-[28px] p-10">
+              <h3 className="text-2xl font-semibold text-gray-900 mb-6">About This Beta</h3>
+              <div className="grid md:grid-cols-2 gap-10">
+                <div>
+                  <p className="text-gray-700 leading-relaxed text-lg mb-6">
+                    Welcome to an exclusive beta testing experience! You&apos;re about to explore cutting-edge features 
+                    before they reach the public. Your feedback will directly influence the final product.
+                  </p>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 rounded-full bg-blue-600"></div>
+                      <span className="text-gray-700 font-medium">Early access to premium features</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 rounded-full bg-green-600"></div>
+                      <span className="text-gray-700 font-medium">Direct line to development team</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 rounded-full bg-red-600"></div>
+                      <span className="text-gray-700 font-medium">Shape the final product</span>
+                    </div>
                   </div>
                 </div>
                 
-                <div className="space-y-6">
+                <div className="space-y-8">
                   <div>
-                    <p className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-1">Reward</p>
-                    <p className="text-2xl font-light text-gray-900">
-                      {app?.test_price ? `$${app.test_price}` : 'Free'}
-                    </p>
+                    <p className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-2">Testing Duration</p>
+                    <p className="text-3xl font-light text-gray-900">2-3 Weeks</p>
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-1">App Type</p>
-                    <div className="space-y-1">
-                      {iosLink && (
-                        <span className="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full mr-2">
-                          iOS
-                        </span>
-                      )}
-                      {androidLink && (
-                        <span className="inline-block px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
-                          Android
-                        </span>
-                      )}
-                    </div>
+                    <p className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-2">Commitment Level</p>
+                    <p className="text-lg text-gray-600">Moderate - Test when convenient</p>
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-gray-900 uppercase tracking-wide mb-1">Focus</p>
-                    <p className="text-sm text-gray-600 leading-relaxed">
-                      Please focus on overall usability, feature functionality, and report any bugs or issues you encounter.
-                    </p>
+                    <p className="text-sm font-bold text-gray-900 uppercase tracking-wide mb-2">Reward</p>
+                    <p className="text-lg text-gray-600">Free premium access & credits</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        
-        {/* Download Section */}
-        <div className="text-center mb-16">
-          <h3 className="text-2xl font-light text-gray-900 mb-8">Download</h3>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-2xl mx-auto">
-            {iosLink && (
-              <button 
-                onClick={handleAppleClick}
-                className="bg-black hover:bg-gray-800 text-white font-medium py-4 px-8 rounded-2xl transition-all duration-200 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl"
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
-                </svg>
-                <span>Join the beta for iOS</span>
-              </button>
-            )}
-            {androidLink && (
-              <button 
-                onClick={handleGoogleClick}
-                className="bg-white hover:bg-gray-50 text-gray-900 font-medium py-4 px-8 rounded-2xl transition-all duration-200 flex items-center justify-center gap-3 border border-gray-200 shadow-lg hover:shadow-xl"
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                </svg>
-                <span>Join the beta for Android</span>
-              </button>
-            )}
-            {!iosLink && !androidLink && (
-              <div className="text-center py-8">
-                <p className="text-gray-500 text-lg">No download links are currently available for this app.</p>
-                <p className="text-gray-400 text-sm mt-2">Please contact the app developer for testing access.</p>
+
+        {/* Process Steps */}
+        <div className="mb-16">
+          <h3 className="text-4xl font-light text-gray-900 mb-12 text-center">Testing Process</h3>
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Step 1 */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-[32px] p-8 border border-white/50 shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-[16px] flex items-center justify-center mb-6 mx-auto">
+                <span className="text-2xl font-bold text-white">1</span>
               </div>
-            )}
-          </div>
-        </div>
-        
-        {/* Important Notes */}
-        <div className="bg-blue-50 border border-blue-100 rounded-3xl p-8">
-          <div className="flex items-start gap-4">
-            <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0 mt-1">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-              </svg>
+              <h4 className="text-xl font-semibold text-gray-900 mb-4 text-center">Download & Setup</h4>
+              <p className="text-gray-600 text-center leading-relaxed">
+                Get the beta version and follow our comprehensive setup guidelines for the best testing experience.
+              </p>
             </div>
-            <div>
-              <h3 className="text-lg font-semibold text-blue-900 mb-3">Testing Guidelines</h3>
-              <ul className="text-blue-800 space-y-2 leading-relaxed">
-                <li>This is a pre-release version with potential bugs and incomplete features</li>
-                <li>Focus on general usability and report any issues you encounter</li>
-                <li>Report crashes or major issues immediately through the feedback channels</li>
-                <li>Your feedback will help improve the final release version</li>
-                {app?.test_price && (
-                  <li>Complete testing to receive your ${app.test_price} reward</li>
-                )}
-              </ul>
+
+            {/* Step 2 */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-[32px] p-8 border border-white/50 shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="w-16 h-16 bg-gradient-to-r from-green-600 to-blue-600 rounded-[16px] flex items-center justify-center mb-6 mx-auto">
+                <span className="text-2xl font-bold text-white">2</span>
+              </div>
+              <h4 className="text-xl font-semibold text-gray-900 mb-4 text-center">Explore & Test</h4>
+              <p className="text-gray-600 text-center leading-relaxed">
+                Use the app naturally while focusing on key features. Note any bugs, crashes, or improvement areas.
+              </p>
+            </div>
+
+            {/* Step 3 */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-[32px] p-8 border border-white/50 shadow-lg hover:shadow-xl transition-all duration-300">
+              <div className="w-16 h-16 bg-gradient-to-r from-red-600 to-yellow-600 rounded-[16px] flex items-center justify-center mb-6 mx-auto">
+                <span className="text-2xl font-bold text-white">3</span>
+              </div>
+              <h4 className="text-xl font-semibold text-gray-900 mb-4 text-center">Share Feedback</h4>
+              <p className="text-gray-600 text-center leading-relaxed">
+                Submit detailed reviews and suggestions that will help make the final product even better.
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Submit Review Section */}
-        <div className="mt-16">
-          <h3 className="text-2xl font-light text-gray-900 mb-8 text-center">Submit Your Review</h3>
-          <form
-            className="max-w-2xl mx-auto bg-white rounded-3xl shadow-sm border border-gray-100 p-8 space-y-6"
-            onSubmit={(e) => {
-              e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              const newReview = {
-          name: formData.get('reviewerName') as string,
-          text: formData.get('reviewText') as string,
-          rating: formData.get('rating') as string,
-              };
-              console.log('Review submitted:', newReview);
-              setReviews((prevReviews) => [...prevReviews, newReview]);
-              e.currentTarget.reset();
-            }}
+        {/* Action Buttons */}
+        <div className="flex flex-col lg:flex-row gap-6 justify-center max-w-4xl mx-auto">
+          <Link
+            href={`/test-instruction/${appId}/download-guidelines`}
+            className="group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-6 px-10 rounded-[20px] transition-all duration-300 flex items-center justify-center gap-4 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
           >
-            <div>
-              <label htmlFor="reviewerName" className="block text-sm font-medium text-gray-700 mb-2">
-          Your Name
-              </label>
-              <input
-          type="text"
-          id="reviewerName"
-          name="reviewerName"
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-          placeholder="Enter your name"
-          required
-              />
-            </div>
-            <div>
-              <label htmlFor="reviewText" className="block text-sm font-medium text-gray-700 mb-2">
-          Your Review
-              </label>
-              <textarea
-          id="reviewText"
-          name="reviewText"
-          rows={4}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-          placeholder="Share your feedback about the app"
-          required
-              ></textarea>
-            </div>
-            <div>
-              <label htmlFor="rating" className="block text-sm font-medium text-gray-700 mb-2">
-          Rating
-              </label>
-              <select
-          id="rating"
-          name="rating"
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-          required
-              >
-          <option value="">Select a rating</option>
-          <option value="5">5 - Excellent</option>
-          <option value="4">4 - Good</option>
-          <option value="3">3 - Average</option>
-          <option value="2">2 - Poor</option>
-          <option value="1">1 - Terrible</option>
-              </select>
-            </div>
-            <div className="text-center">
-              <button
-          type="submit"
-          className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg shadow-md transition-all duration-200"
-              >
-          Submit Review
-              </button>
-            </div>
-          </form>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="group-hover:scale-110 transition-transform duration-300">
+              <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+            </svg>
+            <span className="text-lg">Download & Guidelines</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="group-hover:translate-x-1 transition-transform duration-300">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </Link>
 
-          {/* Review History Section */}
-          <div className="mt-16">
-            <h3 className="text-2xl font-light text-gray-900 mb-8 text-center">Review History</h3>
-            <div className="max-w-2xl mx-auto bg-white rounded-3xl shadow-sm border border-gray-100 p-8 space-y-6">
-              {reviews.length > 0 ? (
-          reviews.map((review, index) => (
-            <div key={index} className="border-b border-gray-200 pb-4 mb-4">
-              <p className="text-lg font-medium text-gray-900">{review.name}</p>
-              <p className="text-sm text-gray-600">{review.text}</p>
-              <p className="text-sm text-yellow-500">Rating: {review.rating} / 5</p>
-            </div>
-          ))
-              ) : (
-          <p className="text-center text-gray-600">No reviews submitted yet.</p>
-              )}
-            </div>
-          </div>
+          <Link
+            href={`/test-instruction/${appId}/review-maker`}
+            className="group bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold py-6 px-10 rounded-[20px] transition-all duration-300 flex items-center justify-center gap-4 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="group-hover:scale-110 transition-transform duration-300">
+              <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+            </svg>
+            <span className="text-lg">Submit Reviews</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="group-hover:translate-x-1 transition-transform duration-300">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </Link>
+        </div>
 
-          <div className="text-center mt-8">
-            <button
-              className="bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-6 rounded-lg shadow-md transition-all duration-200"
-              onClick={() => {
-                if (window.confirm('Are you sure you want to finish your reviews?')) {
-                  setReviews([]); // Clear reviews if needed
-                  window.location.href = '/joined';
-                  console.log('Thank you for completing your reviews!');
-                  //Delete the app from joined testing
-                  //send in-app notification to app developer
-              }
-              }}
-            >
-              Finish Reviews
-            </button>
+        {/* Additional Info */}
+        <div className="mt-16 text-center">
+          <div className="bg-gradient-to-r from-yellow-100 to-orange-100 border border-yellow-200 rounded-[32px] p-10 max-w-3xl mx-auto">
+            <div className="flex items-center justify-center gap-3 mb-6">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-yellow-300 to-yellow-500 flex items-center justify-center shadow-lg">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+              </div>
+              <h3 className="text-2xl font-semibold text-yellow-900">Beta Tester Benefits</h3>
+            </div>
+            <div className="grid md:grid-cols-2 gap-6 text-yellow-800">
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-yellow-600"></div>
+                <span>Lifetime premium access</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-yellow-600"></div>
+                <span>Exclusive beta tester badge</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-yellow-600"></div>
+                <span>Early access to future betas</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-yellow-600"></div>
+                <span>Direct developer communication</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
