@@ -81,7 +81,7 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-green-100 to-blue-100 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-xl text-gray-600">Loading app data...</p>
@@ -92,7 +92,7 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
 
   if (error || !app) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-green-100 to-blue-100 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-4xl font-light text-gray-900 mb-4">App Not Found</h1>
           <p className="text-xl text-gray-600">{error || 'The requested app does not exist.'}</p>
@@ -107,19 +107,6 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
     );
   }
 
-
-  // If app not found, show error
-  if (!app) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-light text-gray-900 mb-4">App Not Found</h1>
-          <p className="text-xl text-gray-600">The requested app does not exist.</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-100 to-blue-100">
       <div className="max-w-4xl mx-auto px-6 py-20">
@@ -127,7 +114,7 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
         <div className="text-center mb-20">
           <h1 className="text-6xl font-extralight text-gray-900 mb-6 tracking-tight">Review Maker</h1>
           <p className="text-2xl text-gray-500 font-light max-w-2xl mx-auto leading-relaxed">
-            Share your valuable feedback about {app.name} and help shape its future
+            Share your valuable feedback about {app.name || app.app_name || 'this app'} and help shape its future
           </p>
         </div>
 
@@ -137,16 +124,16 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
             <div className="flex items-center gap-8">
               <div className="w-24 h-24 rounded-[18px] overflow-hidden shadow-lg ring-4 ring-white/30">
                 <Image
-                  src={app.iconUrl ?? '/default-app-icon.png'}
-                  alt={app.name ?? 'App icon'}
+                  src={app.iconUrl || app.icon_url || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTUwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDE1MCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxNTAiIGhlaWdodD0iMTUwIiBmaWxsPSIjNEE5MEUyIi8+Cjx0ZXh0IHg9Ijc1IiB5PSI4NSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+QXBwPC90ZXh0Pgo8L3N2Zz4K'}
+                  alt={app.name || app.app_name || 'App icon'}
                   width={96}
                   height={96}
                   className="w-full h-full object-cover"
                 />
               </div>
               <div>
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">{app.name}</h2>
-                <p className="text-xl text-gray-600 mb-4">by {app.creator?.name}</p>
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">{app.name || app.app_name || 'Unknown App'}</h2>
+                <p className="text-xl text-gray-600 mb-4">by {app.creator?.name || app.user_info?.username || 'Unknown Creator'}</p>
                 <div className="flex items-center gap-4 text-sm">
                   <span className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full font-semibold shadow-lg">
                     Beta
