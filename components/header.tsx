@@ -3,9 +3,10 @@
 import Link from 'next/link'
 import React, { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
-import { MdNotificationsNone } from "react-icons/md"
+import { MdNotificationsNone, MdMenu } from "react-icons/md"
 import { useAuth } from '@/hooks/useAuth'
 import { initialNotifications } from '@/public/MockData'
+import Sidebar from './SideBar' // Import the SideBar component
 
 const Header = () => {
   const { user, logout, isAuthenticated } = useAuth();
@@ -18,6 +19,11 @@ const Header = () => {
     setShowUserMenu(false);
     window.location.href = '/';
   };
+  const [isOpen, setIsOpen] = useState(false);
+  const toggle = () => {
+    setIsOpen(!isOpen);
+  };
+
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -33,19 +39,30 @@ const Header = () => {
     };
   }, []);
 
+  const [width, setWidth] = useState(0);
+  const updateWidth = () => {
+    const newWidth = window.innerWidth;
+    setWidth(newWidth);
+  };
+  useEffect(() => {
+    window.addEventListener("resize", updateWidth);
+    updateWidth();
+  }, []);
+
   return (
     <div
       ref={headerRef}
-      className='flex bg-white shadow-md items-center h-15 absolute w-full top-0 left-0 pl-2 pr-12 justify-between'
+      className='flex bg-white shadow-md items-center h-15 absolute w-full justify-between px-2'
     >
-      <button className="flex items-center space-x-2" onClick={() => window.location.href = '/'}>
+      <button className="space-x-2" onClick={() => window.location.href = '/'}>
         <Image
           src="/BetaBay-Landscape.jpg"
           alt="Logo"
-          width={100}
-          height={50}
+          width={width < 1024 ? "60" : "120"}
+          height={width < 1024 ? "30" : "60"} className="relative"
         />
       </button>
+      <ul  className="hidden md:flex gap-x-">
       <Link href="/" className="px-4 py-2 hover:underline">
         Explore
       </Link>
@@ -55,6 +72,8 @@ const Header = () => {
       <Link href="/joined" className="px-4 py-2 hover:underline">
         Joined Tests
       </Link>
+      </ul>
+
       <div className="flex max-w-xl items-center space-x-4">
         <div className="relative">
           <button
@@ -128,7 +147,6 @@ const Header = () => {
                 height={30}
                 className="rounded-full"
               />
-              <span className="text-sm font-medium">{user.name}</span>
             </button>
 
             {showUserMenu && (
@@ -148,9 +166,17 @@ const Header = () => {
             )}
           </div>
         ) : (
-          <Link href="/signin" className="px-4 py-2 hover:underline">
+            <Link href="/signin" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
             Sign In
-          </Link>
+            </Link>
+        )
+        }
+        <button type="button" className="inline-flex items-center md:hidden"
+          onClick={toggle}>
+          <MdMenu className="text-2xl" />
+        </button>
+        {isOpen && (
+          <Sidebar /* Pass any necessary props to SideBar component */ toggle={toggle} isOpen={isOpen} />
         )}
       </div>
     </div>
