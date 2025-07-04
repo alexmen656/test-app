@@ -3,5 +3,7 @@
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/myapps/page": "app/myapps/page.js",
   "/page": "app/page.js",
+  "/test-instruction/[id]/download-guidelines/page": "app/test-instruction/[id]/download-guidelines/page.js",
+  "/test-instruction/[id]/join/page": "app/test-instruction/[id]/join/page.js",
   "/test-instruction/[id]/page": "app/test-instruction/[id]/page.js"
 }

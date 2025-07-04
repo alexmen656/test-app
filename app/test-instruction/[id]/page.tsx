@@ -219,9 +219,12 @@ const TestInstructionPage: FC<TestInstructionPageProps> = ({ params }) => {
                   </p>
                 </div>
                 <div className="flex-shrink-0">
-                  <button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-[16px] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                  <Link
+                    href={`/test-instruction/${appId}/join`}
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-[16px] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                  >
                     Join Now
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
