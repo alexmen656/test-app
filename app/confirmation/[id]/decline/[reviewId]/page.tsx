@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter, useParams, useSearchParams } from 'next/navigation';
 
 interface DeclineDetails {
@@ -174,7 +174,7 @@ const ReviewDeclinePage = () => {
                                 <li>• No payment will be processed for this review</li>
                                 <li>• Tester will be notified about the decline reason</li>
                                 <li>• Review is flagged in the system for quality control</li>
-                                <li>• Tester's overall rating may be affected</li>
+                                <li>• Tester&apos;s overall rating may be affected</li>
                                 <li>• Record is kept for future reference and pattern analysis</li>
                             </ul>
                         </div>
@@ -196,7 +196,7 @@ const ReviewDeclinePage = () => {
                                 onClick={handleBackToReviews}
                                 className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors font-medium"
                             >
-                                Back to {declineDetails.testerName}'s Reviews
+                                Back to {declineDetails.testerName}&apos;s Reviews
                             </button>
                             <button
                                 onClick={handleBackToTesters}

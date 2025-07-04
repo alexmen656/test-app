@@ -227,7 +227,7 @@ const TransactionFinalizePage = () => {
                             onClick={handleBackToReviews}
                             className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
                         >
-                            Back to {transaction.testerName}'s Reviews
+                            Back to {transaction.testerName}&apos;s Reviews
                         </button>
                         <button
                             onClick={handleBackToTesters}
