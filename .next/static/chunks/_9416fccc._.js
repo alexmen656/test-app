@@ -202,11 +202,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navi
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$AppCard$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/AppCard.tsx [app-client] (ecmascript)"); // Import the AppCard component
 var __TURBOPACK__imported__module__$5b$project$5d2f$hooks$2f$useAuth$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/hooks/useAuth.ts [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$AppListCard$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/components/AppListCard.tsx [app-client] (ecmascript)");
-(()=>{
-    const e = new Error("Cannot find module '@/public/MockData'");
-    e.code = 'MODULE_NOT_FOUND';
-    throw e;
-})();
+var __TURBOPACK__imported__module__$5b$project$5d2f$public$2f$MockData$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/public/MockData.tsx [app-client] (ecmascript)"); // Import the mock data for apps
 ;
 var _s = __turbopack_context__.k.signature(), _s1 = __turbopack_context__.k.signature();
 'use client'; // This directive is necessary for using hooks like useState
@@ -228,12 +224,12 @@ var _s = __turbopack_context__.k.signature(), _s1 = __turbopack_context__.k.sign
  */ const ExplorePageContent = ({ onSelectApp })=>{
     _s();
     const [searchQuery, setSearchQuery] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
-    const featuredApps = allApps.slice(0, 4);
+    const featuredApps = __TURBOPACK__imported__module__$5b$project$5d2f$public$2f$MockData$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["allApps"].slice(0, 4);
     const filteredApps = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useMemo"])({
         "ExplorePageContent.useMemo[filteredApps]": ()=>{
             const lowercasedQuery = searchQuery.toLowerCase();
-            if (!lowercasedQuery) return allApps;
-            return allApps.filter({
+            if (!lowercasedQuery) return __TURBOPACK__imported__module__$5b$project$5d2f$public$2f$MockData$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["allApps"];
+            return __TURBOPACK__imported__module__$5b$project$5d2f$public$2f$MockData$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["allApps"].filter({
                 "ExplorePageContent.useMemo[filteredApps]": (app)=>app.name.toLowerCase().includes(lowercasedQuery) || app.creator.name.toLowerCase().includes(lowercasedQuery)
             }["ExplorePageContent.useMemo[filteredApps]"]);
         }
