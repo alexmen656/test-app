@@ -1,0 +1,14 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/favicon.ico/route": "/favicon.ico",
+  "/joined/page": "/joined",
+  "/explore/page": "/explore",
+  "/myapps/edit/[id]/page": "/myapps/edit/[id]",
+  "/notification/page": "/notification",
+  "/page": "/",
+  "/notification/detail/[id]/page": "/notification/detail/[id]",
+  "/test-instruction/[id]/page": "/test-instruction/[id]",
+  "/myapps/page": "/myapps",
+  "/detail/[id]/page": "/detail/[id]",
+  "/signin/page": "/signin"
+}
