@@ -17,7 +17,7 @@ const PlusIcon = () => (
 // A placeholder card for adding new apps
 const AddNewAppCard = () => (
     <div
-        onClick={() => window.location.href = `/myapps/detail/new`}
+        onClick={() => window.location.href = `/myapps/edit/new`}
         className="flex items-center justify-center aspect-square bg-gray-100 border-2 border-dashed border-gray-300 rounded-2xl cursor-pointer hover:bg-gray-200 transition-colors duration-300"
     >
         <PlusIcon />
