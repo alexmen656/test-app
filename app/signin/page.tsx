@@ -90,7 +90,7 @@ export default function SignInPage() {
 
             <div className="text-center">
               <p className="text-sm text-gray-600">
-                Don't have Slack?{' '}
+                Don&apos;t have Slack?{' '}
                 <a 
                   href="https://slack.com" 
                   target="_blank" 

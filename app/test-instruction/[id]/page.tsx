@@ -1,9 +1,9 @@
 'use client';
 
 import { FC, use } from 'react';
-import { App } from '@/types';
 import { allApps } from '@/public/MockData';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface TestInstructionPageProps {
   params: Promise<{ id: string }>;
@@ -42,9 +42,11 @@ const TestInstructionPage: FC<TestInstructionPageProps> = ({ params }) => {
           <div className="px-12 py-16">
             <div className="flex items-center gap-10 mb-12">
               <div className="w-36 h-36 rounded-[24px] overflow-hidden shadow-lg ring-4 ring-white/30">
-                <img 
+                <Image 
                   src={app.iconUrl} 
                   alt={app.name}
+                  width={144}
+                  height={144}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -65,7 +67,7 @@ const TestInstructionPage: FC<TestInstructionPageProps> = ({ params }) => {
               <div className="grid md:grid-cols-2 gap-10">
                 <div>
                   <p className="text-gray-700 leading-relaxed text-lg mb-6">
-                    Welcome to an exclusive beta testing experience! You're about to explore cutting-edge features 
+                    Welcome to an exclusive beta testing experience! You&apos;re about to explore cutting-edge features 
                     before they reach the public. Your feedback will directly influence the final product.
                   </p>
                   <div className="space-y-4">

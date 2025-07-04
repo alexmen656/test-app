@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { MdNotificationsNone } from "react-icons/md"
 import { useAuth } from '@/hooks/useAuth'
-import { initialNotifications } from '@/public/MockData'
+import { initialNotifications } from '@/public/MockData' 
 
 const Header = () => {
   const { user, logout, isAuthenticated } = useAuth();
@@ -40,10 +40,11 @@ const Header = () => {
     >
       <button className="flex items-center space-x-2" onClick={() => window.location.href = '/'}>
         <Image
-          src="https://placehold.co/200x50"
+          src="/BetaBay-Landscape.jpg"
           alt="Logo"
-          width={200}
-          height={50}
+          width={60}
+          height={30}
+          className="relative"
         />
       </button>
       <Link href="/explore" className="px-4 py-2 hover:underline">
@@ -107,9 +108,11 @@ const Header = () => {
               onClick={() => setShowUserMenu(!showUserMenu)}
               className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100"
             >
-              <img
+              <Image
                 src={user.image}
                 alt={user.name}
+                width={32}
+                height={32}
                 className="w-8 h-8 rounded-full"
               />
               <span className="text-sm font-medium">{user.name}</span>

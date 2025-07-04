@@ -1,6 +1,7 @@
 'use client';
 import AppSquareCard from '@/components/AppSquareCard';
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import type { App } from '@/types';
 import { getBackendUrl } from '@/lib/api';
 
@@ -111,11 +112,7 @@ export default function App() {
         fetchApps();
     }, []);
 
-    // --- Event Handlers ---
-    const handleAppClick = (app: App) => {
-        // In a real app, you might navigate to the app's details page
-        window.location.href = `/myapps/detail/${app.id}`;
-    };
+    // --- Render Method ---
 
     // --- Render Method ---
     return (
@@ -126,10 +123,11 @@ export default function App() {
                 <header className="flex items-center mb-8 sm:mb-12">
                     <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-300 rounded-full mr-4 sm:mr-6 overflow-hidden">
                         {userProfile.profileImage ? (
-                            <img 
-                                src={userProfile.profileImage} 
+                            <Image
+                                src={userProfile.profileImage}
                                 alt={userProfile.username}
                                 className="w-full h-full object-cover"
+                                fill={true}
                             />
                         ) : (
                             /* Fallback if no image is available */

@@ -1,5 +1,7 @@
 // src/components/ImageUpload.tsx
-import React, { FC, ChangeEvent, ReactNode } from 'react';
+import React, { FC, ChangeEvent } from 'react';
+import Image from 'next/image';
+
 
 // --- Dependency Inlined to Fix Resolution Error ---
 /**
@@ -38,7 +40,7 @@ const ImageUpload: FC<ImageUploadProps> = ({ label, id, onChange, previewUrl, mu
         <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
             <div className="space-y-1 text-center">
                 {previewUrl ? (
-                    <img src={previewUrl} alt="Preview" className="mx-auto h-24 w-24 object-cover rounded-md" />
+                    <Image src={previewUrl} alt="Preview" className="mx-auto object-cover rounded-md" width={96} height={96} />
                 ) : (
                     <UploadIcon />
                 )}

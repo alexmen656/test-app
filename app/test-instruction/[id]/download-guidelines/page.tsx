@@ -1,9 +1,9 @@
 'use client';
 
 import { FC, use } from 'react';
-import { App } from '@/types';
 import { allApps } from '@/public/MockData';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface DownloadGuidelinesPageProps {
   params: Promise<{ id: string }>;
@@ -50,9 +50,11 @@ const DownloadGuidelinesPage: FC<DownloadGuidelinesPageProps> = ({ params }) => 
           <div className="px-12 py-12">
             <div className="flex items-center gap-8">
               <div className="w-24 h-24 rounded-[18px] overflow-hidden shadow-lg ring-4 ring-white/30">
-                <img 
+                <Image 
                   src={app.iconUrl} 
                   alt={app.name}
+                  width={96}
+                  height={96}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -84,7 +86,7 @@ const DownloadGuidelinesPage: FC<DownloadGuidelinesPageProps> = ({ params }) => 
               </div>
               <h4 className="text-2xl font-bold text-gray-900 mb-4 text-center">Apple Platforms</h4>
               <p className="text-gray-600 text-center mb-8 leading-relaxed flex-grow">
-                Download the beta version through TestFlight. You'll need to accept the invitation and install the app directly.
+                Download the beta version through TestFlight. You&apos;ll need to accept the invitation and install the app directly.
               </p>
               <button 
                 onClick={handleAppleClick}
@@ -268,7 +270,7 @@ const DownloadGuidelinesPage: FC<DownloadGuidelinesPageProps> = ({ params }) => 
                   <ul className="space-y-2">
                     <li>• Your testing data is handled with care</li>
                     <li>• Report any security concerns immediately</li>
-                    <li>• Don't share beta builds with non-testers</li>
+                    <li>• Don&apos;t share beta builds with non-testers</li>
                     <li>• Feedback may be used to improve the app</li>
                   </ul>
                 </div>
