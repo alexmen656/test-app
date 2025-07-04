@@ -18,6 +18,11 @@ const nextConfig: NextConfig = {
         hostname: "avatars.slack-edge.com",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "alex.polan.sk",
+        port: "",
+      },
     ], 
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',

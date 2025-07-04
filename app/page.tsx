@@ -6,28 +6,94 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import AppCard from '@/components/AppCard'; // Import the AppCard component
 import { useAuth } from '@/hooks/useAuth';
 import AppListCard from '@/components/AppListCard'; // Import the AppListCard component
+import type { App } from '@/types';
+import { getBackendUrl } from '@/lib/api';
 
 // Create a client component that uses the search params
 function HomeContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
-  const { setAuthToken, debugStorage } = useAuth();
-  
-    const featuredApps = useMemo(() => [
-        { id: 1, name: 'App One', creator: { id: 'creatorA', name: 'Creator A', avatarUrl: '/avatars/creatorA.jpg' } },
-        { id: 2, name: 'App Two', creator: { id: 'creatorB', name: 'Creator B', avatarUrl: '/avatars/creatorB.jpg' } },
-        { id: 3, name: 'App Three', creator: { id: 'creatorC', name: 'Creator C', avatarUrl: '/avatars/creatorC.jpg' } },
-    ], []);//mockdata
-  
+    const { setAuthToken, debugStorage } = useAuth();
+    
+    // State für Apps und Loading
+    const [apps, setApps] = useState<App[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState(''); // Add state for searchQuery
 
     // Filter apps based on the search query
     const filteredApps = useMemo(() => {
-        return featuredApps.filter(app =>
-            app.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            app.creator.name.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-    }, [searchQuery, featuredApps]);
+        return apps.filter(app => {
+            const appName = app.name || app.app_name || '';
+            const creatorName = app.creator?.name || app.user_info?.username || '';
+            
+            return appName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                   creatorName.toLowerCase().includes(searchQuery.toLowerCase());
+        });
+    }, [searchQuery, apps]);
+
+    // Fetch apps from the backend API
+    useEffect(() => {
+        async function fetchApps() {
+            try {
+                setLoading(true);
+                const backendUrl = getBackendUrl();
+                
+                // Optional: Get token from localStorage if it exists
+                const token = localStorage.getItem('betabay_token');
+                const headers: HeadersInit = {};
+                
+                if (token) {
+                    headers['Authorization'] = `Bearer ${token}`;
+                }
+                
+                const response = await fetch(`${backendUrl}/api/test-posts`, {
+                    method: 'GET',
+                    headers: headers
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Error fetching apps: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log("Home Page API response:", data); // Debugging
+                
+                // Überprüfen, ob data ein Array ist oder ein Objekt mit einer Array-Eigenschaft
+                if (Array.isArray(data)) {
+                    setApps(data);
+                } else if (data && typeof data === 'object') {
+                    // Suche nach einer Array-Eigenschaft in der Antwort
+                    const possibleArrays = Object.values(data).filter(value => Array.isArray(value));
+                    if (possibleArrays.length > 0) {
+                        setApps(possibleArrays[0] as App[]);
+                    } else {
+                        // Fallback: Keine Arrays gefunden, versuche das ganze Objekt als App zu behandeln
+                        if (data.id) {
+                            setApps([data as App]);
+                        } else {
+                            // Keine erkennbare App-Struktur
+                            setApps([]);
+                        }
+                    }
+                } else {
+                    // Keine erkennbare Datenstruktur
+                    setApps([]);
+                }
+                
+                setError(null);
+            } catch (error) {
+                console.error('Failed to fetch apps:', error);
+                setError('Failed to load apps. Please try again.');
+                // Fallback to empty array if fetch fails
+                setApps([]);
+            } finally {
+                setLoading(false);
+            }
+        }
+        
+        fetchApps();
+    }, []);
 
     useEffect(() => {
         const authStatus = searchParams.get('auth');
@@ -81,15 +147,33 @@ function HomeContent() {
         {/* Featured Apps Section */}
         <section className="mb-12 px-6">
           <h2 className="text-2xl font-bold mb-6 text-gray-900">Featured Apps</h2>
-          <div className="overflow-x-auto">
-            <div className="flex gap-6 pb-4 min-w-max">
-              {featuredApps.map((app) => (
-                <div key={app.id} className="min-w-[280px] transform hover:scale-105 transition-all duration-300">
-                  <AppCard app={app} />
-                </div>
-              ))}
+          
+          {loading ? (
+            <div className="flex justify-center items-center h-32">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+              <p className="ml-3 text-gray-600">Loading apps...</p>
             </div>
-          </div>
+          ) : error ? (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
+              <p className="font-medium">Error</p>
+              <p>{error}</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <div className="flex gap-6 pb-4 min-w-max">
+                {apps.slice(0, 6).map((app) => (
+                  <div key={app.id} className="min-w-[280px] transform hover:scale-105 transition-all duration-300">
+                    <AppCard app={app} />
+                  </div>
+                ))}
+                {apps.length === 0 && (
+                  <div className="text-center py-8 w-full">
+                    <p className="text-gray-500">No apps available yet.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </section>
 
 
@@ -111,7 +195,12 @@ function HomeContent() {
           </div>
           
           <div className="space-y-4">
-            {filteredApps.length > 0 ? (
+            {loading ? (
+              <div className="flex justify-center items-center h-32">
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+                <p className="ml-3 text-gray-600">Loading apps...</p>
+              </div>
+            ) : filteredApps.length > 0 ? (
               <div className="grid gap-4">
                 {filteredApps.map((app) => (
                   <div key={app.id} className="transform hover:translate-y-[-2px] transition-all duration-200">
@@ -119,7 +208,7 @@ function HomeContent() {
                   </div>
                 ))}
               </div>
-            ) : (
+            ) : searchQuery ? (
               <div className="text-center py-16">
                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -128,6 +217,16 @@ function HomeContent() {
                 </div>
                 <p className="text-xl font-medium text-gray-900 mb-2">No apps found</p>
                 <p className="text-gray-500">Try adjusting your search for &quot;{searchQuery}&quot;</p>
+              </div>
+            ) : (
+              <div className="text-center py-16">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <p className="text-xl font-medium text-gray-900 mb-2">No apps available</p>
+                <p className="text-gray-500">Be the first to add an app to BetaBay!</p>
               </div>
             )}
           </div>
