@@ -172,26 +172,29 @@ const AppDetailPage: FC = () => {
                                 {/* Screenshots */}
                                 <section className="mt-8">
                                     <h2 className="text-xl font-bold mb-4">Screenshots</h2>
-                                    {appData.screenshots?.length || appData.screenshot_urls?.length ? (
-                                        <div className="flex gap-4 overflow-x-auto">
-                                            {(appData.screenshots || appData.screenshot_urls || []).map((src, index) => (
-                                                <div
-                                                    key={index}
-                                                    className="relative h-200 min-w-[400px] rounded-lg bg-gray-200 overflow-hidden"
-                                                >
-                                                    <Image
-                                                        src={src}
-                                                        alt={`Screenshot ${index + 1}`}
-                                                        layout="fill"
-                                                        objectFit="cover"
-                                                        className="transition-transform duration-300 hover:scale-105"
-                                                    />
-                                                </div>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <p className="text-gray-500">No screenshots available.</p>
-                                    )}
+                                    {(() => {
+                                        const screenshots = appData.screenshot_urls || appData.screenshots || [];
+                                        return screenshots.length > 0 ? (
+                                            <div className="flex gap-4 overflow-x-auto">
+                                                {screenshots.map((src, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className="relative h-96 min-w-[300px] rounded-lg bg-gray-200 overflow-hidden flex-shrink-0"
+                                                    >
+                                                        <Image
+                                                            src={src}
+                                                            alt={`Screenshot ${index + 1}`}
+                                                            fill
+                                                            style={{ objectFit: 'cover' }}
+                                                            className="transition-transform duration-300 hover:scale-105"
+                                                        />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <p className="text-gray-500">No screenshots available.</p>
+                                        );
+                                    })()}
                                 </section>
 
                                 {/* Video */}
