@@ -17,7 +17,7 @@ const PlusIcon = () => (
 // A placeholder card for adding new apps
 const AddNewAppCard = () => (
     <div
-        onClick={() => window.location.href = `/myapps/detail/new`}
+        onClick={() => window.location.href = `/myapps/edit/new`}
         className="flex items-center justify-center aspect-square bg-gray-100 border-2 border-dashed border-gray-300 rounded-2xl cursor-pointer hover:bg-gray-200 transition-colors duration-300"
     >
         <PlusIcon />
@@ -113,21 +113,19 @@ export default function App() {
     }, []);
 
     // --- Render Method ---
-
-    // --- Render Method ---
     return (
         <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
             <div className="container mx-auto p-4 sm:p-6 lg:p-8">
 
                 {/* User Profile Section */}
                 <header className="flex items-center mb-8 sm:mb-12">
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-300 rounded-full mr-4 sm:mr-6 overflow-hidden">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-300 rounded-full mr-4 sm:mr-6 overflow-hidden relative">
                         {userProfile.profileImage ? (
-                            <Image
-                                src={userProfile.profileImage}
+                            <Image 
+                                src={userProfile.profileImage} 
                                 alt={userProfile.username}
-                                className="w-full h-full object-cover"
-                                fill={true}
+                                fill
+                                className="object-cover"
                             />
                         ) : (
                             /* Fallback if no image is available */
@@ -153,7 +151,7 @@ export default function App() {
                             {Array.isArray(apps) && apps.length > 0 ? (
                                 // Apps anzeigen, wenn vorhanden
                                 apps.map((app) => (
-                                    <AppSquareCard key={app.id} app={app} route={`/myapps/detail/${app.id}`} />
+                                    <AppSquareCard key={app.id} app={app} route={`/myapps/edit/${app.id}`} />
                                 ))
                             ) : (
                                 // Nachricht anzeigen, wenn keine Apps vorhanden sind

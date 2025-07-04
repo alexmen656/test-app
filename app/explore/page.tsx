@@ -7,6 +7,7 @@ import AppCard from '@/components/AppCard'; // Import the AppCard component
 import { useAuth } from '@/hooks/useAuth';
 import { App } from '@/types'; // Import the App type from the explore page
 import AppListCard from '@/components/AppListCard';
+import { getBackendUrl } from '@/lib/api';
 
 
 // Define the structure for an app object
@@ -26,172 +27,155 @@ import AppListCard from '@/components/AppListCard';
  */
 const ExplorePageContent: FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [allApps, setAllApps] = useState<App[]>([]);
+  const [apps, setApps] = useState<App[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  
+  // Laden der Apps vom Backend
   useEffect(() => {
-    const fetchApps = async () => {
+    async function fetchApps() {
       try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-
-        const response = await fetch('http://localhost:3002/api/apps', {
-          signal: controller.signal
+        setLoading(true);
+        const backendUrl = getBackendUrl();
+        
+        // Optional: Token aus localStorage holen, falls vorhanden
+        const token = localStorage.getItem('betabay_token');
+        const headers: HeadersInit = {};
+        
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+        
+        const response = await fetch(`${backendUrl}/api/test-posts`, {
+          method: 'GET',
+          headers: headers
         });
         
-        clearTimeout(timeoutId);
-        
         if (!response.ok) {
-          throw new Error('Failed to fetch apps');
+          throw new Error(`Error fetching apps: ${response.status}`);
         }
         
         const data = await response.json();
+        console.log("API response for explore page:", data);
         
-        // Transform the data to match our expected structure
-        const transformedApps = data.map((app: {
-          id: number;
-          name: string;
-          description: string;
-          creator_name: string;
-          creator_avatar: string;
-          icon: string;
-          ratings: number;
-          reviews: number;
-          downloads: number;
-          coins: number;
-          featured: boolean;
-          tags?: string;
-          rating?: number;
-          price?: number;
-          category?: string;
-          size?: string;
-          version?: string;
-          screenshots?: string;
-          features?: string;
-          system_requirements?: string;
-          release_date?: string;
-          last_updated?: string;
-          permissions?: string;
-          whats_new?: string;
-          publisher_website?: string;
-          support_email?: string;
-          privacy_policy?: string;
-          terms_of_service?: string;
-          package_name?: string;
-        }) => ({
-          id: app.id,
-          name: app.name,
-          description: app.description || '',
-          creator: {
-            name: app.creator_name || 'Unknown',
-            avatar: app.creator_avatar || ''
-          },
-          icon: app.icon || '',
-          tags: app.tags ? app.tags.split(',').map((tag: string) => tag.trim()) : [],
-          downloads: app.downloads || 0,
-          rating: app.rating || 0,
-          reviews: app.reviews || 0,
-          price: app.price || 0,
-          category: app.category || 'General',
-          size: app.size || '0 MB',
-          version: app.version || '1.0.0',
-          screenshots: app.screenshots ? app.screenshots.split(',').map((s: string) => s.trim()) : [],
-          features: app.features ? app.features.split(',').map((f: string) => f.trim()) : [],
-          systemRequirements: app.system_requirements || 'No requirements specified',
-          releaseDate: app.release_date || new Date().toISOString(),
-          lastUpdated: app.last_updated || new Date().toISOString(),
-          permissions: app.permissions ? app.permissions.split(',').map((p: string) => p.trim()) : [],
-          whatsNew: app.whats_new || 'Initial release',
-          publisherWebsite: app.publisher_website || '',
-          supportEmail: app.support_email || '',
-          privacyPolicy: app.privacy_policy || '',
-          termsOfService: app.terms_of_service || '',
-          packageName: app.package_name || ''
-        }));
+        // Verarbeiten der Antwort
+        if (Array.isArray(data)) {
+          setApps(data);
+        } else if (data && typeof data === 'object') {
+          // Suche nach einer Array-Eigenschaft in der Antwort
+          const possibleArrays = Object.values(data).filter(value => Array.isArray(value));
+          if (possibleArrays.length > 0) {
+            setApps(possibleArrays[0] as App[]);
+          } else {
+            // Fallback: Keine Arrays gefunden, versuche das ganze Objekt als App zu behandeln
+            if (data.id) {
+              setApps([data as App]);
+            } else {
+              // Keine erkennbare App-Struktur
+              setApps([]);
+            }
+          }
+        } else {
+          // Keine erkennbare Datenstruktur
+          setApps([]);
+        }
         
-        setAllApps(transformedApps);
         setError(null);
-      } catch (err) {
-        console.error('Error fetching apps:', err);
-        setError('Failed to load apps. Please try again later.');
+      } catch (error) {
+        console.error('Failed to fetch apps:', error);
+        setError('Failed to load apps. Please try again.');
+        // Fallback auf leeres Array bei Fehler
+        setApps([]);
       } finally {
         setLoading(false);
       }
-    };
-
+    }
+    
     fetchApps();
   }, []);
-
-  const featuredApps = allApps.slice(0, 4);
+  
+  const featuredApps = useMemo(() => apps.slice(0, 4), [apps]);
+  
   const filteredApps = useMemo(() => {
     const lowercasedQuery = searchQuery.toLowerCase();
-    if (!lowercasedQuery) return allApps;
-    return allApps.filter((app: App) =>
-      app.name.toLowerCase().includes(lowercasedQuery) ||
-      app.creator.name.toLowerCase().includes(lowercasedQuery)
-    );
-  }, [searchQuery, allApps]);
-
-  if (loading) {
-    return (
-      <main className="flex-1 bg-gray-100 text-gray-800 overflow-y-auto animate-fade-in h-screen my-10">
-        <div className="px-8 py-10 flex items-center justify-center">
-          <div className="text-center">
-            <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600">Loading apps...</p>
-          </div>
-        </div>
-      </main>
-    );
-  }
-
-  if (error) {
-    return (
-      <main className="flex-1 bg-gray-100 text-gray-800 overflow-y-auto animate-fade-in h-screen my-10">
-        <div className="px-8 py-10 flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-red-600 mb-4">{error}</p>
-            <button 
-              onClick={() => window.location.reload()} 
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-            >
-              Retry
-            </button>
-          </div>
-        </div>
-      </main>
-    );
-  }
+    if (!lowercasedQuery) return apps;
+    return apps.filter(app => {
+      // App-Name aus verschiedenen möglichen Quellen
+      const appName = (app.name || app.app_name || '').toLowerCase();
+      
+      // Creator-Name aus verschiedenen möglichen Quellen
+      const creatorName = (
+        app.creator?.name || 
+        app.user_info?.username || 
+        ''
+      ).toLowerCase();
+      
+      return appName.includes(lowercasedQuery) || creatorName.includes(lowercasedQuery);
+    });
+  }, [searchQuery, apps]);
 
   return (
-    <main className="flex-1 bg-gray-100 text-gray-800  overflow-y-auto animate-fade-in h-screen my-10">
+    <main className="flex-1 bg-gray-100 text-gray-800 overflow-y-auto animate-fade-in h-screen my-10">
       <div className="px-8 py-10">
-        {/* Top Grid Section */}
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            <p className="ml-3 text-lg text-gray-600">Loading apps...</p>
+          </div>
+        ) : error ? (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-6">
+            <p className="font-medium">Error</p>
+            <p>{error}</p>
+          </div>
+        ) : (
+          <>
+            {/* Top Grid Section */}
             <section className="overflow-x-auto w-screen">
-            <div className="flex w-full gap-8 pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100" style={{ WebkitOverflowScrolling: 'touch' }}>
-              {featuredApps.map((app: App) => (
-              <AppCard key={app.id} app={app} />
-              ))}
-            </div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">Featured Apps</h2>
+              <div className="flex w-full gap-8 pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100" style={{ WebkitOverflowScrolling: 'touch' }}>
+                {featuredApps.length > 0 ? (
+                  featuredApps.map((app: App) => (
+                    <AppCard key={app.id} app={app} />
+                  ))
+                ) : (
+                  <p className="text-gray-500">No featured apps available.</p>
+                )}
+              </div>
             </section>
 
-        <hr className="my-15  border-gray-200" />
-        {/* Search & List Section */}
-        <section className="mx-auto max-w-4xl">
-          <div className="mb-6 bg-white">
-            <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search by app name or creator..." className="w-full rounded-md border border-gray-300 bg-gray-100 px-4 py-3 text-lg text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          </div>
-          <div className="space-y-3">
-            {filteredApps.length > 0 ? (
-              filteredApps.map((app) => (
-                <AppListCard key={app.id} app={app} />
-              ))
-            ) : (
-              <div className="text-center py-10"><p className="text-lg text-gray-500">No apps found for &quot;{searchQuery}&quot;</p></div>
-            )}
-          </div>
-        </section>
+            <hr className="my-15 border-gray-200" />
+            
+            {/* Search & List Section */}
+            <section className="mx-auto max-w-4xl">
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">All Apps</h2>
+              <div className="mb-6 bg-white">
+                <input 
+                  type="text" 
+                  value={searchQuery} 
+                  onChange={(e) => setSearchQuery(e.target.value)} 
+                  placeholder="Search by app name or creator..." 
+                  className="w-full rounded-md border border-gray-300 bg-gray-100 px-4 py-3 text-lg text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                />
+              </div>
+              <div className="space-y-3">
+                {filteredApps.length > 0 ? (
+                  filteredApps.map((app: App) => (
+                    <AppListCard key={app.id} app={app} />
+                  ))
+                ) : (
+                  <div className="text-center py-10">
+                    <p className="text-lg text-gray-500">
+                      {searchQuery 
+                        ? `No apps found for "${searchQuery}"` 
+                        : "No apps available."
+                      }
+                    </p>
+                  </div>
+                )}
+              </div>
+            </section>
+          </>
+        )}
       </div>
     </main>
   );
@@ -236,7 +220,6 @@ const ExplorePage: FC = () => {
   }
 
   console.log('ExplorePage: Authenticated, showing content...');
-
   return <ExplorePageContent />;
 };
 

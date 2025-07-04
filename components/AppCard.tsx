@@ -3,23 +3,31 @@ import Image from 'next/image'
 import type { App } from '@/types'; // Import the App type
 
 const AppCard: React.FC<{ app: App }> = ({ app }) => {
+    // Kompatibilität mit der Backend-API
+    const name = app.name || app.app_name || "Unnamed App";
+    const coverImageUrl = app.coverImageUrl || app.cover_image_url || "/vercel.svg"; // Fallback-Bild
+    const price = app.price || app.test_price || "Free";
+    
+    // Creator-Info aus verschiedenen möglichen Quellen
+    const creatorName = app.creator?.name || app.user_info?.username || "Unknown Creator";
+    
     return (
-        <button onClick={() => window.location.href = `/explore/detail/${app.id}`} className="w-full ">
-            <div key={app.id} className="min-w-xl group cursor-pointer bg-white pb-9 pt-9 px-5 rounded-2xl">
-                <div className="relative h-64 w-full bg-gray-200 rounded-lg overflow-hidden transform transition-transform duration-300 group-hover:scale-105">
+        <button onClick={() => window.location.href = `/detail/${app.id}`} className="w-full ">
+            <div key={app.id} className="min-w-2.5 md:min-w-xl group cursor-pointer bg-white pb-9 pt-9 px-5 rounded-2xl">
+                <div className="relative h-40 sm:h-64 w-full bg-gray-200 rounded-lg overflow-hidden transform transition-transform duration-300 group-hover:scale-105">
                     <Image
-                        src={app.coverImageUrl}
-                        alt={`Screenshot of ${app.name}`}
+                        src={coverImageUrl}
+                        alt={`Screenshot of ${name}`}
                         layout="fill"
                         objectFit="cover"
-                        className=" transition-opacity duration-300 group-hover:opacity-90"
+                        className="transition-opacity duration-300 group-hover:opacity-90"
                     />
                 </div>
                 <div className="mt-3">
-                    <p className="text-lg font-semibold">{app.name}</p>
+                    <p className="text-lg font-semibold">{name}</p>
                     <div className="flex justify-between text-gray-500">
-                        <span>{app.creator.name}</span>
-                        <span>{app.price}</span>
+                        <span>{creatorName}</span>
+                        <span>{typeof price === 'number' ? `$${price}` : price}</span>
                     </div>
                 </div>
             </div>

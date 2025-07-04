@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
+// Create a component that uses searchParams
 function SignInContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -22,7 +23,7 @@ function SignInContent() {
       // und im localStorage gespeichert, nachdem der Token gesetzt wurde
       
       // Redirect to explore page or dashboard
-      router.push('/explore');
+      router.push('/');
     } else if (authStatus === 'error') {
       setError('Authentication failed. Please try again.');
     }
@@ -130,22 +131,14 @@ function SignInContent() {
   );
 }
 
+// Main page component with Suspense boundary
 export default function SignInPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
-        <div className="max-w-md w-full space-y-8">
-          <div className="text-center">
-            <div className="mx-auto w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center mb-6">
-              <span className="text-2xl font-bold text-white">BB</span>
-            </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              Welcome to Beta Bay
-            </h2>
-            <p className="text-gray-600">
-              Loading...
-            </p>
-          </div>
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="mt-4 text-gray-600 text-lg">Loading...</p>
         </div>
       </div>
     }>
