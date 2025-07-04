@@ -1,4 +1,3 @@
-import app from 'next/app'
 import React from 'react'
 import Image from 'next/image'
 import type { App } from '@/types'; // Import the App type

@@ -2,11 +2,10 @@
 
 import Image from 'next/image';
 import type { FC } from 'react';
-import { useState, useMemo } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ChevronLeft, MessageSquare, Star, Gem, Link } from 'lucide-react';
+import { ChevronLeft, MessageSquare, Star, Gem } from 'lucide-react';
 import { allApps } from '@/public/MockData'; // Import the mock data for apps
-import AppCard, { App } from '@/components/AppCard'; // Import the AppCard component and type
+import { App } from '@/components/AppCard'; // Import the AppCard component and type
 
 
 const AppDetailPage: FC<{ app: App }> = ({ app }) => {

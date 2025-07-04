@@ -1,9 +1,9 @@
 'use client';
 
 import { FC, use, useState } from 'react';
-import { App } from '@/types';
 import { allApps } from '@/public/MockData';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface ReviewMakerPageProps {
   params: Promise<{ id: string }>;
@@ -43,9 +43,11 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
           <div className="px-12 py-12">
             <div className="flex items-center gap-8">
               <div className="w-24 h-24 rounded-[18px] overflow-hidden shadow-lg ring-4 ring-white/30">
-                <img 
+                <Image 
                   src={app.iconUrl} 
                   alt={app.name}
+                  width={96}
+                  height={96}
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -222,7 +224,7 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
               <h3 className="text-3xl font-bold text-green-900">Ready to Complete?</h3>
             </div>
             <p className="text-green-800 mb-10 leading-relaxed text-xl">
-              Once you finish your reviews, you'll be moved to your completed testing apps and the developer will be notified of your valuable feedback.
+              Once you finish your reviews, you&apos;ll be moved to your completed testing apps and the developer will be notified of your valuable feedback.
             </p>
             <button
               className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold py-6 px-12 rounded-[20px] transition-all duration-300 shadow-xl hover:shadow-2xl text-lg transform hover:-translate-y-1"

@@ -1,5 +1,15 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/explore/detail/[id]/page": "app/explore/detail/[id]/page.js",
   "/explore/page": "app/explore/page.js",
+  "/myapps/detail/[id]/page": "app/myapps/detail/[id]/page.js",
+  "/joined/page": "app/joined/page.js",
+  "/myapps/page": "app/myapps/page.js",
+  "/notification/page": "app/notification/page.js",
   "/page": "app/page.js",
+  "/test-instruction/[id]/download-guidelines/page": "app/test-instruction/[id]/download-guidelines/page.js",
+  "/test-instruction/[id]/page": "app/test-instruction/[id]/page.js",
+  "/test-instruction/[id]/review-maker/page": "app/test-instruction/[id]/review-maker/page.js",
   "/signin/page": "app/signin/page.js"
 }

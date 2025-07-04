@@ -35,7 +35,7 @@ const initialNotifications: Notification[] = [
     {
         id: "3",
         title: "Reminder: Meeting at 3 PM",
-        message: "Don't forget about the meeting later today.",
+        message: "Don&apos;t forget about the meeting later today.",
         timestamp: "2023-10-02T10:00:00Z",
         read: false
     }
@@ -76,12 +76,6 @@ const NotificationPage: FC = () => {
 
     const unreadCount = notifications.filter(n => !n.read).length;
 
-    const handleNotificationClick = (id: string) => {
-        setNotifications(prev =>
-            prev.map(n => n.id === id ? { ...n, read: true } : n)
-        );
-    };
-
     const handleMarkAllRead = () => {
         setNotifications(prev =>
             prev.map(n => n.read ? n : { ...n, read: true })
@@ -119,7 +113,7 @@ const NotificationPage: FC = () => {
                     <div className="text-center p-12 text-gray-500">
                         <Icon path="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" className="mx-auto h-12 w-12 text-gray-300" />
                         <h3 className="mt-4 text-lg font-medium">No notifications yet</h3>
-                        <p className="mt-1 text-sm">We'll let you know when something new comes up.</p>
+                        <p className="mt-1 text-sm">We&apos;ll let you know when something new comes up.</p>
                     </div>
                 )}
             </main>

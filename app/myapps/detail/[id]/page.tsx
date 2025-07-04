@@ -7,22 +7,17 @@ import ImageUpload from '@/components/ImageUpload';
 import { allApps } from '@/public/MockData'; // Importing mock data for apps
 import { useParams, useRouter } from 'next/navigation';
 import { getBackendUrl } from '@/lib/api';
-import router from 'next/router';
+import Image from 'next/image';
 
 
 
 /**
  * The page containing the form to post a new application.
  */
-// Define the NewAppPageProps interface
-interface NewAppPageProps {
-    onCancel: () => void;
-    onCreate: () => void;
-}
-
-const NewAppPage: FC<NewAppPageProps> = ({ onCancel, onCreate }) => {
+const NewAppPage: FC = () => {
     
     const params = useParams();
+    const router = useRouter();
     const isEditing = params.id !== 'new';
 
     const app = allApps.find(app => app.id === parseInt(params.id as string))?? allApps[0]; // Fallback to the first app if not found
@@ -33,7 +28,6 @@ const NewAppPage: FC<NewAppPageProps> = ({ onCancel, onCreate }) => {
         coverImage: null, screenshots: []
     });
     const [previews, setPreviews] = useState<{ icon?: string; coverImage?: string; screenshots: string[] }>({ screenshots: [] });
-    const [isSubmitting, setIsSubmitting] = useState(false);
 
     React.useEffect(() => {
         if (isEditing) {
@@ -103,8 +97,6 @@ const NewAppPage: FC<NewAppPageProps> = ({ onCancel, onCreate }) => {
             return;
         }
         
-        setIsSubmitting(true);
-        
         try {
             const backendUrl = getBackendUrl();
             
@@ -156,8 +148,6 @@ const NewAppPage: FC<NewAppPageProps> = ({ onCancel, onCreate }) => {
         } catch (error) {
             console.error('Failed to create app:', error);
             alert('Failed to create app. Please try again.');
-        } finally {
-            setIsSubmitting(false);
         }
     };
 
@@ -203,7 +193,7 @@ const NewAppPage: FC<NewAppPageProps> = ({ onCancel, onCreate }) => {
                         <ImageUpload label="Screenshots (Select multiple)" id="screenshots" onChange={handleFileChange} multiple />
                         {previews.screenshots.length > 0 && (
                             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
-                                {previews.screenshots.map((src, i) => <img key={i} src={src} className="w-full h-auto object-cover rounded-md" alt={`Screenshot ${i + 1}`} />)}
+                                {previews.screenshots.map((src, i) => <Image key={i} src={src} width={400} height={300} className="w-full h-auto object-cover rounded-md" alt={`Screenshot ${i + 1}`} />)}
                             </div>
                         )}
                         <FormField label="YouTube Link (Optional)" id="youtubeLink" placeholder="https://youtube.com/watch?v=..." value={data.videoUrl ?? ''} onChange={handleChange} />
