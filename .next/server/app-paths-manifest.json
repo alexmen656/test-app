@@ -6,5 +6,6 @@
   "/myapps/edit/[id]/page": "app/myapps/edit/[id]/page.js",
   "/myapps/page": "app/myapps/page.js",
   "/page": "app/page.js",
-  "/signin/page": "app/signin/page.js"
+  "/signin/page": "app/signin/page.js",
+  "/test-instruction/[id]/page": "app/test-instruction/[id]/page.js"
 }

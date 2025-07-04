@@ -1,7 +1,7 @@
 // Landing Page JavaScript
 class LandingPage {
     constructor() {
-        this.apiBaseUrl = 'https://betabay.vercel.app';
+        this.apiBaseUrl = 'https://betbay-backend.vercel.app';//'https://betabay.vercel.app';
         this.init();
     }
 

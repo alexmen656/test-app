@@ -66,7 +66,7 @@ export function useAuth() {
         return;
       }
 
-      const backendUrl = 'https://betabay.vercel.app';
+      const backendUrl = 'https://betbay-backend.vercel.app';//'https://betabay.vercel.app';
       
       console.log('useAuth: Making request to backend...');
       const response = await fetch(`${backendUrl}/api/user`, {
@@ -122,7 +122,7 @@ export function useAuth() {
     console.log('useAuth: Logging out...');
     try {
       const token = localStorage.getItem('authToken');
-      const backendUrl = 'https://betabay.vercel.app';
+      const backendUrl = 'https://betbay-backend.vercel.app';//https://betabay.vercel.app';
       
       if (token) {
         await fetch(`${backendUrl}/api/logout`, {

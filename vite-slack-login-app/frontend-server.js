@@ -10,7 +10,7 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      connectSrc: ["'self'", "https://betabay.vercel.app"],
+      connectSrc: ["'self'","https://betbay-backend.vercel.app"],// "https://betabay.vercel.app"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
       imgSrc: ["'self'", "data:", "https:"],
@@ -30,5 +30,5 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 BetaBay Frontend running on port ${PORT}`);
   console.log(`📱 Visit http://localhost:${PORT} to view the app`);
-  console.log(`🔗 Backend API: https://betabay.vercel.app`);
+  console.log(`🔗 Backend API: https://betbay-backend.vercel.app`);
 });
