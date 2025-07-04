@@ -1,11 +1,12 @@
 {
   "/_not-found/page": "/_not-found",
-  "/favicon.ico/route": "/favicon.ico",
+  "/confirmation/[id]/decline/[reviewId]/page": "/confirmation/[id]/decline/[reviewId]",
+  "/confirmation/[id]/finalize/[reviewId]/page": "/confirmation/[id]/finalize/[reviewId]",
+  "/confirmation/[id]/page": "/confirmation/[id]",
+  "/confirmation/page": "/confirmation",
   "/detail/[id]/page": "/detail/[id]",
-  "/explore/detail/[id]/page": "/explore/detail/[id]",
   "/explore/page": "/explore",
   "/joined/page": "/joined",
-  "/myapps/detail/[id]/page": "/myapps/detail/[id]",
   "/myapps/edit/[id]/page": "/myapps/edit/[id]",
   "/myapps/page": "/myapps",
   "/notification/detail/[id]/page": "/notification/detail/[id]",
@@ -14,5 +15,6 @@
   "/test-instruction/[id]/download-guidelines/page": "/test-instruction/[id]/download-guidelines",
   "/test-instruction/[id]/page": "/test-instruction/[id]",
   "/test-instruction/[id]/review-maker/page": "/test-instruction/[id]/review-maker",
-  "/signin/page": "/signin"
+  "/signin/page": "/signin",
+  "/favicon.ico/route": "/favicon.ico"
 }

@@ -13,8 +13,8 @@ const AppCard: React.FC<{ app: App }> = ({ app }) => {
     
     return (
         <button onClick={() => window.location.href = `/detail/${app.id}`} className="w-full ">
-            <div key={app.id} className="min-w-2.5 md:min-w-xl group cursor-pointer bg-white pb-9 pt-9 px-5 rounded-2xl">
-                <div className="relative h-40 sm:h-64 w-full bg-gray-200 rounded-lg overflow-hidden transform transition-transform duration-300 group-hover:scale-105">
+            <div key={app.id} className="min-w-2.5 md:min-w-xl group cursor-pointer bg-white pb-9 pt-5 px-4 rounded-2xl">
+                <div className="relative h-44 sm:h-64 w-full bg-gray-200 rounded-lg overflow-hidden transform transition-transform duration-300 group-hover:scale-105">
                     <Image
                         src={coverImageUrl}
                         alt={`Screenshot of ${name}`}

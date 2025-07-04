@@ -15,6 +15,32 @@
   "headers": [],
   "dynamicRoutes": [
     {
+      "page": "/confirmation/[id]",
+      "regex": "^/confirmation/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/confirmation/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/confirmation/[id]/decline/[reviewId]",
+      "regex": "^/confirmation/([^/]+?)/decline/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid",
+        "nxtPreviewId": "nxtPreviewId"
+      },
+      "namedRegex": "^/confirmation/(?<nxtPid>[^/]+?)/decline/(?<nxtPreviewId>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/confirmation/[id]/finalize/[reviewId]",
+      "regex": "^/confirmation/([^/]+?)/finalize/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid",
+        "nxtPreviewId": "nxtPreviewId"
+      },
+      "namedRegex": "^/confirmation/(?<nxtPid>[^/]+?)/finalize/(?<nxtPreviewId>[^/]+?)(?:/)?$"
+    },
+    {
       "page": "/detail/[id]",
       "regex": "^/detail/([^/]+?)(?:/)?$",
       "routeKeys": {
@@ -91,6 +117,12 @@
       "regex": "^/_not\\-found(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/confirmation",
+      "regex": "^/confirmation(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/confirmation(?:/)?$"
     },
     {
       "page": "/explore",
