@@ -102,8 +102,8 @@ const AppDetailPage: FC = () => {
                         <Image
                             src={appData.coverImageUrl || appData.cover_image_url || '/vercel.svg'}
                             alt={`${appData.name || appData.app_name || 'App'} cover image`}
-                            layout="fill"
-                            objectFit="cover"
+                            fill
+                            style={{ objectFit: 'cover' }}
                         />
                         <div className="absolute inset-0 bg-black/20"></div>
                         <div className="absolute bottom-0 left-0 p-8">
