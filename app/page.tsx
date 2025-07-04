@@ -1,11 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 
-export default function HomePage() {
+function HomeContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { setAuthToken, debugStorage } = useAuth();
@@ -111,5 +111,47 @@ export default function HomePage() {
                 </div>
             </footer>
         </div>
+    );
+}
+
+export default function HomePage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+                <header className="container mx-auto px-6 py-8">
+                    <nav className="flex justify-between items-center">
+                        <div className="text-2xl font-bold text-gray-800">
+                            Beta Bay
+                        </div>
+                        <div className="space-x-6">
+                            <Link href="/features" className="text-gray-600 hover:text-gray-800">
+                                Features
+                            </Link>
+                            <Link href="/pricing" className="text-gray-600 hover:text-gray-800">
+                                Pricing
+                            </Link>
+                            <Link href="/contact" className="text-gray-600 hover:text-gray-800">
+                                Contact
+                            </Link>
+                            <Link href="/signin" className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                                Sign In
+                            </Link>
+                        </div>
+                    </nav>
+                </header>
+                <main className="container mx-auto px-6 py-16">
+                    <div className="text-center max-w-4xl mx-auto">
+                        <h1 className="text-5xl font-bold text-gray-800 mb-6">
+                            Welcome to Beta Bay
+                        </h1>
+                        <p className="text-xl text-gray-600 mb-8">
+                            Loading...
+                        </p>
+                    </div>
+                </main>
+            </div>
+        }>
+            <HomeContent />
+        </Suspense>
     );
 }

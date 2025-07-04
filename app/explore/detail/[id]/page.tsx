@@ -5,10 +5,9 @@ import type { FC } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { ChevronLeft, MessageSquare, Star, Gem } from 'lucide-react';
 import { allApps } from '@/public/MockData'; // Import the mock data for apps
-import { App } from '@/components/AppCard'; // Import the AppCard component and type
 
 
-const AppDetailPage: FC<{ app: App }> = ({ app }) => {
+const AppDetailPage: FC = () => {
     const router = useRouter();
     const { id } = useParams() as { id: string }; // Extract the dynamic route parameter
     const appData = allApps[parseInt(id)-1];
@@ -37,7 +36,7 @@ const AppDetailPage: FC<{ app: App }> = ({ app }) => {
                 <div className="absolute inset-0 bg-black/20"></div>
                 <div className="absolute bottom-0 left-0 p-8">
                     <h1 className="text-3xl md:text-5xl font-bold text-white shadow-lg">
-                        {appData?.name || app.name}
+                        {appData?.name}
                     </h1>
                 </div>
             </div>
