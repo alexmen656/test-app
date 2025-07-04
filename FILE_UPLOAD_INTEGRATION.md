@@ -2,7 +2,7 @@
 
 ## 🚀 Was wurde implementiert
 
-Das File Upload System wurde erfolgreich in die "Add App" Seite (`/myapps/detail/new`) integriert!
+Das File Upload System wurde erfolgreich in die "Add App" Seite (`/myapps/edit/new`) integriert!
 
 ### Features:
 - ✅ **App Icon Upload** - Einzelnes Bild für App-Icon
