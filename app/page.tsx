@@ -1,27 +1,24 @@
-'use client'; // This directive is necessary for using hooks like useState
+'use client';
 
 import Image from 'next/image';
 import { useState, useMemo, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import AppCard from '@/components/AppCard'; // Import the AppCard component
+import AppCard from '@/components/AppCard';
 import { useAuth } from '@/hooks/useAuth';
-import AppListCard from '@/components/AppListCard'; // Import the AppListCard component
+import AppListCard from '@/components/AppListCard';
 import type { App } from '@/types';
 import { getBackendUrl } from '@/lib/api';
 
-// Create a client component that uses the search params
 function HomeContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { setAuthToken, debugStorage } = useAuth();
     
-    // State für Apps und Loading
     const [apps, setApps] = useState<App[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [searchQuery, setSearchQuery] = useState(''); // Add state for searchQuery
+    const [searchQuery, setSearchQuery] = useState('');
 
-    // Filter apps based on the search query
     const filteredApps = useMemo(() => {
         return apps.filter(app => {
             const appName = app.name || app.app_name || '';
@@ -32,14 +29,12 @@ function HomeContent() {
         });
     }, [searchQuery, apps]);
 
-    // Fetch apps from the backend API
     useEffect(() => {
         async function fetchApps() {
             try {
                 setLoading(true);
                 const backendUrl = getBackendUrl();
                 
-                // Optional: Get token from localStorage if it exists
                 const token = localStorage.getItem('betabay_token');
                 const headers: HeadersInit = {};
                 
@@ -57,27 +52,22 @@ function HomeContent() {
                 }
                 
                 const data = await response.json();
-                console.log("Home Page API response:", data); // Debugging
+                console.log("Home Page API response:", data);
                 
-                // Überprüfen, ob data ein Array ist oder ein Objekt mit einer Array-Eigenschaft
                 if (Array.isArray(data)) {
                     setApps(data);
                 } else if (data && typeof data === 'object') {
-                    // Suche nach einer Array-Eigenschaft in der Antwort
                     const possibleArrays = Object.values(data).filter(value => Array.isArray(value));
                     if (possibleArrays.length > 0) {
                         setApps(possibleArrays[0] as App[]);
                     } else {
-                        // Fallback: Keine Arrays gefunden, versuche das ganze Objekt als App zu behandeln
                         if (data.id) {
                             setApps([data as App]);
                         } else {
-                            // Keine erkennbare App-Struktur
                             setApps([]);
                         }
                     }
                 } else {
-                    // Keine erkennbare Datenstruktur
                     setApps([]);
                 }
                 
@@ -85,7 +75,6 @@ function HomeContent() {
             } catch (error) {
                 console.error('Failed to fetch apps:', error);
                 setError('Failed to load apps. Please try again.');
-                // Fallback to empty array if fetch fails
                 setApps([]);
             } finally {
                 setLoading(false);
@@ -101,17 +90,14 @@ function HomeContent() {
         
         console.log('HomePage: authStatus =', authStatus, 'token =', token ? 'present' : 'missing');
         
-        // Debug localStorage
         debugStorage();
         
         if (authStatus === 'success' && token) {
             console.log('HomePage: Storing token and redirecting...');
             console.log('HomePage: Token preview =', token.substring(0, 50) + '...');
             
-            // Use the auth hook to set the token
             setAuthToken(token);
             
-            // Redirect to explore page after a short delay
             setTimeout(() => {
                 router.push('/explore');
             }, 1000);
