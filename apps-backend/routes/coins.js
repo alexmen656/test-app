@@ -1,45 +1,75 @@
 const express = require('express');
 const { v4: uuidv4 } = require('uuid');
+const jwt = require('jsonwebtoken');
 const db = require('../database');
 
 const router = express.Router();
 
-// Middleware to authenticate user
+// JWT Secret
+const JWT_SECRET = process.env.JWT_SECRET || 'betabay-secret-key-2024';
+
+// Middleware to authenticate user (updated for MongoDB and JWT)
 const authenticateUser = async (req, res, next) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
     
-    if (token) {
-      const userData = JSON.parse(Buffer.from(token, 'base64').toString());
-      
-      if (userData.exp && userData.exp < Date.now()) {
-        return res.status(401).json({ error: 'Token expired' });
-      }
-      
-      await db.initialize();
-      const user = await db.get('SELECT * FROM users WHERE id = ?', [userData.id]);
-      
-      if (!user) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-      
-      req.user = user;
-      return next();
+    if (!token) {
+      return res.status(401).json({ error: 'Authentication token required' });
     }
     
-    if (req.session.user) {
-      await db.initialize();
-      const user = await db.get('SELECT * FROM users WHERE id = ?', [req.session.user.id]);
-      
-      if (!user) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-      
-      req.user = user;
-      return next();
+    let decoded;
+    try {
+      decoded = jwt.verify(token, JWT_SECRET);
+    } catch (jwtError) {
+      return res.status(401).json({ error: 'Invalid or expired token' });
     }
     
-    return res.status(401).json({ error: 'Authentication required' });
+    const { slack_user_id, username, display_name, profile_image, email } = decoded;
+    
+    if (!slack_user_id) {
+      return res.status(401).json({ error: 'Invalid token: missing slack_user_id' });
+    }
+    
+    await db.initialize();
+    let user = await db.findOne('users', { slack_user_id: slack_user_id });
+    
+    if (!user) {
+      const userId = uuidv4();
+      user = {
+        id: userId,
+        slack_user_id: slack_user_id,
+        username: username || `user_${slack_user_id}`,
+        display_name: display_name || username || `User ${slack_user_id}`,
+        email: email || `${slack_user_id}@slack.local`,
+        avatar_url: profile_image || null,
+        owned_coins: 100,
+        is_active: true,
+        created_at: new Date(),
+        updated_at: new Date()
+      };
+      
+      await db.insert('users', user);
+      console.log(`✅ Auto-created user from Slack: ${username} (${slack_user_id})`);
+    } else {
+      await db.update('users', 
+        { slack_user_id: slack_user_id },
+        { 
+          $set: {
+            username: username || user.username,
+            display_name: display_name || user.display_name,
+            email: email || user.email,
+            avatar_url: profile_image || user.avatar_url,
+            updated_at: new Date()
+          }
+        }
+      );
+      
+      user = await db.findOne('users', { slack_user_id: slack_user_id });
+    }
+    
+    req.user = user;
+    req.slack_user_id = slack_user_id;
+    return next();
     
   } catch (error) {
     console.error('❌ Authentication error:', error);
@@ -52,7 +82,7 @@ router.get('/balance', authenticateUser, async (req, res) => {
   try {
     await db.initialize();
     
-    const user = await db.get('SELECT owned_coins FROM users WHERE id = ?', [req.user.id]);
+    const user = await db.findOne('users', { id: req.user.id });
     
     res.json({
       user_id: req.user.id,
@@ -74,49 +104,49 @@ router.get('/transactions', authenticateUser, async (req, res) => {
     const { page = 1, limit = 20, type } = req.query;
     const offset = (page - 1) * limit;
     
-    let query = `
-      SELECT 
-        ct.*,
-        sender.username as sender_username,
-        sender.display_name as sender_display_name,
-        receiver.username as receiver_username,
-        receiver.display_name as receiver_display_name
-      FROM coin_transactions ct
-      LEFT JOIN users sender ON ct.sender_user_id = sender.id
-      LEFT JOIN users receiver ON ct.receiver_user_id = receiver.id
-      WHERE ct.sender_user_id = ? OR ct.receiver_user_id = ?
-    `;
-    
-    const params = [req.user.id, req.user.id];
+    // Build MongoDB query
+    let query = {
+      $or: [
+        { sender_user_id: req.user.id },
+        { receiver_user_id: req.user.id }
+      ]
+    };
     
     if (type) {
-      query += ' AND ct.transaction_type = ?';
-      params.push(type);
+      query.transaction_type = type;
     }
     
-    query += ' ORDER BY ct.created_at DESC LIMIT ? OFFSET ?';
-    params.push(parseInt(limit), offset);
-    
-    const transactions = await db.all(query, params);
+    // Get transactions with sorting and pagination
+    const transactions = await db.find('coin_transactions', query, {
+      sort: { created_at: -1 },
+      limit: parseInt(limit),
+      skip: offset
+    });
     
     // Get total count
-    let countQuery = `
-      SELECT COUNT(*) as total FROM coin_transactions 
-      WHERE sender_user_id = ? OR receiver_user_id = ?
-    `;
-    const countParams = [req.user.id, req.user.id];
+    const total = await db.count('coin_transactions', query);
     
-    if (type) {
-      countQuery += ' AND transaction_type = ?';
-      countParams.push(type);
-    }
-    
-    const { total } = await db.get(countQuery, countParams);
-    
-    // Add transaction direction for each transaction
-    const enrichedTransactions = transactions.map(tx => ({
-      ...tx,
-      direction: tx.sender_user_id === req.user.id ? 'outgoing' : 'incoming'
+    // Enrich transactions with user data
+    const enrichedTransactions = await Promise.all(transactions.map(async (tx) => {
+      let senderUser = null;
+      let receiverUser = null;
+      
+      if (tx.sender_user_id) {
+        senderUser = await db.findOne('users', { id: tx.sender_user_id });
+      }
+      
+      if (tx.receiver_user_id) {
+        receiverUser = await db.findOne('users', { id: tx.receiver_user_id });
+      }
+      
+      return {
+        ...tx,
+        sender_username: senderUser?.username || null,
+        sender_display_name: senderUser?.display_name || null,
+        receiver_username: receiverUser?.username || null,
+        receiver_display_name: receiverUser?.display_name || null,
+        direction: tx.sender_user_id === req.user.id ? 'outgoing' : 'incoming'
+      };
     }));
     
     res.json({
@@ -152,7 +182,7 @@ router.post('/transfer', authenticateUser, async (req, res) => {
     await db.initialize();
     
     // Find recipient
-    const recipient = await db.get('SELECT * FROM users WHERE username = ?', [recipient_username]);
+    const recipient = await db.findOne('users', { username: recipient_username });
     
     if (!recipient) {
       return res.status(404).json({ error: 'Recipient user not found' });
@@ -162,59 +192,48 @@ router.post('/transfer', authenticateUser, async (req, res) => {
       return res.status(400).json({ error: 'Cannot transfer coins to yourself' });
     }
     
-    // Perform transaction
+    // Perform transaction using MongoDB session for atomicity
     const transactionId = uuidv4();
-    
-    // Start transaction
-    await db.run('BEGIN TRANSACTION');
     
     try {
       // Deduct from sender
-      await db.run('UPDATE users SET owned_coins = owned_coins - ? WHERE id = ?', [
-        amount,
-        req.user.id
-      ]);
+      await db.update('users', 
+        { id: req.user.id }, 
+        { $inc: { owned_coins: -amount } }
+      );
       
       // Add to recipient
-      await db.run('UPDATE users SET owned_coins = owned_coins + ? WHERE id = ?', [
-        amount,
-        recipient.id
-      ]);
+      await db.update('users', 
+        { id: recipient.id }, 
+        { $inc: { owned_coins: amount } }
+      );
       
       // Record transaction
-      await db.run(`
-        INSERT INTO coin_transactions (
-          id, sender_user_id, receiver_user_id, amount, transaction_type,
-          reference_type, description, status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-      `, [
-        transactionId,
-        req.user.id,
-        recipient.id,
-        amount,
-        'payment',
-        'user_transfer',
-        description || `Transfer to ${recipient.username}`,
-        'completed'
-      ]);
+      await db.insert('coin_transactions', {
+        id: transactionId,
+        sender_user_id: req.user.id,
+        receiver_user_id: recipient.id,
+        amount: amount,
+        transaction_type: 'payment',
+        reference_type: 'user_transfer',
+        description: description || `Transfer to ${recipient.username}`,
+        status: 'completed',
+        created_at: new Date()
+      });
       
       // Create notification for recipient
       const notificationId = uuidv4();
-      await db.run(`
-        INSERT INTO notifications (
-          id, user_id, title, message, type, reference_type, reference_id
-        ) VALUES (?, ?, ?, ?, ?, ?, ?)
-      `, [
-        notificationId,
-        recipient.id,
-        'Coins Received! 💰',
-        `You received ${amount} coins from ${req.user.display_name || req.user.username}${description ? ': ' + description : ''}`,
-        'success',
-        'coin_transaction',
-        transactionId
-      ]);
-      
-      await db.run('COMMIT');
+      await db.insert('notifications', {
+        id: notificationId,
+        user_id: recipient.id,
+        title: 'Coins Received! 💰',
+        message: `You received ${amount} coins from ${req.user.display_name || req.user.username}${description ? ': ' + description : ''}`,
+        type: 'success',
+        reference_type: 'coin_transaction',
+        reference_id: transactionId,
+        is_read: false,
+        created_at: new Date()
+      });
       
       res.json({
         message: 'Coins transferred successfully',
@@ -227,7 +246,7 @@ router.post('/transfer', authenticateUser, async (req, res) => {
       });
       
     } catch (error) {
-      await db.run('ROLLBACK');
+      console.error('❌ Transaction error:', error);
       throw error;
     }
     
@@ -244,54 +263,44 @@ async function awardCoins(userId, amount, transactionType, referenceType, refere
     
     const transactionId = uuidv4();
     
-    await db.run('BEGIN TRANSACTION');
-    
     try {
       // Add coins to user
-      await db.run('UPDATE users SET owned_coins = owned_coins + ? WHERE id = ?', [
-        amount,
-        userId
-      ]);
+      await db.update('users', 
+        { id: userId }, 
+        { $inc: { owned_coins: amount } }
+      );
       
       // Record transaction
-      await db.run(`
-        INSERT INTO coin_transactions (
-          id, receiver_user_id, amount, transaction_type,
-          reference_type, reference_id, description, status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-      `, [
-        transactionId,
-        userId,
-        amount,
-        transactionType,
-        referenceType,
-        referenceId,
-        description,
-        'completed'
-      ]);
+      await db.insert('coin_transactions', {
+        id: transactionId,
+        receiver_user_id: userId,
+        amount: amount,
+        transaction_type: transactionType,
+        reference_type: referenceType,
+        reference_id: referenceId,
+        description: description,
+        status: 'completed',
+        created_at: new Date()
+      });
       
       // Create notification
       const notificationId = uuidv4();
-      await db.run(`
-        INSERT INTO notifications (
-          id, user_id, title, message, type, reference_type, reference_id
-        ) VALUES (?, ?, ?, ?, ?, ?, ?)
-      `, [
-        notificationId,
-        userId,
-        'Coins Earned! 🎉',
-        `You earned ${amount} coins: ${description}`,
-        'success',
-        'coin_transaction',
-        transactionId
-      ]);
-      
-      await db.run('COMMIT');
+      await db.insert('notifications', {
+        id: notificationId,
+        user_id: userId,
+        title: 'Coins Earned! 🎉',
+        message: `You earned ${amount} coins: ${description}`,
+        type: 'success',
+        reference_type: 'coin_transaction',
+        reference_id: transactionId,
+        is_read: false,
+        created_at: new Date()
+      });
       
       return { success: true, transactionId };
       
     } catch (error) {
-      await db.run('ROLLBACK');
+      console.error('❌ Award coins error:', error);
       throw error;
     }
     
@@ -306,29 +315,57 @@ router.get('/stats', async (req, res) => {
   try {
     await db.initialize();
     
-    const stats = await db.get(`
-      SELECT 
-        SUM(CASE WHEN transaction_type = 'reward' THEN amount ELSE 0 END) as total_rewards_given,
-        SUM(CASE WHEN transaction_type = 'payment' THEN amount ELSE 0 END) as total_payments,
-        COUNT(DISTINCT receiver_user_id) as active_users,
-        AVG(amount) as avg_transaction_amount
-      FROM coin_transactions
-      WHERE status = 'completed'
-    `);
+    // Get platform stats using MongoDB aggregation
+    const rewardTransactions = await db.find('coin_transactions', {
+      transaction_type: 'reward',
+      status: 'completed'
+    });
+    
+    const paymentTransactions = await db.find('coin_transactions', {
+      transaction_type: 'payment',
+      status: 'completed'
+    });
+    
+    const allTransactions = await db.find('coin_transactions', {
+      status: 'completed'
+    });
+    
+    // Calculate stats
+    const totalRewards = rewardTransactions.reduce((sum, tx) => sum + tx.amount, 0);
+    const totalPayments = paymentTransactions.reduce((sum, tx) => sum + tx.amount, 0);
+    const avgTransactionAmount = allTransactions.length > 0 
+      ? allTransactions.reduce((sum, tx) => sum + tx.amount, 0) / allTransactions.length 
+      : 0;
+    
+    // Get unique active users
+    const activeUserIds = new Set();
+    allTransactions.forEach(tx => {
+      if (tx.receiver_user_id) activeUserIds.add(tx.receiver_user_id);
+    });
+    
+    const stats = {
+      total_rewards_given: totalRewards,
+      total_payments: totalPayments,
+      active_users: activeUserIds.size,
+      avg_transaction_amount: Math.round(avgTransactionAmount * 100) / 100
+    };
     
     // Get top earners
-    const topEarners = await db.all(`
-      SELECT 
-        u.username, u.display_name, u.avatar_url, u.owned_coins
-      FROM users u
-      WHERE u.is_active = 1
-      ORDER BY u.owned_coins DESC
-      LIMIT 5
-    `);
+    const topEarners = await db.find('users', {
+      is_active: true
+    }, {
+      sort: { owned_coins: -1 },
+      limit: 5
+    });
     
     res.json({
       platform_stats: stats,
-      top_earners: topEarners
+      top_earners: topEarners.map(user => ({
+        username: user.username,
+        display_name: user.display_name,
+        avatar_url: user.avatar_url,
+        owned_coins: user.owned_coins
+      }))
     });
     
   } catch (error) {
