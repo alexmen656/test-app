@@ -5,9 +5,9 @@ import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AppCard from '@/components/AppCard'; // Import the AppCard component
 import { useAuth } from '@/hooks/useAuth';
+import { useApps } from '@/hooks/useApps';
 import { App } from '@/types'; // Import the App type from the explore page
 import AppListCard from '@/components/AppListCard';
-import { getBackendUrl } from '@/lib/api';
 
 
 // Define the structure for an app object
@@ -27,72 +27,12 @@ import { getBackendUrl } from '@/lib/api';
  */
 const ExplorePageContent: FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [apps, setApps] = useState<App[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  
-  // Laden der Apps vom Backend
-  useEffect(() => {
-    async function fetchApps() {
-      try {
-        setLoading(true);
-        const backendUrl = getBackendUrl();
-        
-        // Optional: Token aus localStorage holen, falls vorhanden
-        const token = localStorage.getItem('betabay_token');
-        const headers: HeadersInit = {};
-        
-        if (token) {
-          headers['Authorization'] = `Bearer ${token}`;
-        }
-        
-        const response = await fetch(`${backendUrl}/api/test-posts`, {
-          method: 'GET',
-          headers: headers
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Error fetching apps: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        console.log("API response for explore page:", data);
-        
-        // Verarbeiten der Antwort
-        if (Array.isArray(data)) {
-          setApps(data);
-        } else if (data && typeof data === 'object') {
-          // Suche nach einer Array-Eigenschaft in der Antwort
-          const possibleArrays = Object.values(data).filter(value => Array.isArray(value));
-          if (possibleArrays.length > 0) {
-            setApps(possibleArrays[0] as App[]);
-          } else {
-            // Fallback: Keine Arrays gefunden, versuche das ganze Objekt als App zu behandeln
-            if (data.id) {
-              setApps([data as App]);
-            } else {
-              // Keine erkennbare App-Struktur
-              setApps([]);
-            }
-          }
-        } else {
-          // Keine erkennbare Datenstruktur
-          setApps([]);
-        }
-        
-        setError(null);
-      } catch (error) {
-        console.error('Failed to fetch apps:', error);
-        setError('Failed to load apps. Please try again.');
-        // Fallback auf leeres Array bei Fehler
-        setApps([]);
-      } finally {
-        setLoading(false);
-      }
-    }
-    
-    fetchApps();
-  }, []);
+  const { apps, loading, error, hasCache } = useApps({
+    cacheKey: 'explore',
+    endpoint: '/api/test-posts',
+    requireAuth: false,
+    autoFetch: true
+  });
   
   const featuredApps = useMemo(() => apps.slice(0, 4), [apps]);
   
@@ -117,12 +57,12 @@ const ExplorePageContent: FC = () => {
   return (
     <main className="flex-1 bg-gray-100 text-gray-800 overflow-y-auto animate-fade-in h-screen my-10">
       <div className="px-8 py-10">
-        {loading ? (
+        {loading && !hasCache ? (
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
             <p className="ml-3 text-lg text-gray-600">Loading apps...</p>
           </div>
-        ) : error ? (
+        ) : error && !hasCache ? (
           <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md mb-6">
             <p className="font-medium">Error</p>
             <p>{error}</p>
@@ -131,7 +71,15 @@ const ExplorePageContent: FC = () => {
           <>
             {/* Top Grid Section */}
             <section className="overflow-x-auto w-screen">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">Featured Apps</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-bold text-gray-800">Featured Apps</h2>
+                {hasCache && loading && (
+                  <div className="flex items-center text-sm text-blue-600">
+                    <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-2"></div>
+                    Updating...
+                  </div>
+                )}
+              </div>
               <div className="flex w-full gap-8 pb-4 overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100" style={{ WebkitOverflowScrolling: 'touch' }}>
                 {featuredApps.length > 0 ? (
                   featuredApps.map((app: App) => (

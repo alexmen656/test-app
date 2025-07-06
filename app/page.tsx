@@ -5,18 +5,22 @@ import { useState, useMemo, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import AppCard from '@/components/AppCard';
 import { useAuth } from '@/hooks/useAuth';
+import { useApps } from '@/hooks/useApps';
 import AppListCard from '@/components/AppListCard';
 import type { App } from '@/types';
-import { getBackendUrl } from '@/lib/api';
 
 function HomeContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { setAuthToken, debugStorage } = useAuth();
     
-    const [apps, setApps] = useState<App[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const { apps, loading, error, hasCache } = useApps({
+        cacheKey: 'home',
+        endpoint: '/api/test-posts',
+        requireAuth: false,
+        autoFetch: true
+    });
+    
     const [searchQuery, setSearchQuery] = useState('');
 
     const filteredApps = useMemo(() => {
@@ -28,61 +32,6 @@ function HomeContent() {
                    creatorName.toLowerCase().includes(searchQuery.toLowerCase());
         });
     }, [searchQuery, apps]);
-
-    useEffect(() => {
-        async function fetchApps() {
-            try {
-                setLoading(true);
-                const backendUrl = getBackendUrl();
-                
-                const token = localStorage.getItem('betabay_token');
-                const headers: HeadersInit = {};
-                
-                if (token) {
-                    headers['Authorization'] = `Bearer ${token}`;
-                }
-                
-                const response = await fetch(`${backendUrl}/api/test-posts`, {
-                    method: 'GET',
-                    headers: headers
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`Error fetching apps: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                console.log("Home Page API response:", data);
-                
-                if (Array.isArray(data)) {
-                    setApps(data);
-                } else if (data && typeof data === 'object') {
-                    const possibleArrays = Object.values(data).filter(value => Array.isArray(value));
-                    if (possibleArrays.length > 0) {
-                        setApps(possibleArrays[0] as App[]);
-                    } else {
-                        if (data.id) {
-                            setApps([data as App]);
-                        } else {
-                            setApps([]);
-                        }
-                    }
-                } else {
-                    setApps([]);
-                }
-                
-                setError(null);
-            } catch (error) {
-                console.error('Failed to fetch apps:', error);
-                setError('Failed to load apps. Please try again.');
-                setApps([]);
-            } finally {
-                setLoading(false);
-            }
-        }
-        
-        fetchApps();
-    }, []);
 
     useEffect(() => {
         const authStatus = searchParams.get('auth');
@@ -132,14 +81,22 @@ function HomeContent() {
         </section>
         {/* Featured Apps Section */}
         <section className="mb-12 px-6">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900">Featured Apps</h2>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">Featured Apps</h2>
+            {hasCache && loading && (
+              <div className="flex items-center text-sm text-blue-600">
+                <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-2"></div>
+                Updating...
+              </div>
+            )}
+          </div>
           
-          {loading ? (
+          {loading && !hasCache ? (
             <div className="flex justify-center items-center h-32">
               <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
               <p className="ml-3 text-gray-600">Loading apps...</p>
             </div>
-          ) : error ? (
+          ) : error && !hasCache ? (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
               <p className="font-medium">Error</p>
               <p>{error}</p>
@@ -181,7 +138,7 @@ function HomeContent() {
           </div>
           
           <div className="space-y-4">
-            {loading ? (
+            {loading && !hasCache ? (
               <div className="flex justify-center items-center h-32">
                 <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
                 <p className="ml-3 text-gray-600">Loading apps...</p>
