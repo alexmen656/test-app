@@ -142,11 +142,9 @@ router.get('/slack/callback', async (req, res) => {
         console.log('✅ User login updated:', user.username);
       }
     } else {
-      // SQLite approach
       user = await db.get('SELECT * FROM users WHERE slack_user_id = ?', [slackUserId]);
       
       if (!user) {
-        // Create new user
         const userId = uuidv4();
         await db.run(`
           INSERT INTO users (
@@ -158,14 +156,13 @@ router.get('/slack/callback', async (req, res) => {
           slackUserId,
           slackUser.name,
           slackUser.real_name || slackUser.name,
-          slackUser.profile.email || `${slackUserId}@slack.local`, // Provide fallback email
+          slackUser.profile.email || `${slackUserId}@slack.local`,
           slackUser.profile.image_512 || slackUser.profile.image_192,
           `https://${teamName.toLowerCase()}.slack.com/team/${slackUserId}`,
-          100, // Starting coins
+          100,
           new Date().toISOString()
         ]);
         
-        // Create signup bonus transaction
         const transactionId = uuidv4();
         await db.run(`
           INSERT INTO coin_transactions (
@@ -180,7 +177,6 @@ router.get('/slack/callback', async (req, res) => {
           'Welcome bonus for joining BetaBay!'
         ]);
         
-        // Create welcome notification
         const notificationId = uuidv4();
         await db.run(`
           INSERT INTO notifications (
@@ -197,7 +193,6 @@ router.get('/slack/callback', async (req, res) => {
         user = await db.get('SELECT * FROM users WHERE id = ?', [userId]);
         console.log('✅ New user created:', user.username);
       } else {
-        // Update last login
         await db.run('UPDATE users SET last_login = ? WHERE id = ?', [
           new Date().toISOString(),
           user.id
@@ -206,7 +201,6 @@ router.get('/slack/callback', async (req, res) => {
       }
     }
     
-    // Create JWT token for frontend authentication
     const jwtPayload = {
       slack_user_id: user.slack_user_id,
       username: user.username,
@@ -214,7 +208,7 @@ router.get('/slack/callback', async (req, res) => {
       email: user.email,
       profile_image: user.avatar_url,
       iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) // 24 hours
+      exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60)
     };
     
     const userToken = jwt.sign(jwtPayload, JWT_SECRET);
@@ -225,7 +219,6 @@ router.get('/slack/callback', async (req, res) => {
       username: user.username 
     });
     
-    // Store user in session as fallback
     req.session.user = {
       id: user.id,
       username: user.username,
@@ -235,7 +228,6 @@ router.get('/slack/callback', async (req, res) => {
       owned_coins: user.owned_coins
     };
     
-    // Redirect to frontend with token
     const frontendUrl = `${'https://app.beta-bay.com'}/?auth=success&token=${userToken}`;//process.env.FRONTEND_URL || 
     //process.env.NODE_ENV === 'production' 
       //? `${process.env.FRONTEND_URL || 'https://betabay-apps.vercel.app'}/?auth=success&token=${userToken}`
@@ -256,29 +248,23 @@ router.get('/slack/callback', async (req, res) => {
   }
 });
 
-// Get current user info
 router.get('/user', async (req, res) => {
   try {
-    // Check for JWT token-based auth first
     const token = req.headers.authorization?.replace('Bearer ', '') || req.query.token;
     
     if (token) {
       try {
-        // Verify JWT token
         const decoded = jwt.verify(token, JWT_SECRET);
         
         if (!decoded.slack_user_id) {
           return res.status(401).json({ error: 'Invalid token: missing slack_user_id' });
         }
         
-        // Get fresh user data from database using Slack ID
         let user;
         
         if (db.findOne) {
-          // MongoDB approach
           user = await db.findOne('users', { slack_user_id: decoded.slack_user_id });
         } else {
-          // SQLite approach
           user = await db.get('SELECT * FROM users WHERE slack_user_id = ?', [decoded.slack_user_id]);
         }
         
@@ -286,9 +272,8 @@ router.get('/user', async (req, res) => {
           return res.status(404).json({ error: 'User not found' });
         }
         
-        // Return user data in format expected by frontend
         return res.json({
-          id: user.slack_user_id, // Frontend expects this as the user ID
+          id: user.slack_user_id,
           name: user.display_name || user.username,
           email: user.email,
           image: user.avatar_url,
@@ -300,15 +285,12 @@ router.get('/user', async (req, res) => {
       }
     }
     
-    // Fallback to session-based auth
     if (req.session.user) {
       let user;
       
       if (db.findOne) {
-        // MongoDB approach
         user = await db.findOne('users', { id: req.session.user.id });
       } else {
-        // SQLite approach
         user = await db.get('SELECT * FROM users WHERE id = ?', [req.session.user.id]);
       }
       
@@ -328,7 +310,6 @@ router.get('/user', async (req, res) => {
   }
 });
 
-// Logout
 router.post('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {
