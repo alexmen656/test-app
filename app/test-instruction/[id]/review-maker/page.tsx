@@ -6,18 +6,52 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { App } from '@/types';
 import { getBackendUrl } from '@/lib/api';
+import { useAuth } from '@/hooks/useAuth';
 
 interface ReviewMakerPageProps {
   params: Promise<{ id: string }>;
 }
 
+interface Review {
+  id: string;
+  review_score: number;
+  comment: string;
+  username: string;
+  display_name: string;
+  avatar_url?: string;
+  created_at: string;
+}
+
 const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
-  const [reviews, setReviews] = useState<{ name: string; text: string; rating: string }[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const resolvedParams = use(params);
   const appId = resolvedParams.id;
   const [app, setApp] = useState<App | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const { isAuthenticated } = useAuth();
+
+  // Load existing reviews for this test post
+  useEffect(() => {
+    const fetchReviews = async () => {
+      if (!app) return;
+      
+      try {
+        const backendUrl = getBackendUrl();
+        const response = await fetch(`${backendUrl}/api/reviews/test-post/${appId}`);
+        
+        if (response.ok) {
+          const data = await response.json();
+          setReviews(data.reviews || []);
+        }
+      } catch (error) {
+        console.error('Error fetching reviews:', error);
+      }
+    };
+
+    fetchReviews();
+  }, [app, appId]);
 
   // Try to fetch app data from backend first, fallback to mock data
   useEffect(() => {
@@ -149,36 +183,71 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
           <h3 className="text-4xl font-light text-gray-900 mb-12 text-center">Submit Your Review</h3>
           <form
             className="max-w-4xl mx-auto bg-white/80 backdrop-blur-sm rounded-[40px] border border-white/50 shadow-xl p-12 space-y-8"
-            onSubmit={(e) => {
+            onSubmit={async (e) => {
               e.preventDefault();
-              const formData = new FormData(e.currentTarget);
-              const newReview = {
-                name: formData.get('reviewerName') as string,
-                text: formData.get('reviewText') as string,
-                rating: formData.get('rating') as string,
-              };
-              console.log('Review submitted:', newReview);
-              setReviews((prevReviews) => [...prevReviews, newReview]);
-              e.currentTarget.reset();
+              
+              if (!isAuthenticated) {
+                alert('Please sign in to submit a review.');
+                return;
+              }
 
-              // Show success message
-              alert('Thank you for your review! Your feedback has been submitted successfully.');
+              const formData = new FormData(e.currentTarget);
+              const reviewScore = parseInt(formData.get('rating') as string);
+              const comment = formData.get('reviewText') as string;
+
+              if (!reviewScore || !comment.trim()) {
+                alert('Please provide both a rating and review text.');
+                return;
+              }
+
+              setSubmitting(true);
+
+              try {
+                const backendUrl = getBackendUrl();
+                const token = localStorage.getItem('betabay_token');
+
+                if (!token) {
+                  alert('Authentication required. Please sign in again.');
+                  return;
+                }
+
+                const response = await fetch(`${backendUrl}/api/reviews`, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                  },
+                  body: JSON.stringify({
+                    test_post_id: appId,
+                    review_score: reviewScore,
+                    comment: comment.trim()
+                  })
+                });
+
+                if (response.ok) {
+                  const data = await response.json();
+                  
+                  // Add the new review to the list
+                  if (data.review) {
+                    setReviews(prev => [data.review, ...prev]);
+                  }
+                  
+                  // Reset form
+                  e.currentTarget.reset();
+                  
+                  alert('Thank you for your review! Your feedback has been submitted successfully.');
+                } else {
+                  const errorData = await response.json();
+                  alert(`Failed to submit review: ${errorData.error || 'Unknown error'}`);
+                }
+              } catch (error) {
+                console.error('Error submitting review:', error);
+                alert('Failed to submit review. Please try again.');
+              } finally {
+                setSubmitting(false);
+              }
             }}
           >
-            <div>
-              <label htmlFor="reviewerName" className="block text-lg font-bold text-gray-900 mb-4">
-                Your Name
-              </label>
-              <input
-                type="text"
-                id="reviewerName"
-                name="reviewerName"
-                className="w-full px-6 py-4 border border-gray-200 rounded-[20px] shadow-sm focus:ring-green-500 focus:border-green-500 text-lg bg-white/90 backdrop-blur-sm transition-all duration-200 hover:shadow-md"
-                placeholder="Enter your name"
-                required
-              />
-            </div>
-
             <div>
               <label htmlFor="rating" className="block text-lg font-bold text-gray-900 mb-4">
                 Overall Rating
@@ -247,34 +316,56 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
             <div className="text-center">
               <button
                 type="submit"
-                className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold py-6 px-12 rounded-[20px] transition-all duration-300 shadow-xl hover:shadow-2xl text-lg transform hover:-translate-y-1"
+                disabled={submitting || !isAuthenticated}
+                className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-bold py-6 px-12 rounded-[20px] transition-all duration-300 shadow-xl hover:shadow-2xl text-lg transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
-                Submit Review
+                {submitting ? 'Submitting...' : 'Submit Review'}
               </button>
+              {!isAuthenticated && (
+                <p className="mt-4 text-red-600 text-sm">
+                  Please sign in to submit a review.
+                </p>
+              )}
             </div>
           </form>
         </div>
 
         {/* Review History Section */}
         <div className="mb-20">
-          <h3 className="text-4xl font-light text-gray-900 mb-12 text-center">Your Review History</h3>
+          <h3 className="text-4xl font-light text-gray-900 mb-12 text-center">Recent Reviews</h3>
           <div className="max-w-4xl mx-auto bg-white/80 backdrop-blur-sm rounded-[40px] border border-white/50 shadow-xl p-12">
             {reviews.length > 0 ? (
               <div className="space-y-8">
                 {reviews.map((review, index) => (
-                  <div key={index} className="border-b border-gray-200 pb-8 last:border-b-0 last:pb-0">
+                  <div key={review.id || index} className="border-b border-gray-200 pb-8 last:border-b-0 last:pb-0">
                     <div className="flex items-center justify-between mb-4">
-                      <p className="text-xl font-bold text-gray-900">{review.name}</p>
+                      <div className="flex items-center gap-3">
+                        {review.avatar_url && (
+                          <Image
+                            src={review.avatar_url}
+                            alt={review.display_name || review.username}
+                            width={40}
+                            height={40}
+                            className="rounded-full"
+                          />
+                        )}
+                        <p className="text-xl font-bold text-gray-900">
+                          {review.display_name || review.username}
+                        </p>
+                      </div>
                       <div className="flex items-center gap-1">
                         {Array.from({ length: 5 }, (_, i) => (
-                          <span key={i} className={i < parseInt(review.rating) ? 'text-yellow-400 text-xl' : 'text-gray-300 text-xl'}>
+                          <span key={i} className={i < review.review_score ? 'text-yellow-400 text-xl' : 'text-gray-300 text-xl'}>
                             ⭐
                           </span>
                         ))}
-                        <span className="ml-2 text-lg text-gray-600 font-semibold">({review.rating}/5)</span>
+                        <span className="ml-2 text-lg text-gray-600 font-semibold">({review.review_score}/5)</span>
                       </div>
                     </div>
-                    <p className="text-gray-700 leading-relaxed text-lg">{review.text}</p>
+                    <p className="text-gray-700 leading-relaxed text-lg mb-2">{review.comment}</p>
+                    <p className="text-sm text-gray-500">
+                      {new Date(review.created_at).toLocaleDateString()}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -285,8 +376,8 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
                     <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                   </svg>
                 </div>
-                <p className="text-gray-600 text-xl mb-3">No reviews submitted yet.</p>
-                <p className="text-gray-500 text-lg">Your reviews will appear here after submission.</p>
+                <p className="text-gray-600 text-xl mb-3">No reviews yet.</p>
+                <p className="text-gray-500 text-lg">Be the first to share your feedback!</p>
               </div>
             )}
           </div>
