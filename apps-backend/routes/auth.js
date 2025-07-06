@@ -98,17 +98,16 @@ router.get('/slack/callback', async (req, res) => {
           slack_user_id: slackUserId,
           username: slackUser.name,
           display_name: slackUser.real_name || slackUser.name,
-          email: slackUser.profile.email || `${slackUserId}@slack.local`, // Provide fallback email
+          email: slackUser.profile.email || `${slackUserId}@slack.local`,
           avatar_url: slackUser.profile.image_512 || slackUser.profile.image_192,
           slack_profile_link: `https://${teamName.toLowerCase()}.slack.com/team/${slackUserId}`,
-          owned_coins: 100, // Starting coins
+          owned_coins: 100,
           last_login: new Date(),
           created_at: new Date(),
           updated_at: new Date(),
           is_active: true
         });
         
-        // Create signup bonus transaction
         await db.insert('coin_transactions', {
           id: uuidv4(),
           receiver_user_id: userId,
@@ -120,7 +119,6 @@ router.get('/slack/callback', async (req, res) => {
           created_at: new Date()
         });
         
-        // Create welcome notification
         await db.insert('notifications', {
           id: uuidv4(),
           user_id: userId,
