@@ -131,7 +131,6 @@ router.get('/slack/callback', async (req, res) => {
         user = await db.findOne('users', { id: userId });
         console.log('✅ New user created:', user.username);
       } else {
-        // Update last login
         await db.update('users', 
           { id: user.id }, 
           { $set: { last_login: new Date(), updated_at: new Date() } }
@@ -167,10 +166,7 @@ router.get('/slack/callback', async (req, res) => {
       owned_coins: user.owned_coins
     };
     
-    const frontendUrl = `${'https://app.beta-bay.com'}/?auth=success&token=${userToken}`;//process.env.FRONTEND_URL || 
-    //process.env.NODE_ENV === 'production' 
-      //? `${process.env.FRONTEND_URL || 'https://betabay-apps.vercel.app'}/?auth=success&token=${userToken}`
-    //  : `http://localhost:3000/?auth=success&token=${userToken}`;
+    const frontendUrl = `${'https://app.beta-bay.com'}/?auth=success&token=${userToken}`;
     
     res.redirect(frontendUrl);
     
@@ -179,9 +175,6 @@ router.get('/slack/callback', async (req, res) => {
     console.error('Error details:', error.response?.data);
     
     const errorUrl = `${'https://app.beta-bay.com'}/?auth=error`;
-    /*process.env.NODE_ENV === 'production'
-      ? `${process.env.FRONTEND_URL || 'https://betabay-apps.vercel.app'}/?auth=error`
-      : 'http://localhost:3000/?auth=error';*/
     
     res.redirect(errorUrl);
   }
