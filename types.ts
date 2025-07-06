@@ -44,6 +44,7 @@ export interface App {
         name: string;
         avatarUrl: string;
     }[];
+    joinedUserIds?: string[]; // Array of user IDs who joined the test
     testingFocus?: string;
     focusAreas?: string[];
     subtitle?: string;
@@ -51,7 +52,7 @@ export interface App {
     created_at?: string; // Backend field name
     testPeriod?: string;
     feedbackInstructions?: string;
-  }
+}
 
 /**
  * Represents the data structure for the new app creation form.
@@ -79,4 +80,3 @@ export interface Notification {
     timestamp: string;
     read: boolean;
 }
-  
