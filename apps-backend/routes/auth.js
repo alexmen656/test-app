@@ -6,18 +6,14 @@ const db = require('../database');
 
 const router = express.Router();
 
-// JWT Secret (same as in testPosts.js)
 const JWT_SECRET = process.env.JWT_SECRET || 'betabay-secret-key-2024';
 
-// Slack OAuth configuration
 const SLACK_OAUTH_URL = 'https://slack.com/oauth/v2/authorize';
 const SLACK_TOKEN_URL = 'https://slack.com/api/oauth.v2.access';
 const SLACK_USER_INFO_URL = 'https://slack.com/api/users.info';
 
-// In-memory store for OAuth states
 const oauthStates = new Map();
 
-// Start Slack OAuth flow
 router.get('/slack', (req, res) => {
   const state = require('crypto').randomBytes(32).toString('hex');
   
@@ -29,13 +25,11 @@ router.get('/slack', (req, res) => {
     response_type: 'code'
   });
   
-  // Store state with expiration (10 minutes)
   oauthStates.set(state, {
     timestamp: Date.now(),
     sessionId: req.sessionID
   });
   
-  // Clean up old states
   const tenMinutesAgo = Date.now() - 10 * 60 * 1000;
   for (const [key, value] of oauthStates.entries()) {
     if (value.timestamp < tenMinutesAgo) {
@@ -47,11 +41,9 @@ router.get('/slack', (req, res) => {
   res.redirect(`${SLACK_OAUTH_URL}?${params}`);
 });
 
-// Handle Slack OAuth callback
 router.get('/slack/callback', async (req, res) => {
   const { code, state } = req.query;
   
-  // Verify state
   const storedState = oauthStates.get(state);
   if (!storedState) {
     console.error('❌ OAuth state not found:', state);
@@ -65,7 +57,6 @@ router.get('/slack/callback', async (req, res) => {
   }
   
   try {
-    // Exchange code for access token
     const tokenResponse = await axios.post(SLACK_TOKEN_URL, {
       client_id: process.env.SLACK_CLIENT_ID,
       client_secret: process.env.SLACK_CLIENT_SECRET,
@@ -83,7 +74,6 @@ router.get('/slack/callback', async (req, res) => {
     const slackUserId = tokenResponse.data.authed_user.id;
     const teamName = tokenResponse.data.team.name;
     
-    // Get user information
     const userResponse = await axios.get(SLACK_USER_INFO_URL, {
       headers: { 'Authorization': `Bearer ${accessToken}` },
       params: { user: slackUserId }
@@ -95,24 +85,20 @@ router.get('/slack/callback', async (req, res) => {
     
     const slackUser = userResponse.data.user;
     
-    // Check if user exists in database
     let user;
     
     if (db.findOne) {
-      // MongoDB approach
       user = await db.findOne('users', { slack_user_id: slackUserId });
       
       if (!user) {
-        // Create new user
         const userId = uuidv4();
         
-        // Insert user
         await db.insert('users', {
           id: userId,
           slack_user_id: slackUserId,
           username: slackUser.name,
           display_name: slackUser.real_name || slackUser.name,
-          email: slackUser.profile.email,
+          email: slackUser.profile.email || `${slackUserId}@slack.local`, // Provide fallback email
           avatar_url: slackUser.profile.image_512 || slackUser.profile.image_192,
           slack_profile_link: `https://${teamName.toLowerCase()}.slack.com/team/${slackUserId}`,
           owned_coins: 100, // Starting coins
@@ -172,7 +158,7 @@ router.get('/slack/callback', async (req, res) => {
           slackUserId,
           slackUser.name,
           slackUser.real_name || slackUser.name,
-          slackUser.profile.email,
+          slackUser.profile.email || `${slackUserId}@slack.local`, // Provide fallback email
           slackUser.profile.image_512 || slackUser.profile.image_192,
           `https://${teamName.toLowerCase()}.slack.com/team/${slackUserId}`,
           100, // Starting coins
@@ -250,9 +236,10 @@ router.get('/slack/callback', async (req, res) => {
     };
     
     // Redirect to frontend with token
-    const frontendUrl = process.env.NODE_ENV === 'production' 
-      ? `${process.env.FRONTEND_URL || 'https://betabay-apps.vercel.app'}/?auth=success&token=${userToken}`
-      : `http://localhost:3000/?auth=success&token=${userToken}`;
+    const frontendUrl = `${'https://app.beta-bay.com'}/?auth=success&token=${userToken}`;//process.env.FRONTEND_URL || 
+    //process.env.NODE_ENV === 'production' 
+      //? `${process.env.FRONTEND_URL || 'https://betabay-apps.vercel.app'}/?auth=success&token=${userToken}`
+    //  : `http://localhost:3000/?auth=success&token=${userToken}`;
     
     res.redirect(frontendUrl);
     
@@ -260,9 +247,10 @@ router.get('/slack/callback', async (req, res) => {
     console.error('❌ Slack OAuth error:', error.message);
     console.error('Error details:', error.response?.data);
     
-    const errorUrl = process.env.NODE_ENV === 'production'
+    const errorUrl = `${'https://app.beta-bay.com'}/?auth=error`;
+    /*process.env.NODE_ENV === 'production'
       ? `${process.env.FRONTEND_URL || 'https://betabay-apps.vercel.app'}/?auth=error`
-      : 'http://localhost:3000/?auth=error';
+      : 'http://localhost:3000/?auth=error';*/
     
     res.redirect(errorUrl);
   }
