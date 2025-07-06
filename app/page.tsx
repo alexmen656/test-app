@@ -7,7 +7,6 @@ import AppCard from '@/components/AppCard';
 import { useAuth } from '@/hooks/useAuth';
 import { useApps } from '@/hooks/useApps';
 import AppListCard from '@/components/AppListCard';
-import type { App } from '@/types';
 
 function HomeContent() {
     const router = useRouter();
