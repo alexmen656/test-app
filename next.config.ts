@@ -28,6 +28,11 @@ const nextConfig: NextConfig = {
         hostname: "images.unsplash.com",
         port: "",
       },
+       {
+        protocol: "https",
+        hostname: "mock-cover-image-url.com",
+        port: "",
+      },
     ], 
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
