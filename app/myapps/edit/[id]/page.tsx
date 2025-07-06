@@ -9,8 +9,6 @@ import { useParams, useRouter } from 'next/navigation';
 import { getBackendUrl } from '@/lib/api';
 import { useSimpleFileUpload } from '@/hooks/useFileUpload';
 
-
-
 /**
  * The page containing the form to post a new application.
  */
@@ -39,7 +37,6 @@ const NewAppPage: FC = () => {
     const [uploadedUrls, setUploadedUrls] = useState<{ icon?: string; coverImage?: string; screenshots: string[] }>({ screenshots: [] });
     const { upload, isUploading } = useSimpleFileUpload();
 
-    // Daten aus dem Backend laden, wenn wir im Bearbeitungsmodus sind
     useEffect(() => {
         const fetchAppData = async () => {
             if (!isEditing) return;
@@ -50,8 +47,6 @@ const NewAppPage: FC = () => {
             try {
                 const backendUrl = getBackendUrl();
                 const postId = params.id;
-
-                // Token aus localStorage holen
                 const token = localStorage.getItem('betabay_token');
                 const headers: HeadersInit = {};
 
@@ -59,7 +54,6 @@ const NewAppPage: FC = () => {
                     headers['Authorization'] = `Bearer ${token}`;
                 }
 
-                // Daten vom Backend abrufen
                 const response = await fetch(`${backendUrl}/api/test-posts/${postId}`, {
                     method: 'GET',
                     headers: headers
@@ -72,7 +66,6 @@ const NewAppPage: FC = () => {
                 const appData = await response.json();
                 console.log('Fetched app data:', appData);
 
-                // Daten in den State setzen
                 setData({
                     name: appData.name || appData.app_name || '',
                     description: appData.description || '',
@@ -87,7 +80,6 @@ const NewAppPage: FC = () => {
                     screenshots: []
                 });
 
-                // Vorschaubilder setzen, wenn vorhanden
                 const previewsUpdate: { icon?: string; coverImage?: string; screenshots: string[] } = { screenshots: [] };
                 const uploadedUrlsUpdate: { icon?: string; coverImage?: string; screenshots: string[] } = { screenshots: [] };
 
@@ -136,11 +128,9 @@ const NewAppPage: FC = () => {
             if (name === 'screenshots') {
                 const newFiles = Array.from(files);
 
-                // Show preview immediately for better UX
                 const newPreviews = newFiles.map(file => URL.createObjectURL(file));
                 setPreviews(prev => ({ ...prev, screenshots: [...prev.screenshots, ...newPreviews] }));
 
-                // Upload each file sequentially to ensure all URLs are captured
                 const uploadedScreenshots: string[] = [];
                 for (const file of newFiles) {
                     try {
@@ -152,27 +142,22 @@ const NewAppPage: FC = () => {
                     } catch (uploadError) {
                         console.error('Failed to upload screenshot:', uploadError);
                         alert(`Failed to upload one of the screenshots. Please try again.`);
-                        return; // Stop if any upload fails
+                        return;
                     }
                 }
 
-                // Update uploaded URLs with all new screenshots
                 setUploadedUrls(prev => ({
                     ...prev,
                     screenshots: [...prev.screenshots, ...uploadedScreenshots]
                 }));
 
-                // Update file data for form submission
                 setData(prev => ({ ...prev, screenshots: [...prev.screenshots, ...newFiles] }));
             } else {
                 const file = files[0];
-
-                // Show preview immediately
                 const previewUrl = URL.createObjectURL(file);
                 setPreviews(prev => ({ ...prev, [name]: previewUrl }));
 
                 try {
-                    // Upload file
                     const url = await upload(file);
                     if (url) {
                         setUploadedUrls(prev => ({ ...prev, [name]: url }));
@@ -183,12 +168,10 @@ const NewAppPage: FC = () => {
                 } catch (uploadError) {
                     console.error(`Failed to upload ${name}:`, uploadError);
                     alert(`Failed to upload ${name}. Please try again.`);
-                    // Reset preview on failed upload
                     setPreviews(prev => ({ ...prev, [name]: undefined }));
                     return;
                 }
 
-                // Update file data for form submission
                 setData(prev => ({ ...prev, [name]: file }));
             }
         } catch (error) {
@@ -204,7 +187,6 @@ const NewAppPage: FC = () => {
             return;
         }
 
-        // Warten bis alle Uploads abgeschlossen sind
         if (isUploading) {
             alert("Please wait for all file uploads to complete before submitting.");
             return;
@@ -215,7 +197,6 @@ const NewAppPage: FC = () => {
         try {
             const backendUrl = getBackendUrl();
 
-            // Prepare JSON data for upload
             const jsonData = {
                 app_name: data.name,
                 description: data.description,
@@ -225,28 +206,22 @@ const NewAppPage: FC = () => {
                 google_group_link: data.googleGroupLink,
                 testing_instruction: data.testingInstruction,
                 test_price: data.price,
-
-                // User information from Slack
                 user_info: {
                     username: localStorage.getItem('betabay_username') || 'test',
                     profile_image: localStorage.getItem('betabay_profile_image') || 'https://example.com/test',
                     slack_user_id: localStorage.getItem('betabay_user_id') || 'test'
                 },
-
-                // Include uploaded file URLs - diese werden jetzt garantiert gesendet
                 icon_url: uploadedUrls.icon || null,
                 cover_image_url: uploadedUrls.coverImage || null,
                 screenshot_urls: uploadedUrls.screenshots || []
             };
 
-            // Debug: Log der gesendeten URLs
             console.log('Sending file URLs to backend:', {
                 icon_url: jsonData.icon_url,
                 cover_image_url: jsonData.cover_image_url,
                 screenshot_urls: jsonData.screenshot_urls
             });
 
-            // Optional: Get Token from localStorage if it exists
             const token = localStorage.getItem('betabay_token');
             const headers: HeadersInit = {
                 'Content-Type': 'application/json'
@@ -256,14 +231,12 @@ const NewAppPage: FC = () => {
                 headers['Authorization'] = `Bearer ${token}`;
             }
 
-            // API endpoint und Methode basierend auf Bearbeitung oder Erstellung
             const endpoint = isEditing
                 ? `${backendUrl}/api/test-posts/${params.id}`
                 : `${backendUrl}/api/test-posts`;
 
             const method = isEditing ? 'PUT' : 'POST';
 
-            // Send JSON data to backend
             const response = await fetch(endpoint, {
                 method: method,
                 headers: headers,
@@ -277,7 +250,6 @@ const NewAppPage: FC = () => {
             const result = await response.json();
             console.log(`App ${isEditing ? 'updated' : 'created'} successfully:`, result);
 
-            // Redirect to myapps page
             router.push('/myapps');
         } catch (error) {
             console.error(`Failed to ${isEditing ? 'update' : 'create'} app:`, error);
@@ -288,12 +260,8 @@ const NewAppPage: FC = () => {
     };
 
     const handleCancel = () => {
-        router.push('/myapps'); // Redirect to the My Apps page
+        router.push('/myapps');
     };
-
-    // Render the form with sections for core information, media & visuals, and testing & distribution
-
-
 
     return (
         <div className="max-w-5xl mx-auto md:px-5 px-2 mb-10">
