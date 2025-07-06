@@ -2,13 +2,10 @@ const express = require('express');
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 const db = require('../database');
-
 const router = express.Router();
 
-// JWT Secret
 const JWT_SECRET = process.env.JWT_SECRET || 'betabay-secret-key-2024';
 
-// Middleware to authenticate user (updated for MongoDB and JWT)
 const authenticateUser = async (req, res, next) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
@@ -77,7 +74,6 @@ const authenticateUser = async (req, res, next) => {
   }
 };
 
-// Get user's coin balance
 router.get('/balance', authenticateUser, async (req, res) => {
   try {
     await db.initialize();
@@ -96,7 +92,6 @@ router.get('/balance', authenticateUser, async (req, res) => {
   }
 });
 
-// Get user's transaction history
 router.get('/transactions', authenticateUser, async (req, res) => {
   try {
     await db.initialize();
@@ -104,7 +99,6 @@ router.get('/transactions', authenticateUser, async (req, res) => {
     const { page = 1, limit = 20, type } = req.query;
     const offset = (page - 1) * limit;
     
-    // Build MongoDB query
     let query = {
       $or: [
         { sender_user_id: req.user.id },
@@ -116,17 +110,14 @@ router.get('/transactions', authenticateUser, async (req, res) => {
       query.transaction_type = type;
     }
     
-    // Get transactions with sorting and pagination
     const transactions = await db.find('coin_transactions', query, {
       sort: { created_at: -1 },
       limit: parseInt(limit),
       skip: offset
     });
     
-    // Get total count
     const total = await db.count('coin_transactions', query);
     
-    // Enrich transactions with user data
     const enrichedTransactions = await Promise.all(transactions.map(async (tx) => {
       let senderUser = null;
       let receiverUser = null;
@@ -165,12 +156,10 @@ router.get('/transactions', authenticateUser, async (req, res) => {
   }
 });
 
-// Transfer coins to another user
 router.post('/transfer', authenticateUser, async (req, res) => {
   try {
     const { recipient_username, amount, description } = req.body;
     
-    // Validation
     if (!recipient_username || !amount || amount <= 0) {
       return res.status(400).json({ error: 'Invalid transfer details' });
     }
@@ -181,7 +170,6 @@ router.post('/transfer', authenticateUser, async (req, res) => {
     
     await db.initialize();
     
-    // Find recipient
     const recipient = await db.findOne('users', { username: recipient_username });
     
     if (!recipient) {
@@ -192,23 +180,19 @@ router.post('/transfer', authenticateUser, async (req, res) => {
       return res.status(400).json({ error: 'Cannot transfer coins to yourself' });
     }
     
-    // Perform transaction using MongoDB session for atomicity
     const transactionId = uuidv4();
     
     try {
-      // Deduct from sender
       await db.update('users', 
         { id: req.user.id }, 
         { $inc: { owned_coins: -amount } }
       );
       
-      // Add to recipient
       await db.update('users', 
         { id: recipient.id }, 
         { $inc: { owned_coins: amount } }
       );
       
-      // Record transaction
       await db.insert('coin_transactions', {
         id: transactionId,
         sender_user_id: req.user.id,
@@ -221,7 +205,6 @@ router.post('/transfer', authenticateUser, async (req, res) => {
         created_at: new Date()
       });
       
-      // Create notification for recipient
       const notificationId = uuidv4();
       await db.insert('notifications', {
         id: notificationId,
@@ -256,7 +239,6 @@ router.post('/transfer', authenticateUser, async (req, res) => {
   }
 });
 
-// Award coins (for completing tests, good reviews, etc.)
 async function awardCoins(userId, amount, transactionType, referenceType, referenceId, description) {
   try {
     await db.initialize();
@@ -264,13 +246,11 @@ async function awardCoins(userId, amount, transactionType, referenceType, refere
     const transactionId = uuidv4();
     
     try {
-      // Add coins to user
       await db.update('users', 
         { id: userId }, 
         { $inc: { owned_coins: amount } }
       );
       
-      // Record transaction
       await db.insert('coin_transactions', {
         id: transactionId,
         receiver_user_id: userId,
@@ -283,7 +263,6 @@ async function awardCoins(userId, amount, transactionType, referenceType, refere
         created_at: new Date()
       });
       
-      // Create notification
       const notificationId = uuidv4();
       await db.insert('notifications', {
         id: notificationId,
@@ -310,12 +289,10 @@ async function awardCoins(userId, amount, transactionType, referenceType, refere
   }
 }
 
-// Get coin statistics
 router.get('/stats', async (req, res) => {
   try {
     await db.initialize();
     
-    // Get platform stats using MongoDB aggregation
     const rewardTransactions = await db.find('coin_transactions', {
       transaction_type: 'reward',
       status: 'completed'
@@ -330,14 +307,12 @@ router.get('/stats', async (req, res) => {
       status: 'completed'
     });
     
-    // Calculate stats
     const totalRewards = rewardTransactions.reduce((sum, tx) => sum + tx.amount, 0);
     const totalPayments = paymentTransactions.reduce((sum, tx) => sum + tx.amount, 0);
     const avgTransactionAmount = allTransactions.length > 0 
       ? allTransactions.reduce((sum, tx) => sum + tx.amount, 0) / allTransactions.length 
       : 0;
     
-    // Get unique active users
     const activeUserIds = new Set();
     allTransactions.forEach(tx => {
       if (tx.receiver_user_id) activeUserIds.add(tx.receiver_user_id);
@@ -350,7 +325,6 @@ router.get('/stats', async (req, res) => {
       avg_transaction_amount: Math.round(avgTransactionAmount * 100) / 100
     };
     
-    // Get top earners
     const topEarners = await db.find('users', {
       is_active: true
     }, {
@@ -374,6 +348,5 @@ router.get('/stats', async (req, res) => {
   }
 });
 
-// Export the award function for use in other modules
 module.exports = router;
 module.exports.awardCoins = awardCoins;
