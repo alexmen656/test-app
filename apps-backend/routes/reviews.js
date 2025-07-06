@@ -207,9 +207,9 @@ router.post('/', authenticateUser, async (req, res) => {
       return res.status(400).json({ error: 'Cannot review your own test post' });
     }
     
-    if (!participation) {
+    /*if (!participation) {
       return res.status(400).json({ error: 'You must join the test before reviewing' });
-    }
+    }*/
     
     if (existingReview) {
       return res.status(400).json({ error: 'You have already reviewed this test post' });
