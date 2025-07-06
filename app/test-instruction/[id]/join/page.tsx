@@ -170,87 +170,12 @@ const JoinBetaPage: FC<JoinBetaPageProps> = ({ params }) => {
         {!joined ? (
           /* Join Form */
           <div className="bg-white/90 backdrop-blur-sm rounded-[32px] shadow-xl border border-white/50 p-10">
-            <h3 className="text-3xl font-bold text-gray-900 mb-8 text-center">Confirm Your Beta Participation</h3>
-            
-            <div className="grid md:grid-cols-2 gap-10 mb-10">
-              <div>
-                <h4 className="text-xl font-semibold text-gray-900 mb-4">What You&apos;ll Get:</h4>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
-                        <path d="M20 6L9 17l-5-5"/>
-                      </svg>
-                    </div>
-                    <span className="text-gray-700">Early access to all beta features</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
-                        <path d="M20 6L9 17l-5-5"/>
-                      </svg>
-                    </div>
-                    <span className="text-gray-700">Direct communication with developers</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
-                        <path d="M20 6L9 17l-5-5"/>
-                      </svg>
-                    </div>
-                    <span className="text-gray-700">Lifetime premium access</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
-                        <path d="M20 6L9 17l-5-5"/>
-                      </svg>
-                    </div>
-                    <span className="text-gray-700">Exclusive beta tester badge</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div>
-                <h4 className="text-xl font-semibold text-gray-900 mb-4">Your Commitment:</h4>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
-                        <path d="M12 2v20M2 12h20"/>
-                      </svg>
-                    </div>
-                    <span className="text-gray-700">2-3 weeks of testing</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
-                        <path d="M12 2v20M2 12h20"/>
-                      </svg>
-                    </div>
-                    <span className="text-gray-700">Regular app usage and testing</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
-                        <path d="M12 2v20M2 12h20"/>
-                      </svg>
-                    </div>
-                    <span className="text-gray-700">Provide detailed feedback</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
-                        <path d="M12 2v20M2 12h20"/>
-                      </svg>
-                    </div>
-                    <span className="text-gray-700">Report bugs and suggestions</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
             <div className="text-center">
+              <h3 className="text-3xl font-bold text-gray-900 mb-6">Ready to Join?</h3>
+              <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+                Join the beta program to get early access and help shape the future of this app.
+              </p>
+              
               <button
                 onClick={handleJoinBeta}
                 disabled={isJoining}
@@ -265,10 +190,6 @@ const JoinBetaPage: FC<JoinBetaPageProps> = ({ params }) => {
                   'Join Beta Program'
                 )}
               </button>
-              
-              <p className="text-sm text-gray-500 mt-4">
-                By joining, you agree to provide constructive feedback and help improve the app.
-              </p>
             </div>
           </div>
         ) : (
@@ -304,7 +225,7 @@ const JoinBetaPage: FC<JoinBetaPageProps> = ({ params }) => {
                 href={`/test-instruction/${appId}`}
                 className="group bg-white text-gray-700 hover:text-gray-900 font-semibold py-4 px-8 rounded-[16px] transition-all duration-300 shadow-lg hover:shadow-xl border border-gray-200 hover:border-gray-300 flex items-center justify-center gap-3"
               >
-                View Full Journey
+                Check Reviews
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="group-hover:translate-x-1 transition-transform duration-300">
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>

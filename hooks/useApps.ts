@@ -109,7 +109,7 @@ export function useApps({
       
     } catch (error) {
       console.error(`useApps (${cacheKey}): Failed to fetch apps:`, error);
-      setError('Failed to load apps. Please try again.');
+      setError('Please sign in to view your apps.');
       setLoading(false);
     }
   }, [endpoint, requireAuth, cacheKey, setApps, setLoading, setError]);

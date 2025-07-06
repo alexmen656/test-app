@@ -278,12 +278,20 @@ const NewAppPage: FC = () => {
                     </p>
                 </div>
                 {isEditing && (
-                    <button
-                        onClick={() => router.push(`/detail/${params.id}`)}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-                    >
-                        View Details
-                    </button>
+                    <div className="flex gap-3">
+                        <button
+                            onClick={() => router.push(`/detail/${params.id}`)}
+                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                        >
+                            View Details
+                        </button>
+                        <button
+                            onClick={() => router.push('/confirmation')}
+                            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+                        >
+                            Check Reviews
+                        </button>
+                    </div>
                 )}
             </header>
 
