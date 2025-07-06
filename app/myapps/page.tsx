@@ -152,7 +152,7 @@ export default function App() {
                             ) : (
                                 // Nachricht anzeigen, wenn keine Apps vorhanden sind
                                 <div className="col-span-full text-center py-8 text-gray-500">
-                                    Du hast noch keine Apps erstellt.
+                                    You have no Apps yet.
                                 </div>
                             )}
                             <AddNewAppCard />
