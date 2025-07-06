@@ -4,16 +4,10 @@ import React, { FC, useState, ChangeEvent } from 'react';
 import { NewAppData } from '@/types';
 import FormField from '@/components/FormField';
 import ImageUpload from '@/components/ImageUpload';
-import { allApps } from '@/public/MockData'; // Importing mock data for apps
+import { allApps } from '@/public/MockData';
 import { useParams, useRouter } from 'next/navigation';
 import { getBackendUrl } from '@/lib/api';
 import Image from 'next/image';
-
-
-
-/**
- * The page containing the form to post a new application.
- */
 
 const NewAppPage: FC = () => {
     
@@ -101,7 +95,6 @@ const NewAppPage: FC = () => {
         try {
             const backendUrl = getBackendUrl();
             
-            // Prepare JSON data for upload
             const jsonData = {
                 app_name: data.name,
                 description: data.description,
@@ -111,16 +104,8 @@ const NewAppPage: FC = () => {
                 google_group_link: data.googleGroupLink,
                 testing_instruction: data.testingInstruction,
                 test_price: data.price,
-                
-                // We'll need to handle file uploads separately or convert them to base64
-                // For this JSON implementation, we'll assume the backend can accept these as null
-                // or you would need to implement a separate file upload endpoint
-                /*icon_url: null,*/
-                /*cover_image_url: null,*/
-                /*screenshot_urls: []*/
             };
             
-            // Optional: Get Token from localStorage if it exists
             const token = localStorage.getItem('betabay_token');
             const headers: HeadersInit = {
                 'Content-Type': 'application/json'
@@ -130,7 +115,6 @@ const NewAppPage: FC = () => {
                 headers['Authorization'] = `Bearer ${token}`;
             }
             
-            // Send JSON data to backend
             const response = await fetch(`${backendUrl}/api/test-posts`, {
                 method: 'POST',
                 headers: headers,
@@ -144,7 +128,6 @@ const NewAppPage: FC = () => {
             const result = await response.json();
             console.log('App created successfully:', result);
             
-            // Redirect to myapps page
             router.push('/myapps');
         } catch (error) {
             console.error('Failed to create app:', error);
@@ -153,13 +136,9 @@ const NewAppPage: FC = () => {
     };
 
     const handleCancel = () => {
-       router.push('/myapps'); // Redirect to the My Apps page
+       router.push('/myapps');
     };
-
-    // Render the form with sections for core information, media & visuals, and testing & distribution
-
   
-
     return (
         <div className="max-w-5xl mx-auto mb-10">
             <header className="my-10">

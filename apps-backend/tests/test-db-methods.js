@@ -10,7 +10,7 @@ if (!process.env.MONGODB_URI) {
 }
 
 // Import the database instance
-const db = require('./database');
+const db = require('../database');
 
 async function testMethods() {
   try {

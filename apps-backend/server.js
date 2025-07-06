@@ -7,10 +7,8 @@ const path = require('path');
 const fs = require('fs');
 require('dotenv').config();
 
-// Import the shared database instance
 const db = require('./database');
 
-// Import routes
 const authRoutes = require('./routes/auth');
 const testPostRoutes = require('./routes/testPosts');
 const userRoutes = require('./routes/users');
@@ -21,7 +19,6 @@ const reviewRoutes = require('./routes/reviews');
 const app = express();
 const PORT = process.env.PORT || 3002;
 
-// Security middleware
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -35,7 +32,6 @@ app.use(helmet({
   },
 }));
 
-// CORS configuration
 app.use(cors({
   origin: [
     'http://localhost:3000', 
@@ -50,23 +46,20 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
 
-// Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Session configuration
 app.use(session({
   secret: process.env.SESSION_SECRET || 'betabay-apps-secret-key',
   resave: false,
   saveUninitialized: false,
   cookie: {
     secure: process.env.NODE_ENV === 'production',
-    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    maxAge: 24 * 60 * 60 * 1000,
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
   }
 }));
 
-// File upload configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadDir = path.join(__dirname, 'uploads');
@@ -84,11 +77,10 @@ const storage = multer.diskStorage({
 const upload = multer({ 
   storage: storage,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
-    files: 10 // Max 10 files per request
+    fileSize: 5 * 1024 * 1024,
+    files: 10
   },
   fileFilter: (req, file, cb) => {
-    // Allow images only
     if (file.mimetype.startsWith('image/')) {
       cb(null, true);
     } else {
@@ -97,10 +89,8 @@ const upload = multer({
   }
 });
 
-// Static file serving
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/test-posts', testPostRoutes);
 app.use('/api/users', userRoutes);
@@ -108,22 +98,16 @@ app.use('/api/coins', coinRoutes);
 app.use('/api/reviews', reviewRoutes);
 //add route
 
-// Health check endpoint
 app.get('/api/health', async (req, res) => {
   try {
-    // Check if we're using MongoDB
     const isMongoDb = !!db.client;
     
-    // Check database connection
     let dbStatus = 'unknown';
     try {
-      // For MongoDB, we'll test a simple operation
       if (isMongoDb) {
-        // Simple ping to test MongoDB connection
         const result = await db.client.db().command({ ping: 1 });
         dbStatus = result.ok ? 'connected' : 'error';
       } else {
-        // For SQLite, just check if the connection is established
         dbStatus = db.db ? 'connected' : 'error';
       }
     } catch (dbError) {
@@ -152,7 +136,6 @@ app.get('/api/health', async (req, res) => {
   }
 });
 
-// Error handling middleware
 app.use((error, req, res, next) => {
   console.error('Error:', error);
   
@@ -171,12 +154,10 @@ app.use((error, req, res, next) => {
   });
 });
 
-// 404 handler
 app.use('*', (req, res) => {
   res.status(404).json({ error: 'Endpoint not found' });
 });
 
-// Initialize database and start server
 async function startServer() {
   try {
     await db.initialize();
