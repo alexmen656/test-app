@@ -7,8 +7,8 @@ const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 
 // Import the database and coins module
-const db = require('./database');
-const { awardCoins } = require('./routes/coins');
+const db = require('../database');
+const { awardCoins } = require('../routes/coins');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'betabay-secret-key-2024';
 

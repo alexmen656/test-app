@@ -12,7 +12,7 @@ const { v4: uuidv4 } = require('uuid');
 process.env.MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://your-mongodb-uri';
 
 // Import the database module
-const db = require('./database');
+const db = require('../database');
 
 const API_URL = 'http://localhost:3002';
 
