@@ -5,7 +5,6 @@ const { v4: uuidv4 } = require('uuid');
 
 async function insertSampleData(db) {
   try {
-    // Create a sample user first
     const userId = uuidv4();
     await db.run(
       `INSERT OR REPLACE INTO users (id, slack_user_id, username, display_name, email, avatar_url, owned_coins) 
@@ -13,7 +12,6 @@ async function insertSampleData(db) {
       [userId, 'U123456', 'johndoe', 'John Doe', 'john@example.com', 'https://via.placeholder.com/150', 100]
     );
 
-    // Create sample test posts
     const testPosts = [
       {
         id: '1',
@@ -53,7 +51,6 @@ async function insertSampleData(db) {
       }
     ];
 
-    // Insert test posts
     for (const post of testPosts) {
       await db.run(
         `INSERT OR REPLACE INTO test_posts (id, user_id, app_name, description, testing_link, test_price, instructions, youtube_link, google_group_link, icon_url, status, max_testers, current_testers) 
@@ -76,7 +73,6 @@ async function insertSampleData(db) {
       );
     }
 
-    // Add some sample reviews
     const reviewId1 = uuidv4();
     const reviewId2 = uuidv4();
     
