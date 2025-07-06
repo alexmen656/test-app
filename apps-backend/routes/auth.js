@@ -3,7 +3,6 @@ const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const { v4: uuidv4 } = require('uuid');
 const db = require('../database');
-
 const router = express.Router();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'betabay-secret-key-2024';
@@ -139,64 +138,6 @@ router.get('/slack/callback', async (req, res) => {
         );
         console.log('✅ User login updated:', user.username);
       }
-    } else {
-      user = await db.get('SELECT * FROM users WHERE slack_user_id = ?', [slackUserId]);
-      
-      if (!user) {
-        const userId = uuidv4();
-        await db.run(`
-          INSERT INTO users (
-            id, slack_user_id, username, display_name, email, avatar_url, 
-            slack_profile_link, owned_coins, last_login
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `, [
-          userId,
-          slackUserId,
-          slackUser.name,
-          slackUser.real_name || slackUser.name,
-          slackUser.profile.email || `${slackUserId}@slack.local`,
-          slackUser.profile.image_512 || slackUser.profile.image_192,
-          `https://${teamName.toLowerCase()}.slack.com/team/${slackUserId}`,
-          100,
-          new Date().toISOString()
-        ]);
-        
-        const transactionId = uuidv4();
-        await db.run(`
-          INSERT INTO coin_transactions (
-            id, receiver_user_id, amount, transaction_type, reference_type, description
-          ) VALUES (?, ?, ?, ?, ?, ?)
-        `, [
-          transactionId,
-          userId,
-          100,
-          'bonus',
-          'signup_bonus',
-          'Welcome bonus for joining BetaBay!'
-        ]);
-        
-        const notificationId = uuidv4();
-        await db.run(`
-          INSERT INTO notifications (
-            id, user_id, title, message, type
-          ) VALUES (?, ?, ?, ?, ?)
-        `, [
-          notificationId,
-          userId,
-          'Welcome to BetaBay! 🎉',
-          'You have received 100 coins as a welcome bonus. Start testing apps to earn more!',
-          'success'
-        ]);
-        
-        user = await db.get('SELECT * FROM users WHERE id = ?', [userId]);
-        console.log('✅ New user created:', user.username);
-      } else {
-        await db.run('UPDATE users SET last_login = ? WHERE id = ?', [
-          new Date().toISOString(),
-          user.id
-        ]);
-        console.log('✅ User login updated:', user.username);
-      }
     }
     
     const jwtPayload = {
@@ -262,8 +203,6 @@ router.get('/user', async (req, res) => {
         
         if (db.findOne) {
           user = await db.findOne('users', { slack_user_id: decoded.slack_user_id });
-        } else {
-          user = await db.get('SELECT * FROM users WHERE slack_user_id = ?', [decoded.slack_user_id]);
         }
         
         if (!user) {
@@ -288,8 +227,6 @@ router.get('/user', async (req, res) => {
       
       if (db.findOne) {
         user = await db.findOne('users', { id: req.session.user.id });
-      } else {
-        user = await db.get('SELECT * FROM users WHERE id = ?', [req.session.user.id]);
       }
       
       if (!user) {
