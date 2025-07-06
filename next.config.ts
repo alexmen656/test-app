@@ -5,33 +5,11 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "placehold.co",
-        port: "",
+        hostname: "**",
       },
       {
-        protocol: "https",
-        hostname: "via.placeholder.com",
-        port: "",
-      },
-      {
-        protocol: "https",
-        hostname: "avatars.slack-edge.com",
-        port: "",
-      },
-      {
-        protocol: "https",
-        hostname: "alex.polan.sk",
-        port: "",
-      },
-        {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-        port: "",
-      },
-       {
-        protocol: "https",
-        hostname: "mock-cover-image-url.com",
-        port: "",
+        protocol: "http",
+        hostname: "**",
       },
     ], 
     dangerouslyAllowSVG: true,
