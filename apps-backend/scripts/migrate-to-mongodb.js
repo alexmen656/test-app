@@ -12,15 +12,18 @@ const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 
+// Import both database handlers
 const SqliteDB = require('../database/db');
 const MongoDB = require('../database/mongo-db');
 
+// Set to true to wipe MongoDB collections before migration
 const WIPE_COLLECTIONS = true;
 
 async function migrateData() {
   console.log('🚀 Starting migration from SQLite to MongoDB...');
   
   try {
+    // Initialize both databases
     const sqliteDB = new SqliteDB();
     const mongoDB = new MongoDB();
     
@@ -29,6 +32,7 @@ async function migrateData() {
     
     console.log('✅ Both databases initialized');
     
+    // Define tables to migrate (in order for foreign key constraints)
     const tables = [
       'users',
       'test_posts',
@@ -39,6 +43,7 @@ async function migrateData() {
       'notifications'
     ];
     
+    // Map table names to MongoDB model names
     const tableToModelMap = {
       'users': 'User',
       'test_posts': 'TestPost',
@@ -49,6 +54,7 @@ async function migrateData() {
       'notifications': 'Notification'
     };
     
+    // Wipe MongoDB collections if configured
     if (WIPE_COLLECTIONS) {
       console.log('⚠️ Wiping MongoDB collections before migration...');
       
@@ -59,9 +65,11 @@ async function migrateData() {
       }
     }
     
+    // Migrate each table
     for (const table of tables) {
       console.log(`🔄 Migrating ${table}...`);
       
+      // Get all records from SQLite
       const records = await sqliteDB.all(`SELECT * FROM ${table}`);
       
       if (records.length === 0) {
@@ -71,16 +79,19 @@ async function migrateData() {
       
       console.log(`📊 Found ${records.length} records in ${table}`);
       
+      // Transform date fields to proper MongoDB Date objects
       const dateFields = ['created_at', 'updated_at', 'last_login', 'expires_at', 
                          'joined_at', 'completion_date'];
       
       for (const record of records) {
+        // Transform dates
         for (const field of dateFields) {
           if (record[field]) {
             record[field] = new Date(record[field]);
           }
         }
         
+        // Insert into MongoDB
         await mongoDB.insert(tableToModelMap[table], record);
       }
       
@@ -89,6 +100,7 @@ async function migrateData() {
     
     console.log('✅ Migration completed successfully!');
     
+    // Close connections
     await sqliteDB.close();
     await mongoDB.close();
     
@@ -101,4 +113,5 @@ async function migrateData() {
   }
 }
 
+// Run the migration
 migrateData();
