@@ -102,7 +102,7 @@ export default function App() {
                     headers['Authorization'] = `Bearer ${token}`;
                 }
 
-                const response = await fetch(`${backendUrl}/api/test-posts`, {
+                const response = await fetch(`${backendUrl}/api/user/mine`, {
                     method: 'GET',
                     headers: headers
                 });
