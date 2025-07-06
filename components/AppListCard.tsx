@@ -27,6 +27,7 @@ const AppListCard = ({ app }: { app: App }) => {
                 </span>
                 <span className="font-bold text-sm text-gray-900">
                     {app.price ? app.price : 'Free'}
+                    {price}
                 </span>
             </div>
         </div>
