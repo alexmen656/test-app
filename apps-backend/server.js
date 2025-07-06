@@ -16,6 +16,7 @@ const testPostRoutes = require('./routes/testPosts');
 const userRoutes = require('./routes/users');
 const coinRoutes = require('./routes/coins');
 const reviewRoutes = require('./routes/reviews');
+//add route
 
 const app = express();
 const PORT = process.env.PORT || 3002;
@@ -105,6 +106,7 @@ app.use('/api/test-posts', testPostRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/coins', coinRoutes);
 app.use('/api/reviews', reviewRoutes);
+//add route
 
 // Health check endpoint
 app.get('/api/health', async (req, res) => {

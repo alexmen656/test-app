@@ -40,7 +40,7 @@ export interface App {
         comment: string;
     }[];
     joinedTesters?: {
-        id: number;
+        id: string;
         name: string;
         avatarUrl: string;
     }[];

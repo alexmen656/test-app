@@ -14,6 +14,7 @@ import Image from 'next/image';
 /**
  * The page containing the form to post a new application.
  */
+
 const NewAppPage: FC = () => {
     
     const params = useParams();
