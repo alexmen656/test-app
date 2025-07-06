@@ -10,25 +10,22 @@ const db = require('../database');
 
 const router = express.Router();
 
-// JWT Secret (in production this should be in environment variables)
 const JWT_SECRET = process.env.JWT_SECRET || 'betabay-secret-key-2024';
 
-// Validation schemas
 const testPostSchema = Joi.object({
-  slack_user_id: Joi.string().optional(), // Allow slack_user_id in the request body for testing
+  slack_user_id: Joi.string().optional(),
   app_name: Joi.string().min(3).max(100).required(),
   description: Joi.string().min(10).max(1000).required(),
   testing_link: Joi.string().uri().allow('').optional(),
   ios_link: Joi.string().uri().allow('').optional(),
   android_link: Joi.string().uri().allow('').optional(),
-  testing_instruction: Joi.string().max(5000).allow('').optional(), // Longer test instructions
+  testing_instruction: Joi.string().max(5000).allow('').optional(),
   test_price: Joi.number().integer().min(0).max(1000).default(0),
   instructions: Joi.string().max(2000).allow('').optional(),
   youtube_link: Joi.string().uri().allow('').optional(),
   google_group_link: Joi.string().uri().allow('').optional(),
   max_testers: Joi.number().integer().min(1).max(100).default(10),
   expires_at: Joi.date().greater('now').optional(),
-  // Neue Felder für File Upload URLs
   icon_url: Joi.string().uri().allow(null, '').optional(),
   cover_image_url: Joi.string().uri().allow(null, '').optional(),
   screenshot_urls: Joi.array().items(Joi.string().uri()).optional(),
@@ -39,7 +36,6 @@ const testPostSchema = Joi.object({
   }).optional()
 });
 
-// Middleware to authenticate user via JWT with Slack ID
 const authenticateUser = async (req, res, next) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
@@ -48,7 +44,6 @@ const authenticateUser = async (req, res, next) => {
       return res.status(401).json({ error: 'Authentication token required' });
     }
     
-    // Verify JWT token
     let decoded;
     try {
       decoded = jwt.verify(token, JWT_SECRET);
@@ -56,18 +51,15 @@ const authenticateUser = async (req, res, next) => {
       return res.status(401).json({ error: 'Invalid or expired token' });
     }
     
-    // Extract Slack user info from JWT payload
     const { slack_user_id, username, display_name, profile_image, email } = decoded;
     
     if (!slack_user_id) {
       return res.status(401).json({ error: 'Invalid token: missing slack_user_id' });
     }
     
-    // Find or create user based on Slack ID
     let user = await db.findOne('users', { slack_user_id: slack_user_id });
     
     if (!user) {
-      // Auto-create user from Slack data
       const userId = uuidv4();
       user = {
         id: userId,
@@ -85,7 +77,6 @@ const authenticateUser = async (req, res, next) => {
       await db.insert('users', user);
       console.log(`✅ Auto-created user from Slack: ${username} (${slack_user_id})`);
     } else {
-      // Update user info from latest JWT data
       await db.update('users', 
         { slack_user_id: slack_user_id },
         { 
@@ -99,7 +90,6 @@ const authenticateUser = async (req, res, next) => {
         }
       );
       
-      // Refresh user data
       user = await db.findOne('users', { slack_user_id: slack_user_id });
     }
     
@@ -113,7 +103,6 @@ const authenticateUser = async (req, res, next) => {
   }
 };
 
-// Get all test posts (public)
 router.get('/', async (req, res) => {
   try {
     const { page = 1, limit = 10, status = 'active', search } = req.query;
@@ -122,7 +111,6 @@ router.get('/', async (req, res) => {
     let testPosts;
     let total = 0;
     
-    // Build query
     const query = { status };
     if (search) {
       query.$or = [
@@ -131,27 +119,22 @@ router.get('/', async (req, res) => {
       ];
     }
     
-    // Get total count
     const count = await db.count('test_posts', query);
     total = count || 0;
     
-    // Get paginated posts
     testPosts = await db.find('test_posts', query, { 
       sort: { created_at: -1 },
       skip: offset,
       limit: parseInt(limit)
     });
     
-    // Enhance posts with additional data
     for (const post of testPosts) {
-      // Get user data and add as user_info object
       const user = await db.findOne('users', { id: post.user_id });
       if (user) {
         post.username = user.username;
         post.display_name = user.display_name;
         post.avatar_url = user.avatar_url;
         
-        // Add user_info object for frontend compatibility
         post.user_info = {
           user_id: user.id,
           username: user.username,
@@ -161,15 +144,12 @@ router.get('/', async (req, res) => {
         };
       }
       
-      // Get screenshots
       const screenshots = await db.find('screenshots', { test_post_id: post.id });
       post.screenshots = screenshots || [];
       
-      // Get current testers count
       const testers = await db.find('test_participants', { test_post_id: post.id, status: 'testing' });
       post.current_testers = testers ? testers.length : 0;
       
-      // Get review stats
       const reviews = await db.find('reviews', { test_post_id: post.id });
       if (reviews && reviews.length > 0) {
         const totalScore = reviews.reduce((sum, review) => sum + (review.review_score || 0), 0);
@@ -197,7 +177,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get single test post
 router.get('/:id', async (req, res) => {
   try {    
     const testPost = await db.findOne('test_posts', { id: req.params.id });
@@ -206,14 +185,12 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Test post not found' });
     }
     
-    // Get user data and add it as user_info object
     const user = await db.findOne('users', { id: testPost.user_id });
     if (user) {
       testPost.username = user.username;
       testPost.display_name = user.display_name;
       testPost.avatar_url = user.avatar_url;
       
-      // Add user_info object for frontend compatibility
       testPost.user_info = {
         user_id: user.id,
         username: user.username,
@@ -223,19 +200,15 @@ router.get('/:id', async (req, res) => {
       };
     }
     
-    // Get screenshots
     const screenshots = await db.find('screenshots', { test_post_id: testPost.id });
     testPost.screenshots = screenshots || [];
     
-    // Get reviews
     const reviews = await db.find('reviews', { test_post_id: testPost.id }, { sort: { created_at: -1 }, limit: 10 });
     testPost.reviews = reviews || [];
     
-    // Get current testers count
     const testers = await db.find('test_participants', { test_post_id: testPost.id, status: 'testing' });
     testPost.current_testers = testers ? testers.length : 0;
     
-    // Calculate average rating
     if (reviews && reviews.length > 0) {
       const totalScore = reviews.reduce((sum, review) => sum + (review.review_score || 0), 0);
       testPost.avg_rating = totalScore / reviews.length;
@@ -245,7 +218,6 @@ router.get('/:id', async (req, res) => {
       testPost.review_count = 0;
     }
 
-    // Log für Debug-Zwecke - URL-Felder prüfen
     console.log('📁 Test post retrieved with URLs:', {
       id: testPost.id,
       app_name: testPost.app_name,
@@ -262,16 +234,13 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Create new test post
 router.post('/', authenticateUser, async (req, res) => {
   try {
-    // Validate input
     const { error, value } = testPostSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
     
-    // Get user ID from authenticated user
     const userId = req.user.id;    
     const testPostId = uuidv4();
     
@@ -290,7 +259,6 @@ router.post('/', authenticateUser, async (req, res) => {
       google_group_link: value.google_group_link || null,
       max_testers: value.max_testers,
       expires_at: value.expires_at || null,
-      // Neue Felder für Upload URLs
       icon_url: value.icon_url || null,
       cover_image_url: value.cover_image_url || null,
       screenshot_urls: value.screenshot_urls || [],
@@ -307,7 +275,6 @@ router.post('/', authenticateUser, async (req, res) => {
       screenshot_urls: value.screenshot_urls
     });
     
-    // Get the created test post
     const createdPost = await db.findOne('test_posts', { id: testPostId });
     
     res.status(201).json({
@@ -330,7 +297,6 @@ router.post('/', authenticateUser, async (req, res) => {
   }
 });
 
-// Update test post
 router.put('/:id', authenticateUser, async (req, res) => {
   try {
     const testPost = await db.findOne('test_posts', { id: req.params.id });
@@ -339,13 +305,11 @@ router.put('/:id', authenticateUser, async (req, res) => {
       return res.status(404).json({ error: 'Test post not found' });
     }
     
-    // Validate input
     const { error, value } = testPostSchema.validate(req.body);
     if (error) {
       return res.status(400).json({ error: error.details[0].message });
     }
     
-    // Update test post
     await db.update('test_posts', 
       { id: req.params.id },
       { 
@@ -361,7 +325,6 @@ router.put('/:id', authenticateUser, async (req, res) => {
           google_group_link: value.google_group_link || null,
           max_testers: value.max_testers,
           expires_at: value.expires_at || null,
-          // Neue Felder für Upload URLs
           icon_url: value.icon_url || null,
           cover_image_url: value.cover_image_url || null,
           screenshot_urls: value.screenshot_urls || [],
@@ -377,7 +340,6 @@ router.put('/:id', authenticateUser, async (req, res) => {
       screenshot_urls: value.screenshot_urls
     });
     
-    // Get updated test post
     const updatedPost = await db.findOne('test_posts', { id: req.params.id });
     
     res.json({
@@ -391,7 +353,6 @@ router.put('/:id', authenticateUser, async (req, res) => {
   }
 });
 
-// Join test post as tester
 router.post('/:id/join', authenticateUser, async (req, res) => {
   try {    
     const testPost = await db.findOne('test_posts', { id: req.params.id, status: 'active' });
@@ -411,26 +372,21 @@ router.post('/:id/join', authenticateUser, async (req, res) => {
     });
     const currentTestersCount = currentTesters ? currentTesters.length : 0;
     
-    // Get user ID from authenticated user
     const userId = req.user.id;
     const userName = req.user.display_name || req.user.username || 'User';
     
-    // Check if user is not the owner
     if (testPost.user_id === userId) {
       return res.status(400).json({ error: 'Cannot join your own test post' });
     }
     
-    // Check if already joined
     if (existingParticipant) {
       return res.status(400).json({ error: 'Already joined this test' });
     }
     
-    // Check if test is full
     if (currentTestersCount >= testPost.max_testers) {
       return res.status(400).json({ error: 'Test is full' });
     }
     
-    // Join the test
     const participantId = uuidv4();
     
     await db.insert('test_participants', {
@@ -442,7 +398,6 @@ router.post('/:id/join', authenticateUser, async (req, res) => {
       updated_at: new Date()
     });
     
-    // Create notification for test owner
     const notificationId = uuidv4();
     await db.insert('notifications', {
       id: notificationId,
@@ -464,22 +419,16 @@ router.post('/:id/join', authenticateUser, async (req, res) => {
   }
 });
 
-// Get user's test posts
 router.get('/user/mine', authenticateUser, async (req, res) => {
   try {    
-    // Get user ID from authenticated user
     const userId = req.user.id;
     
-    // MongoDB approach
     const testPosts = await db.find('test_posts', { user_id: userId }, { sort: { created_at: -1 } });
     
-    // For each post, get additional data
     for (const post of testPosts) {
-      // Get testers count
       const testers = await db.find('test_participants', { test_post_id: post.id, status: 'testing' });
       post.current_testers = testers ? testers.length : 0;
       
-      // Get review stats
       const reviews = await db.find('reviews', { test_post_id: post.id });
       if (reviews && reviews.length > 0) {
         const totalScore = reviews.reduce((sum, review) => sum + (review.review_score || 0), 0);
@@ -499,7 +448,6 @@ router.get('/user/mine', authenticateUser, async (req, res) => {
   }
 });
 
-// File upload endpoint for app assets
 router.post('/upload', async (req, res) => {
   try {
     const multer = require('multer');
@@ -507,10 +455,9 @@ router.post('/upload', async (req, res) => {
     const upload = multer({ 
       storage: storage,
       limits: {
-        fileSize: 5 * 1024 * 1024, // 5MB limit
+        fileSize: 5 * 1024 * 1024,
       },
       fileFilter: (req, file, cb) => {
-        // Allow images only
         if (file.mimetype.startsWith('image/')) {
           cb(null, true);
         } else {
@@ -529,8 +476,6 @@ router.post('/upload', async (req, res) => {
         return res.status(400).json({ error: 'No file uploaded' });
       }
 
-      // In einer realen Implementierung würden Sie hier das File zu einem Cloud-Service hochladen
-      // Für jetzt geben wir eine Mock-URL zurück
       const fileUrl = `https://betabay-uploads.s3.amazonaws.com/${Date.now()}-${req.file.originalname}`;
       
       console.log('✅ File uploaded successfully:', {
@@ -554,7 +499,6 @@ router.post('/upload', async (req, res) => {
   }
 });
 
-// Helper endpoint to generate JWT tokens for testing (remove in production)
 router.post('/auth/generate-token', async (req, res) => {
   try {
     const { slack_user_id, username, display_name, profile_image, email } = req.body;
@@ -570,7 +514,7 @@ router.post('/auth/generate-token', async (req, res) => {
       profile_image: profile_image || null,
       email: email || `${slack_user_id}@slack.local`,
       iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) // 24 hours
+      exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60)
     };
     
     const token = jwt.sign(payload, JWT_SECRET);
