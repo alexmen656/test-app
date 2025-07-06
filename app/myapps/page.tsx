@@ -3,6 +3,7 @@ import AppSquareCard from '@/components/AppSquareCard';
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import type { App } from '@/types';
+import { useApps } from '@/hooks/useApps';
 import { getBackendUrl } from '@/lib/api';
 
 // --- Helper Components ---
@@ -29,9 +30,13 @@ const AddNewAppCard = () => (
 
 export default function App() {
     // --- State Management ---
-    const [apps, setApps] = useState<App[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const { apps, loading, error, hasCache } = useApps({
+        cacheKey: 'myApps',
+        endpoint: '/api/test-posts/user/mine',
+        requireAuth: true,
+        autoFetch: true
+    });
+    
     const [userProfile, setUserProfile] = useState({
         username: 'Username',
         profileImage: ''
@@ -84,60 +89,6 @@ export default function App() {
         fetchCoinBalance();
     }, []);
 
-    useEffect(() => {
-        async function fetchApps() {
-            try {
-                setLoading(true);
-                const backendUrl = getBackendUrl();
-                const token = localStorage.getItem('betabay_token');
-                const headers: HeadersInit = {};
-
-                if (token) {
-                    headers['Authorization'] = `Bearer ${token}`;
-                }
-
-                const response = await fetch(`${backendUrl}/api/test-posts/user/mine`, {
-                    method: 'GET',
-                    headers: headers
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Error fetching apps: ${response.status}`);
-                }
-
-                const data = await response.json();
-                console.log("API response:", data);
-
-                if (Array.isArray(data)) {
-                    setApps(data);
-                } else if (data && typeof data === 'object') {
-                    const possibleArrays = Object.values(data).filter(value => Array.isArray(value));
-                    if (possibleArrays.length > 0) {
-                        setApps(possibleArrays[0] as App[]);
-                    } else {
-                        if (data.id) {
-                            setApps([data as App]);
-                        } else {
-                            setApps([]);
-                        }
-                    }
-                } else {
-                    setApps([]);
-                }
-
-                setError(null);
-            } catch (error) {
-                console.error('Failed to fetch apps:', error);
-                setError('Failed to load apps. Please try again.');
-                setApps([]);
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        fetchApps();
-    }, []);
-
     return (
         <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
             <div className="container mx-auto p-4 sm:p-6 lg:p-8">
@@ -176,11 +127,19 @@ export default function App() {
 
                 {/* Apps Section */}
                 <main>
-                    <h2 className="text-xl sm:text-2xl font-semibold mb-6 sm:mb-8">My Apps</h2>
+                    <div className="flex items-center justify-between mb-6 sm:mb-8">
+                        <h2 className="text-xl sm:text-2xl font-semibold">My Apps</h2>
+                        {hasCache && loading && (
+                            <div className="flex items-center text-sm text-blue-600">
+                                <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mr-2"></div>
+                                Updating...
+                            </div>
+                        )}
+                    </div>
 
-                    {loading ? (
+                    {loading && !hasCache ? (
                         <div className="text-center py-8">Loading your apps...</div>
-                    ) : error ? (
+                    ) : error && !hasCache ? (
                         <div className="text-center py-8 text-red-500">{error}</div>
                     ) : (
                         /* Grid for the apps */

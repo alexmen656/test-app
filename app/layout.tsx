@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/header";
+import { AppCacheProvider } from "@/contexts/AppCacheContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,12 +29,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="bg-gray-100 text-black flex-1 h-screen overflow-hidden relative">
-          <Header />
-          <div className="absolute inset-0 top-[64px] overflow-auto">
-            {children}
+        <AppCacheProvider>
+          <div className="bg-gray-100 text-black flex-1 h-screen overflow-hidden relative">
+            <Header />
+            <div className="absolute inset-0 top-[64px] overflow-auto">
+              {children}
+            </div>
           </div>
-        </div>
+        </AppCacheProvider>
       </body>
     </html>
   );
