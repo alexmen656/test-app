@@ -7,7 +7,10 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "init-db": "node scripts/init-database.js",
-    "migrate-to-mongodb": "node scripts/migrate-to-mongodb.js"
+    "migrate-to-mongodb": "node scripts/migrate-to-mongodb.js",
+    "test:coins": "node test-coins.js",
+    "test:coins-mongodb": "node test-coins-mongodb.js",
+    "test:all": "npm run test:coins-mongodb && npm run test:coins"
   },
   "dependencies": {
     "axios": "^1.6.0",
