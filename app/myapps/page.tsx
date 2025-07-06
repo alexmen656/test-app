@@ -39,9 +39,7 @@ export default function App() {
     const [coinBalance, setCoinBalance] = useState<number>(0);
     const [coinLoading, setCoinLoading] = useState(true);
 
-    // Fetch user profile data
     useEffect(() => {
-        // Get user data from localStorage (set during login/authentication)
         const username = localStorage.getItem('betabay_username') || 'Username';
         const profileImage = localStorage.getItem('betabay_profile_image') || '';
 
@@ -51,7 +49,6 @@ export default function App() {
         });
     }, []);
 
-    // Fetch user's coin balance
     useEffect(() => {
         async function fetchCoinBalance() {
             try {
@@ -87,14 +84,11 @@ export default function App() {
         fetchCoinBalance();
     }, []);
 
-    // Fetch apps from the backend
     useEffect(() => {
         async function fetchApps() {
             try {
                 setLoading(true);
                 const backendUrl = getBackendUrl();
-
-                // Optional: Get token from localStorage if it exists
                 const token = localStorage.getItem('betabay_token');
                 const headers: HeadersInit = {};
 
@@ -112,27 +106,22 @@ export default function App() {
                 }
 
                 const data = await response.json();
-                console.log("API response:", data); // Debugging
+                console.log("API response:", data);
 
-                // Überprüfen, ob data ein Array ist oder ein Objekt mit einer Array-Eigenschaft
                 if (Array.isArray(data)) {
                     setApps(data);
                 } else if (data && typeof data === 'object') {
-                    // Suche nach einer Array-Eigenschaft in der Antwort
                     const possibleArrays = Object.values(data).filter(value => Array.isArray(value));
                     if (possibleArrays.length > 0) {
                         setApps(possibleArrays[0] as App[]);
                     } else {
-                        // Fallback: Keine Arrays gefunden, versuche das ganze Objekt als App zu behandeln
                         if (data.id) {
                             setApps([data as App]);
                         } else {
-                            // Keine erkennbare App-Struktur
                             setApps([]);
                         }
                     }
                 } else {
-                    // Keine erkennbare Datenstruktur
                     setApps([]);
                 }
 
@@ -140,7 +129,6 @@ export default function App() {
             } catch (error) {
                 console.error('Failed to fetch apps:', error);
                 setError('Failed to load apps. Please try again.');
-                // Fallback to empty array if fetch fails
                 setApps([]);
             } finally {
                 setLoading(false);
@@ -150,7 +138,6 @@ export default function App() {
         fetchApps();
     }, []);
 
-    // --- Render Method ---
     return (
         <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
             <div className="container mx-auto p-4 sm:p-6 lg:p-8">
