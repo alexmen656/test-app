@@ -12,8 +12,18 @@ interface ReviewMakerPageProps {
   params: Promise<{ id: string }>;
 }
 
+interface Review {
+  id: string;
+  review_score: number;
+  comment: string;
+  username: string;
+  display_name: string;
+  avatar_url?: string;
+  created_at: string;
+}
+
 const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
-  const [reviews, setReviews] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const resolvedParams = use(params);
   const appId = resolvedParams.id;
   const [app, setApp] = useState<App | null>(null);
