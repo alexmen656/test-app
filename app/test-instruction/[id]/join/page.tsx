@@ -237,7 +237,7 @@ const JoinBetaPage: FC<JoinBetaPageProps> = ({ params }) => {
               </Link>
 
               <Link
-                href={`/test-instruction/review-maker/${appId}`}
+                href={`/test-instruction/${appId}/review-maker`}
                 className="group bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white font-semibold py-6 px-10 rounded-[20px] transition-all duration-300 flex items-center justify-center gap-4 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="group-hover:-translate-x-1 transition-transform duration-300">
