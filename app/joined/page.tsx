@@ -107,8 +107,7 @@ export default function JoinedPage() {
         }
 
         // Fetch apps if we have authentication
-        const token = localStorage.getItem('betabay_token');
-        if (token) {
+        if (userProfile.userId && userProfile.userId !== '0') {
             fetchApps();
         } else {
             setLoading(false);
