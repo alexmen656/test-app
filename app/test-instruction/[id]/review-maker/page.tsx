@@ -12,8 +12,18 @@ interface ReviewMakerPageProps {
   params: Promise<{ id: string }>;
 }
 
+interface Review {
+  id: string;
+  review_score: number;
+  comment: string;
+  username: string;
+  display_name: string;
+  avatar_url?: string;
+  created_at: string;
+}
+
 const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
-  // const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const resolvedParams = use(params);
   const appId = resolvedParams.id;
   const [app, setApp] = useState<App | null>(null);
@@ -26,15 +36,14 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
   useEffect(() => {
     const fetchReviews = async () => {
       if (!app) return;
-      
+
       try {
         const backendUrl = getBackendUrl();
         const response = await fetch(`${backendUrl}/api/reviews/test-post/${appId}`);
-        
+
         if (response.ok) {
-          // Reviews are fetched but not currently displayed in the UI
-          // const data = await response.json();
-          // setReviews(data.reviews || []);
+          const data = await response.json();
+          setReviews(data.reviews || []);
         }
       } catch (error) {
         console.error('Error fetching reviews:', error);
@@ -121,7 +130,7 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
         <div className="text-center">
           <h1 className="text-4xl font-light text-gray-900 mb-4">App Not Found</h1>
           <p className="text-xl text-gray-600">{error || 'The requested app does not exist.'}</p>
-          <Link 
+          <Link
             href="/"
             className="mt-6 inline-block bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
           >
@@ -176,7 +185,7 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
             className="max-w-4xl mx-auto bg-white/80 backdrop-blur-sm rounded-[40px] border border-white/50 shadow-xl p-12 space-y-8"
             onSubmit={async (e) => {
               e.preventDefault();
-              
+
               if (!isAuthenticated) {
                 alert('Please sign in to submit a review.');
                 return;
@@ -217,15 +226,15 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
 
                 if (response.ok) {
                   const data = await response.json();
-                  
+
+                  // Add the new review to the list
                   // Add the new review to the list
                   if (data.review) {
-                    // setReviews(prev => [data.review, ...prev]);
+                    setReviews(prev => [data.review, ...prev]);
                   }
-                  
                   // Reset form
                   e.currentTarget.reset();
-                  
+
                   alert('Thank you for your review! Your feedback has been submitted successfully.');
                 } else {
                   const errorData = await response.json();
@@ -320,6 +329,66 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
             </div>
           </form>
         </div>
+
+        {/* Existing Reviews Section */}
+        {reviews.length > 0 && (
+          <div className="mb-20">
+            <h3 className="text-4xl font-light text-gray-900 mb-12 text-center">Community Reviews</h3>
+            <div className="space-y-6">
+              {reviews.map((review) => (
+                <div
+                  key={review.id}
+                  className="bg-white/80 backdrop-blur-sm rounded-[24px] border border-white/50 shadow-lg p-8"
+                >
+                  <div className="flex items-start gap-6">
+                    <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold">
+                      {review.avatar_url ? (
+                        <Image
+                          src={review.avatar_url}
+                          alt={review.display_name || review.username}
+                          width={48}
+                          height={48}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span>{(review.display_name || review.username).charAt(0).toUpperCase()}</span>
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-4 mb-3">
+                        <h4 className="font-semibold text-gray-900">
+                          {review.display_name || review.username}
+                        </h4>
+                        <div className="flex items-center gap-1">
+                          {[...Array(5)].map((_, i) => (
+                            <svg
+                              key={i}
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill={i < review.review_score ? "currentColor" : "none"}
+                              stroke="currentColor"
+                              className={i < review.review_score ? "text-yellow-400" : "text-gray-300"}
+                            >
+                              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                            </svg>
+                          ))}
+                          <span className="text-sm text-gray-600 ml-2">
+                            {review.review_score}/5
+                          </span>
+                        </div>
+                        <span className="text-sm text-gray-500">
+                          {new Date(review.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <p className="text-gray-700 leading-relaxed">{review.comment}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Navigation Buttons */}
         <div className="flex flex-col lg:flex-row gap-6 justify-center">

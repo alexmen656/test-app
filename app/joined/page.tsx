@@ -58,12 +58,39 @@ export default function JoinedPage() {
 
                 const data = await response.json();
                 console.log("API response:", data); // Debugging
+                console.log("User ID:", userProfile.userId); // Debugging
 
-                // Simply set the apps from the API response
-                if (data && data.test_posts && Array.isArray(data.test_posts)) {
-                    setApps(data.test_posts);
-                } else if (Array.isArray(data)) {
-                    setApps(data);
+                if (Array.isArray(data)) {
+                    data.forEach(item => {
+                        console.log("joinedUserIds:", item.joinedUserIds); // Debugging
+                        if (item.joinedUserIds && Array.isArray(item.joinedUserIds) && item.joinedUserIds.includes(userProfile.userId)) {
+                            setApps(prev => [...prev, item]);
+                        }
+                    });
+                } else if (data && typeof data === 'object') {
+
+                    const possibleArrays = Object.values(data).filter(value => Array.isArray(value));
+                    if (possibleArrays.length > 0) {
+                        possibleArrays.forEach((arrayOfApps) => {
+                            arrayOfApps.forEach(item => {
+                                if (item.joinedUserIds && Array.isArray(item.joinedUserIds) && item.joinedUserIds.includes(userProfile.userId)) {
+                                    setApps(prev => [...prev, item]);
+                                }
+                            });
+                        });
+                    } else {
+
+                        if (data.id) {
+
+                            data.forEach((item: App) => {
+                                if (item.joinedUserIds && Array.isArray(item.joinedUserIds) && item.joinedUserIds.includes(userProfile.userId)) {
+                                    setApps(prev => [...prev, item]);
+                                }
+                            });
+                        } else {
+                            setApps([]);
+                        }
+                    }
                 } else {
                     setApps([]);
                 }
