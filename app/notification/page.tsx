@@ -125,7 +125,7 @@ const NotificationPage: FC = () => {
                                 No notifications yet
                             </h3>
                             <p className="text-gray-600 text-base sm:text-lg">
-                                When you have new notifications, they'll appear here.
+                                When you have new notifications, they&apos;ll appear here.
                             </p>
                         </div>
                     )}

@@ -115,32 +115,6 @@ const JoinBetaPage: FC<JoinBetaPageProps> = ({ params }) => {
     }
   };
 
-  const handleAppleClick = async () => {
-    if (!app) return;
-    const iosLink = app.iosLink || app.ios_link;
-    if (iosLink) {
-      window.open(iosLink, '_blank');
-    } else {
-      // Fallback to TestFlight if no specific link
-      window.open('https://testflight.apple.com', '_blank');
-    }
-  };
-
-  const handleGoogleClick = async () => {
-    if (!app) return;
-    const androidLink = app.androidLink || app.android_link;
-    if (androidLink) {
-      window.open(androidLink, '_blank');
-    } else {
-      // Fallback to Play Store if no specific link
-      window.open('https://play.google.com/store', '_blank');
-    }
-  };
-
-  const handleGitHubClick = async () => {
-    window.open('https://github.com', '_blank');
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 flex items-center justify-center">

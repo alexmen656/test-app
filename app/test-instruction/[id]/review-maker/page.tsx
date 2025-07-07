@@ -23,7 +23,7 @@ interface Review {
 }
 
 const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
-  const [reviews, setReviews] = useState<Review[]>([]);
+  // const [reviews, setReviews] = useState<Review[]>([]);
   const resolvedParams = use(params);
   const appId = resolvedParams.id;
   const [app, setApp] = useState<App | null>(null);
@@ -43,7 +43,7 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
         
         if (response.ok) {
           const data = await response.json();
-          setReviews(data.reviews || []);
+          // setReviews(data.reviews || []);
         }
       } catch (error) {
         console.error('Error fetching reviews:', error);
@@ -229,7 +229,7 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
                   
                   // Add the new review to the list
                   if (data.review) {
-                    setReviews(prev => [data.review, ...prev]);
+                    // setReviews(prev => [data.review, ...prev]);
                   }
                   
                   // Reset form

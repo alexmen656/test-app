@@ -112,7 +112,7 @@ export default function JoinedPage() {
         } else {
             setLoading(false);
         }
-    }, [userProfile.userId]);
+    }, [userProfile]);
     return (
         <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
             <div className="container mx-auto p-4 sm:p-6 lg:p-8">
