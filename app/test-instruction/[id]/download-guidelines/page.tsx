@@ -255,7 +255,7 @@ const DownloadGuidelinesPage: FC<DownloadGuidelinesPageProps> = ({ params }) => 
               <div className="flex items-center justify-center mb-6">
                 <div className="w-16 h-16 bg-green-500 rounded-2xl flex items-center justify-center group-hover:scale-105 transition-transform">
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
-                    <path d="M17.523 15.3414c-.5665 0-1.0263-.4598-1.0263-1.0263s.4598-1.0263 1.0263-1.0263c.5665 0 1.0263.4598 1.0263 1.0263s-.4598 1.0263-1.0263 1.0263zm-11.046 0c-.5665 0-1.0263-.4598-1.0263-1.0263s.4598-1.0263 1.0263-1.0263c.5665 0 1.0263.4598 1.0263 1.0263s-.4598 1.0263-1.0263 1.0263zm11.405-6.02l1.14-2.02c.064-.115.026-.26-.09-.327-.115-.064-.26-.026-.327.09l-1.15 2.04c-.979-.461-2.06-.719-3.18-.719-1.11 0-2.175.243-3.18.719l-1.15-2.04c-.064-.115-.21-.154-.327-.09-.115.064-.154.21-.09.327l1.14 2.02C9.25 9.806 8.476 11.02 8.476 12.38v.956h7.048v-.956c0-1.36-.774-2.574-2.382-3.066z"/>
+                    <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.61 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
                   </svg>
                 </div>
               </div>
@@ -268,7 +268,7 @@ const DownloadGuidelinesPage: FC<DownloadGuidelinesPageProps> = ({ params }) => 
                 className="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                  <path d="M17.523 15.3414c-.5665 0-1.0263-.4598-1.0263-1.0263s.4598-1.0263 1.0263-1.0263c.5665 0 1.0263.4598 1.0263 1.0263s-.4598 1.0263-1.0263 1.0263zm-11.046 0c-.5665 0-1.0263-.4598-1.0263-1.0263s.4598-1.0263 1.0263-1.0263c.5665 0 1.0263.4598 1.0263 1.0263s-.4598 1.0263-1.0263 1.0263zm11.405-6.02l1.14-2.02c.064-.115.026-.26-.09-.327-.115-.064-.26-.026-.327.09l-1.15 2.04c-.979-.461-2.06-.719-3.18-.719-1.11 0-2.175.243-3.18.719l-1.15-2.04c-.064-.115-.21-.154-.327-.09-.115.064-.154.21-.09.327l1.14 2.02C9.25 9.806 8.476 11.02 8.476 12.38v.956h7.048v-.956c0-1.36-.774-2.574-2.382-3.066z"/>
+                  <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.61 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
                 </svg>
                 <span>Play Store</span>
               </button>
@@ -300,129 +300,7 @@ const DownloadGuidelinesPage: FC<DownloadGuidelinesPageProps> = ({ params }) => 
           </div>
         </div>
 
-        {/* Setup Guidelines */}
-        <div className="mb-12">
-          <h3 className="text-2xl font-semibold text-gray-900 mb-8 text-center">Setup Guidelines</h3>
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Installation Steps */}
-            <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                  </svg>
-                </div>
-                <h4 className="text-lg font-semibold text-gray-900">Installation Steps</h4>
-              </div>
-              <div className="space-y-4">
-                <div className="flex gap-3">
-                  <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-medium text-sm flex-shrink-0">1</div>
-                  <div>
-                    <h5 className="font-medium text-gray-900 mb-1">Click Download Button</h5>
-                    <p className="text-gray-600 text-sm">Choose your platform and click the download button above</p>
-                  </div>
-                </div>
-                <div className="flex gap-3">
-                  <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-medium text-sm flex-shrink-0">2</div>
-                  <div>
-                    <h5 className="font-medium text-gray-900 mb-1">Accept Beta Invitation</h5>
-                    <p className="text-gray-600 text-sm">Follow the platform-specific instructions to join the beta program</p>
-                  </div>
-                </div>
-                <div className="flex gap-3">
-                  <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-medium text-sm flex-shrink-0">3</div>
-                  <div>
-                    <h5 className="font-medium text-gray-900 mb-1">Install & Launch</h5>
-                    <p className="text-gray-600 text-sm">Download and install the beta version, then launch the app</p>
-                  </div>
-                </div>
-                <div className="flex gap-3">
-                  <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-medium text-sm flex-shrink-0">4</div>
-                  <div>
-                    <h5 className="font-medium text-gray-900 mb-1">Start Testing</h5>
-                    <p className="text-gray-600 text-sm">Begin exploring the app and testing its features</p>
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            {/* Testing Guidelines */}
-            <div className="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                  </svg>
-                </div>
-                <h4 className="text-lg font-semibold text-gray-900">Testing Guidelines</h4>
-              </div>
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-2 flex-shrink-0"></div>
-                  <div>
-                    <h5 className="font-medium text-gray-900 mb-1">Test Core Features</h5>
-                    <p className="text-gray-600 text-sm">Focus on the main functionality and user flows</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-2 flex-shrink-0"></div>
-                  <div>
-                    <h5 className="font-medium text-gray-900 mb-1">Report Issues</h5>
-                    <p className="text-gray-600 text-sm">Document any crashes, bugs, or unexpected behavior</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-2 flex-shrink-0"></div>
-                  <div>
-                    <h5 className="font-medium text-gray-900 mb-1">Test Edge Cases</h5>
-                    <p className="text-gray-600 text-sm">Try unusual scenarios and boundary conditions</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 mt-2 flex-shrink-0"></div>
-                  <div>
-                    <h5 className="font-medium text-gray-900 mb-1">Provide Feedback</h5>
-                    <p className="text-gray-600 text-sm">Share your thoughts on usability and feature improvements</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Important Notes */}
-        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 mb-12">
-          <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center flex-shrink-0">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-              </svg>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-amber-900 mb-4">Important Beta Testing Notes</h3>
-              <div className="grid md:grid-cols-2 gap-4 text-amber-800">
-                <div>
-                  <h4 className="font-medium mb-2">⚠️ Beta Limitations</h4>
-                  <ul className="space-y-1 text-sm">
-                    <li>• This is a pre-release version with potential bugs</li>
-                    <li>• Some features may be incomplete or experimental</li>
-                    <li>• Performance may not reflect the final product</li>
-                    <li>• Data may not transfer to the final release</li>
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-medium mb-2">🔒 Privacy & Security</h4>
-                  <ul className="space-y-1 text-sm">
-                    <li>• Your testing data is handled with care</li>
-                    <li>• Report any security concerns immediately</li>
-                    <li>• Don&apos;t share beta builds with non-testers</li>
-                    <li>• Feedback may be used to improve the app</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* Navigation Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
