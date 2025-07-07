@@ -13,7 +13,7 @@ interface ReviewMakerPageProps {
 }
 
 const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
-  // const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviews, setReviews] = useState<any[]>([]);
   const resolvedParams = use(params);
   const appId = resolvedParams.id;
   const [app, setApp] = useState<App | null>(null);
@@ -32,9 +32,8 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
         const response = await fetch(`${backendUrl}/api/reviews/test-post/${appId}`);
 
         if (response.ok) {
-          // Reviews are fetched but not currently displayed in the UI
-          // const data = await response.json();
-          // setReviews(data.reviews || []);
+          const data = await response.json();
+          setReviews(data.reviews || []);
         }
       } catch (error) {
         console.error('Error fetching reviews:', error);
@@ -219,10 +218,10 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
                   const data = await response.json();
 
                   // Add the new review to the list
+                  // Add the new review to the list
                   if (data.review) {
-                    // setReviews(prev => [data.review, ...prev]);
+                    setReviews(prev => [data.review, ...prev]);
                   }
-
                   // Reset form
                   e.currentTarget.reset();
 
