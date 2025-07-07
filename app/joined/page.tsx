@@ -47,7 +47,7 @@ export default function JoinedPage() {
                     headers['Authorization'] = `Bearer ${token}`;
                 }
 
-                const response = await fetch(`${backendUrl}/api/test-posts`, {
+                const response = await fetch(`${backendUrl}/api/test-posts/user/joined`, {
                     method: 'GET',
                     headers: headers
                 });
@@ -92,7 +92,6 @@ export default function JoinedPage() {
                         }
                     }
                 } else {
-
                     setApps([]);
                 }
 
@@ -107,8 +106,9 @@ export default function JoinedPage() {
             }
         }
 
-        // Only fetch if we have a valid userId
-        if (userProfile.userId && userProfile.userId !== '0') {
+        // Fetch apps if we have authentication
+        const token = localStorage.getItem('betabay_token');
+        if (token) {
             fetchApps();
         } else {
             setLoading(false);
