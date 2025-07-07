@@ -12,16 +12,6 @@ interface ReviewMakerPageProps {
   params: Promise<{ id: string }>;
 }
 
-interface Review {
-  id: string;
-  review_score: number;
-  comment: string;
-  username: string;
-  display_name: string;
-  avatar_url?: string;
-  created_at: string;
-}
-
 const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
   // const [reviews, setReviews] = useState<Review[]>([]);
   const resolvedParams = use(params);
@@ -42,7 +32,8 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
         const response = await fetch(`${backendUrl}/api/reviews/test-post/${appId}`);
         
         if (response.ok) {
-          const data = await response.json();
+          // Reviews are fetched but not currently displayed in the UI
+          // const data = await response.json();
           // setReviews(data.reviews || []);
         }
       } catch (error) {
