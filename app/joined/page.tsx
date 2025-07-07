@@ -58,10 +58,11 @@ export default function JoinedPage() {
 
                 const data = await response.json();
                 console.log("API response:", data); // Debugging
-                console.log("User Profile:", userProfile); // Debugging
+                console.log("User ID:", userProfile.userId); // Debugging
 
                 if (Array.isArray(data)) {
                     data.forEach(item => {
+                        console.log("joinedUserIds:", item.joinedUserIds); // Debugging
                         if (item.joinedUserIds && Array.isArray(item.joinedUserIds) && item.joinedUserIds.includes(userProfile.userId)) {
                             setApps(prev => [...prev, item]);
                         }
@@ -112,7 +113,7 @@ export default function JoinedPage() {
         } else {
             setLoading(false);
         }
-    }, [userProfile.userId]);
+    }, [userProfile]);
     return (
         <div className="min-h-screen bg-gray-50 text-gray-800 font-sans">
             <div className="container mx-auto p-4 sm:p-6 lg:p-8">

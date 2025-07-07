@@ -115,32 +115,6 @@ const JoinBetaPage: FC<JoinBetaPageProps> = ({ params }) => {
     }
   };
 
-  const handleAppleClick = async () => {
-    if (!app) return;
-    const iosLink = app.iosLink || app.ios_link;
-    if (iosLink) {
-      window.open(iosLink, '_blank');
-    } else {
-      // Fallback to TestFlight if no specific link
-      window.open('https://testflight.apple.com', '_blank');
-    }
-  };
-
-  const handleGoogleClick = async () => {
-    if (!app) return;
-    const androidLink = app.androidLink || app.android_link;
-    if (androidLink) {
-      window.open(androidLink, '_blank');
-    } else {
-      // Fallback to Play Store if no specific link
-      window.open('https://play.google.com/store', '_blank');
-    }
-  };
-
-  const handleGitHubClick = async () => {
-    window.open('https://github.com', '_blank');
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 flex items-center justify-center">
@@ -220,7 +194,7 @@ const JoinBetaPage: FC<JoinBetaPageProps> = ({ params }) => {
               <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
                 Join the beta program to get early access and help shape the future of this app.
               </p>
-              
+
               <button
                 onClick={handleJoinBeta}
                 disabled={isJoining}
@@ -242,28 +216,28 @@ const JoinBetaPage: FC<JoinBetaPageProps> = ({ params }) => {
           <div className="bg-gradient-to-r from-green-100 to-blue-100 rounded-[32px] shadow-xl border border-green-200 p-10 text-center">
             <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 6L9 17l-5-5"/>
+                <path d="M20 6L9 17l-5-5" />
               </svg>
             </div>
-            
+
             <h3 className="text-4xl font-bold text-gray-900 mb-4">Welcome to the Beta Program!</h3>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
               Congratulations! You&apos;re In! Waiting for your Feedbacks.
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-6 justify-center max-w-3xl mx-auto">
               <Link
                 href={`/test-instruction/${appId}`}
                 className="group bg-white text-gray-700 hover:text-gray-900 font-semibold py-4 px-8 rounded-[16px] transition-all duration-300 shadow-lg hover:shadow-xl border border-gray-200 hover:border-gray-300 flex items-center justify-center gap-3"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-translate-x-1 transition-transform duration-300">
-                  <path d="M19 12H5M12 19l-7-7 7-7"/>
+                  <path d="M19 12H5M12 19l-7-7 7-7" />
                 </svg>
                 Back to Overview
               </Link>
-              
+
               <Link
-                href={`/test-instruction/${appId}`}
+                href={`/test-instruction/review-maker/${appId}`}
                 className="group bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white font-semibold py-6 px-10 rounded-[20px] transition-all duration-300 flex items-center justify-center gap-4 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="group-hover:-translate-x-1 transition-transform duration-300">
