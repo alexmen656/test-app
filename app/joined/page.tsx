@@ -37,6 +37,7 @@ export default function JoinedPage() {
         async function fetchApps() {
             try {
                 setLoading(true);
+                setApps([]); // Clear previous apps before fetching new ones
                 const backendUrl = getBackendUrl();
 
                 // Optional: Get token from localStorage if it exists
@@ -60,40 +61,34 @@ export default function JoinedPage() {
                 console.log("API response:", data); // Debugging
                 console.log("User ID:", userProfile.userId); // Debugging
 
+                const filteredApps: App[] = [];
+
                 if (Array.isArray(data)) {
                     data.forEach(item => {
                         console.log("joinedUserIds:", item.joinedUserIds); // Debugging
                         if (item.joinedUserIds && Array.isArray(item.joinedUserIds) && item.joinedUserIds.includes(userProfile.userId)) {
-                            setApps(prev => [...prev, item]);
+                            filteredApps.push(item);
                         }
                     });
                 } else if (data && typeof data === 'object') {
-
                     const possibleArrays = Object.values(data).filter(value => Array.isArray(value));
                     if (possibleArrays.length > 0) {
                         possibleArrays.forEach((arrayOfApps) => {
                             arrayOfApps.forEach(item => {
                                 if (item.joinedUserIds && Array.isArray(item.joinedUserIds) && item.joinedUserIds.includes(userProfile.userId)) {
-                                    setApps(prev => [...prev, item]);
+                                    filteredApps.push(item);
                                 }
                             });
                         });
                     } else {
-
-                        if (data.id) {
-
-                            data.forEach((item: App) => {
-                                if (item.joinedUserIds && Array.isArray(item.joinedUserIds) && item.joinedUserIds.includes(userProfile.userId)) {
-                                    setApps(prev => [...prev, item]);
-                                }
-                            });
-                        } else {
-                            setApps([]);
+                        // Handle single app object
+                        if (data.id && data.joinedUserIds && Array.isArray(data.joinedUserIds) && data.joinedUserIds.includes(userProfile.userId)) {
+                            filteredApps.push(data as App);
                         }
                     }
-                } else {
-                    setApps([]);
                 }
+
+                setApps(filteredApps);
 
                 setError(null);
             } catch (error) {
