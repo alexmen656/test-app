@@ -47,7 +47,7 @@ export default function JoinedPage() {
                     headers['Authorization'] = `Bearer ${token}`;
                 }
 
-                const response = await fetch(`${backendUrl}/api/test-posts/user/joined`, {
+                const response = await fetch(`${backendUrl}/api/test-posts`, {
                     method: 'GET',
                     headers: headers
                 });
