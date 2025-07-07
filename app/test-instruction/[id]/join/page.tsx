@@ -82,18 +82,63 @@ const JoinBetaPage: FC<JoinBetaPageProps> = ({ params }) => {
 
   const handleJoinBeta = async () => {
     setIsJoining(true);
-    
-    // Simulate API call to join beta program
+
     try {
-      // TODO: Replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setJoined(true);
-    } catch (err) {
-      console.error('Failed to join beta program:', err);
-      // Handle error
+      const backendUrl = getBackendUrl();
+      const token = localStorage.getItem('betabay_token');
+
+      if (!token) {
+        alert('Please log in to join the test');
+        return;
+      }
+
+      const response = await fetch(`${backendUrl}/api/test-posts/${appId}/join`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        setJoined(true);
+        // Success handled by the UI state change
+      } else {
+        const errorData = await response.json();
+        alert(errorData.error || 'Failed to join the test');
+      }
+    } catch (error) {
+      console.error('Error joining test:', error);
+      alert('Failed to join the test. Please try again.');
     } finally {
       setIsJoining(false);
     }
+  };
+
+  const handleAppleClick = async () => {
+    if (!app) return;
+    const iosLink = app.iosLink || app.ios_link;
+    if (iosLink) {
+      window.open(iosLink, '_blank');
+    } else {
+      // Fallback to TestFlight if no specific link
+      window.open('https://testflight.apple.com', '_blank');
+    }
+  };
+
+  const handleGoogleClick = async () => {
+    if (!app) return;
+    const androidLink = app.androidLink || app.android_link;
+    if (androidLink) {
+      window.open(androidLink, '_blank');
+    } else {
+      // Fallback to Play Store if no specific link
+      window.open('https://play.google.com/store', '_blank');
+    }
+  };
+
+  const handleGitHubClick = async () => {
+    window.open('https://github.com', '_blank');
   };
 
   if (loading) {
@@ -129,16 +174,16 @@ const JoinBetaPage: FC<JoinBetaPageProps> = ({ params }) => {
       <div className="max-w-4xl mx-auto px-6 py-20">
         {/* Header */}
         <div className="text-center mb-16">
-          <Link 
+          <Link
             href={`/test-instruction/${appId}`}
             className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-8 transition-colors"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="M19 12H5M12 19l-7-7 7-7"/>
+              <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
             Back to Overview
           </Link>
-          
+
           <h1 className="text-5xl font-extralight text-gray-900 mb-6 tracking-tight">Join Beta Program</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
             Ready to become an exclusive beta tester? Join the program and get early access to cutting-edge features.
@@ -218,11 +263,11 @@ const JoinBetaPage: FC<JoinBetaPageProps> = ({ params }) => {
               </Link>
               
               <Link
-                href={`/test-instruction/${appId}/download-guidelines`}
-                className="group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-[16px] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center gap-3"
+                href={`/test-instruction/${appId}`}
+                className="group bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 text-white font-semibold py-6 px-10 rounded-[20px] transition-all duration-300 flex items-center justify-center gap-4 shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
               >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="group-hover:-translate-x-1 transition-transform duration-300">
+                  <path d="M19 12H5M12 19l-7-7 7-7" />
                 </svg>
                 Download & Setup
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="group-hover:translate-x-1 transition-transform duration-300">

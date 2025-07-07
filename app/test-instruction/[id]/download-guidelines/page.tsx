@@ -17,6 +17,8 @@ const DownloadGuidelinesPage: FC<DownloadGuidelinesPageProps> = ({ params }) => 
   const [app, setApp] = useState<App | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [joining, setJoining] = useState(false);
+  const [joined, setJoined] = useState(false);
 
   // Try to fetch app data from backend first, fallback to mock data
   useEffect(() => {
@@ -32,6 +34,12 @@ const DownloadGuidelinesPage: FC<DownloadGuidelinesPageProps> = ({ params }) => 
           if (mockApp) {
             setApp(mockApp);
             setLoading(false);
+
+            // Check if user is already joined (for mock data, assume not joined)
+            const userId = localStorage.getItem('betabay_user_id');
+            if (userId && mockApp.joinedUserIds && mockApp.joinedUserIds.includes(userId)) {
+              setJoined(true);
+            }
             return;
           }
         }
@@ -64,6 +72,13 @@ const DownloadGuidelinesPage: FC<DownloadGuidelinesPageProps> = ({ params }) => 
           const data = await response.json();
           setApp(data);
           setLoading(false);
+
+          
+          // Check if user is already joined
+          const userId = localStorage.getItem('betabay_user_id');
+          if (userId && data.joinedUserIds && data.joinedUserIds.includes(userId)) {
+            setJoined(true);
+          }
         } catch (fetchError) {
           clearTimeout(timeoutId);
           throw fetchError;
@@ -77,6 +92,43 @@ const DownloadGuidelinesPage: FC<DownloadGuidelinesPageProps> = ({ params }) => 
 
     fetchAppData();
   }, [appId]);
+
+  // Function to join the test
+  const joinTest = async () => {
+    if (joining || joined) return;
+
+    setJoining(true);
+    try {
+      const backendUrl = getBackendUrl();
+      const token = localStorage.getItem('betabay_token');
+
+      if (!token) {
+        alert('Please log in to join the test');
+        return;
+      }
+
+      const response = await fetch(`${backendUrl}/api/test-posts/${appId}/join`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        setJoined(true);
+        alert('Successfully joined the test! You can now download and start testing.');
+      } else {
+        const errorData = await response.json();
+        alert(errorData.error || 'Failed to join the test');
+      }
+    } catch (error) {
+      console.error('Error joining test:', error);
+      alert('Failed to join the test. Please try again.');
+    } finally {
+      setJoining(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -106,7 +158,8 @@ const DownloadGuidelinesPage: FC<DownloadGuidelinesPageProps> = ({ params }) => 
     );
   }
 
-  const handleAppleClick = () => {
+  const handleAppleClick = async () => {
+    await joinTest();
     const iosLink = app.iosLink || app.ios_link;
     if (iosLink) {
       window.open(iosLink, '_blank');
@@ -116,7 +169,8 @@ const DownloadGuidelinesPage: FC<DownloadGuidelinesPageProps> = ({ params }) => 
     }
   };
 
-  const handleGoogleClick = () => {
+  const handleGoogleClick = async () => {
+    await joinTest();
     const androidLink = app.androidLink || app.android_link;
     if (androidLink) {
       window.open(androidLink, '_blank');
@@ -124,6 +178,11 @@ const DownloadGuidelinesPage: FC<DownloadGuidelinesPageProps> = ({ params }) => 
       // Fallback to Play Store if no specific link
       window.open('https://play.google.com/store', '_blank');
     }
+  };
+
+  const handleGitHubClick = async () => {
+    await joinTest();
+    window.open('https://github.com', '_blank');
   };
 
   return (
@@ -136,7 +195,7 @@ const DownloadGuidelinesPage: FC<DownloadGuidelinesPageProps> = ({ params }) => 
             Get started with {app.name || app.app_name || 'this app'} beta testing in just a few simple steps
           </p>
         </div>
-        
+
         {/* App Info Card */}
         <div className="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden mb-12">
           <div className="px-8 py-8">
@@ -180,7 +239,7 @@ const DownloadGuidelinesPage: FC<DownloadGuidelinesPageProps> = ({ params }) => 
               <p className="text-gray-600 text-center text-sm mb-6 leading-relaxed">
                 Download through TestFlight. Accept the invitation and install directly.
               </p>
-              <button 
+              <button
                 onClick={handleAppleClick}
                 className="w-full bg-black hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
@@ -204,7 +263,7 @@ const DownloadGuidelinesPage: FC<DownloadGuidelinesPageProps> = ({ params }) => 
               <p className="text-gray-600 text-center text-sm mb-6 leading-relaxed">
                 Join the beta program through Google Play Store and download the latest version.
               </p>
-              <button 
+              <button
                 onClick={handleGoogleClick}
                 className="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"
               >

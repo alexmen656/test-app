@@ -5,7 +5,6 @@ import type { App } from '@/types'; // Import the App type
 const AppListCard = ({ app }: { app: App }) => {
   const name = app.name || app.app_name || "Unnamed App";
   const iconUrl = app.iconUrl || app.icon_url || "/vercel.svg"; // Fallback-Bild
-  const price = app.price || app.test_price || "Free";
   
   // Creator-Info aus verschiedenen möglichen Quellen
   const creatorName = app.creator?.name || app.user_info?.username || "Unknown Creator";
@@ -26,8 +25,7 @@ const AppListCard = ({ app }: { app: App }) => {
                     h
                 </span>
                 <span className="font-bold text-sm text-gray-900">
-                    {app.price ? app.price : 'Free'}
-                    {price}
+                    {app.test_price ? app.test_price : 'Free'}
                 </span>
             </div>
         </div>

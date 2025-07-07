@@ -26,6 +26,7 @@ const testPostSchema = new mongoose.Schema({
   user_id: { type: String, required: true, ref: 'User' },
   app_name: { type: String, required: true },
   description: { type: String, required: true },
+  joinedUserIds: [{ type: String, ref: 'User' }], // Array of user IDs who joined the test
   testing_link: String,
   ios_link: String,
   android_link: String,
