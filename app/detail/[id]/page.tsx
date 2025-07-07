@@ -150,7 +150,7 @@ const AppDetailPage: FC = () => {
                                         h
                                     </span>
                                     <span className="font-bold text-lg text-gray-900">
-                                        {appData.price ? appData.price : 'Free'}
+                                        {appData.price ? appData.price : 'No reward'}
                                     </span>
                                 </div>
                             </div>
