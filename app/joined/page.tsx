@@ -80,7 +80,7 @@ export default function JoinedPage() {
 
                         if (data.id) {
 
-                            data.forEach((item: any) => {
+                            data.forEach((item: App) => {
                                 if (item.joinedUserIds && Array.isArray(item.joinedUserIds) && item.joinedUserIds.includes(userProfile.userId)) {
                                     setApps(prev => [...prev, item]);
                                 }
