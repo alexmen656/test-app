@@ -247,25 +247,11 @@ const allApps: App[] = [
 const initialNotifications: Notification[] = [
     {
         id: "1",
-        title: "New message from John",
-        message: "Hey, are you available for a call?",
-        timestamp: "2023-10-01T12:00:00Z",
+        title: "Welcome to Beta Bay!",
+        message: "Start with joining your favorite apps.",
+        timestamp: "2025-07-07T12:00:00Z",
         read: false
     },
-    {
-        id: "2",
-        title: "Your app has been approved",
-        message: "Congratulations! Your app is now live.",
-        timestamp: "2023-10-02T08:30:00Z",
-        read: true
-    },
-    {
-        id: "3",
-        title: "Reminder: Meeting at 3 PM",
-        message: "Don't forget about the meeting later today.",
-        timestamp: "2023-10-02T10:00:00Z",
-        read: false
-    }
 ];
 
 export { allApps, initialNotifications }; // Exporting the allApps array and initialNotifications for use in other components
