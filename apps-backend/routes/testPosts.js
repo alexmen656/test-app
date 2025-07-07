@@ -540,4 +540,90 @@ router.post('/auth/generate-token', async (req, res) => {
   }
 });
 
+// Get all test posts that the user has joined
+router.get('/user/joined', authenticateUser, async (req, res) => {
+  try {
+    const { page = 1, limit = 10, status = 'testing' } = req.query;
+    const offset = (page - 1) * limit;
+    const userId = req.user.id;
+
+    // Find all test participations for this user
+    const participations = await db.find('test_participants', 
+      { user_id: userId, status: status }, 
+      { 
+        sort: { created_at: -1 },
+        skip: offset,
+        limit: parseInt(limit)
+      }
+    );
+
+    // Get total count for pagination
+    const totalParticipations = await db.count('test_participants', { user_id: userId, status: status });
+
+    const joinedTestPosts = [];
+
+    // For each participation, get the corresponding test post
+    for (const participation of participations) {
+      const testPost = await db.findOne('test_posts', { id: participation.test_post_id });
+      
+      if (testPost) {
+        // Get the test post owner's info
+        const owner = await db.findOne('users', { id: testPost.user_id });
+        if (owner) {
+          testPost.user_info = {
+            user_id: owner.id,
+            username: owner.username,
+            display_name: owner.display_name,
+            profile_image: owner.avatar_url,
+            email: owner.email
+          };
+        }
+
+        // Get screenshots
+        const screenshots = await db.find('screenshots', { test_post_id: testPost.id });
+        testPost.screenshots = screenshots || [];
+
+        // Get current testers count
+        const testers = await db.find('test_participants', { test_post_id: testPost.id, status: 'testing' });
+        testPost.current_testers = testers ? testers.length : 0;
+        testPost.joinedUserIds = testers ? testers.map(tester => tester.user_id) : [];
+
+        // Get reviews and rating
+        const reviews = await db.find('reviews', { test_post_id: testPost.id });
+        if (reviews && reviews.length > 0) {
+          const totalScore = reviews.reduce((sum, review) => sum + (review.review_score || 0), 0);
+          testPost.avg_rating = totalScore / reviews.length;
+          testPost.review_count = reviews.length;
+        } else {
+          testPost.avg_rating = null;
+          testPost.review_count = 0;
+        }
+
+        // Add participation info
+        testPost.participation_info = {
+          joined_at: participation.created_at,
+          participation_status: participation.status,
+          completion_date: participation.completion_date || null
+        };
+
+        joinedTestPosts.push(testPost);
+      }
+    }
+
+    res.json({
+      test_posts: joinedTestPosts,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total: totalParticipations || 0,
+        pages: Math.ceil((totalParticipations || 0) / limit)
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ Error fetching joined test posts:', error);
+    res.status(500).json({ error: 'Failed to fetch joined test posts', details: error.message });
+  }
+});
+
 module.exports = router;

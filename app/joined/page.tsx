@@ -47,7 +47,7 @@ export default function JoinedPage() {
                     headers['Authorization'] = `Bearer ${token}`;
                 }
 
-                const response = await fetch(`${backendUrl}/api/test-posts`, {
+                const response = await fetch(`${backendUrl}/api/test-posts/user/joined`, {
                     method: 'GET',
                     headers: headers
                 });
@@ -58,40 +58,13 @@ export default function JoinedPage() {
 
                 const data = await response.json();
                 console.log("API response:", data); // Debugging
-                console.log("User Profile:", userProfile); // Debugging
 
-                if (Array.isArray(data)) {
-                    data.forEach(item => {
-                        if (item.joinedUserIds && Array.isArray(item.joinedUserIds) && item.joinedUserIds.includes(userProfile.userId)) {
-                            setApps(prev => [...prev, item]);
-                        }
-                    });
-                } else if (data && typeof data === 'object') {
-
-                    const possibleArrays = Object.values(data).filter(value => Array.isArray(value));
-                    if (possibleArrays.length > 0) {
-                        possibleArrays.forEach((arrayOfApps) => {
-                            arrayOfApps.forEach(item => {
-                                if (item.joinedUserIds && Array.isArray(item.joinedUserIds) && item.joinedUserIds.includes(userProfile.userId)) {
-                                    setApps(prev => [...prev, item]);
-                                }
-                            });
-                        });
-                    } else {
-
-                        if (data.id) {
-
-                            data.forEach((item: App) => {
-                                if (item.joinedUserIds && Array.isArray(item.joinedUserIds) && item.joinedUserIds.includes(userProfile.userId)) {
-                                    setApps(prev => [...prev, item]);
-                                }
-                            });
-                        } else {
-                            setApps([]);
-                        }
-                    }
+                // Simply set the apps from the API response
+                if (data && data.test_posts && Array.isArray(data.test_posts)) {
+                    setApps(data.test_posts);
+                } else if (Array.isArray(data)) {
+                    setApps(data);
                 } else {
-
                     setApps([]);
                 }
 
@@ -106,8 +79,9 @@ export default function JoinedPage() {
             }
         }
 
-        // Only fetch if we have a valid userId
-        if (userProfile.userId && userProfile.userId !== '0') {
+        // Fetch apps if we have authentication
+        const token = localStorage.getItem('betabay_token');
+        if (token) {
             fetchApps();
         } else {
             setLoading(false);
