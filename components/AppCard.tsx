@@ -32,7 +32,7 @@ const AppCard: React.FC<{ app: App }> = ({ app }) => {
                                 h
                             </span>
                             <span className="font-bold text-lg text-gray-900">
-                                {app.test_price ? app.test_price : 'Free'}
+                                {app.test_price ? app.test_price : 'No reward'}
                             </span>
                         </div>
                     </div>

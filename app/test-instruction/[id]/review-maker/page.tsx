@@ -191,7 +191,8 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
                 return;
               }
 
-              const formData = new FormData(e.currentTarget);
+              const form = e.currentTarget;
+              const formData = new FormData(form);
               const reviewScore = parseInt(formData.get('rating') as string);
               const comment = formData.get('reviewText') as string;
 
@@ -208,6 +209,7 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
 
                 if (!token) {
                   alert('Authentication required. Please sign in again.');
+                  setSubmitting(false);
                   return;
                 }
 
@@ -228,12 +230,14 @@ const ReviewMakerPage: FC<ReviewMakerPageProps> = ({ params }) => {
                   const data = await response.json();
 
                   // Add the new review to the list
-                  // Add the new review to the list
                   if (data.review) {
                     setReviews(prev => [data.review, ...prev]);
                   }
-                  // Reset form
-                  e.currentTarget.reset();
+
+                  // Reset form safely
+                  if (form) {
+                    form.reset();
+                  }
 
                   alert('Thank you for your review! Your feedback has been submitted successfully.');
                 } else {
