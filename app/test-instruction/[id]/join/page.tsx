@@ -196,18 +196,27 @@ const JoinBetaPage: FC<JoinBetaPageProps> = ({ params }) => {
           /* Success State */
           <div className="bg-gradient-to-r from-green-100 to-blue-100 rounded-[32px] shadow-xl border border-green-200 p-10 text-center">
             <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="white">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20 6L9 17l-5-5"/>
               </svg>
             </div>
             
             <h3 className="text-4xl font-bold text-gray-900 mb-4">Welcome to the Beta Program!</h3>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Congratulations! You&apos;re now part of an exclusive group of beta testers. 
-              Let&apos;s get you started with the next steps.
+              Congratulations! You&apos;re In! Waiting for your Feedbacks.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-6 justify-center max-w-3xl mx-auto">
+              <Link
+                href={`/test-instruction/${appId}`}
+                className="group bg-white text-gray-700 hover:text-gray-900 font-semibold py-4 px-8 rounded-[16px] transition-all duration-300 shadow-lg hover:shadow-xl border border-gray-200 hover:border-gray-300 flex items-center justify-center gap-3"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" className="group-hover:-translate-x-1 transition-transform duration-300">
+                  <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                Back to Overview
+              </Link>
+              
               <Link
                 href={`/test-instruction/${appId}/download-guidelines`}
                 className="group bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-[16px] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center gap-3"
@@ -216,16 +225,6 @@ const JoinBetaPage: FC<JoinBetaPageProps> = ({ params }) => {
                   <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
                 </svg>
                 Download & Setup
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="group-hover:translate-x-1 transition-transform duration-300">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </Link>
-              
-              <Link
-                href={`/test-instruction/${appId}`}
-                className="group bg-white text-gray-700 hover:text-gray-900 font-semibold py-4 px-8 rounded-[16px] transition-all duration-300 shadow-lg hover:shadow-xl border border-gray-200 hover:border-gray-300 flex items-center justify-center gap-3"
-              >
-                Check Reviews
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="group-hover:translate-x-1 transition-transform duration-300">
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
