@@ -8,13 +8,15 @@ import { getBackendUrl } from '@/lib/api';
 export default function JoinedPage() {
     // --- State Management ---
     const [apps, setApps] = useState<App[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [userProfile, setUserProfile] = useState({
         username: 'Username',
         profileImage: '',
         userId: '0'
     });
+
+
 
     // Fetch user profile data
     useEffect(() => {
@@ -35,7 +37,6 @@ export default function JoinedPage() {
         async function fetchApps() {
             try {
                 setLoading(true);
-                setApps([]); // Clear previous apps before fetching new ones
                 const backendUrl = getBackendUrl();
 
                 // Optional: Get token from localStorage if it exists
@@ -57,22 +58,23 @@ export default function JoinedPage() {
 
                 const data = await response.json();
                 console.log("API response:", data); // Debugging
-                console.log("User Profile:", userProfile); // Debugging
+                console.log("User ID:", userProfile.userId); // Debugging
 
-                const filteredApps: App[] = [];
                 if (Array.isArray(data)) {
                     data.forEach(item => {
+                        console.log("joinedUserIds:", item.joinedUserIds); // Debugging
                         if (item.joinedUserIds && Array.isArray(item.joinedUserIds) && item.joinedUserIds.includes(userProfile.userId)) {
-                            filteredApps.push(item);
+                            setApps(prev => [...prev, item]);
                         }
                     });
                 } else if (data && typeof data === 'object') {
+
                     const possibleArrays = Object.values(data).filter(value => Array.isArray(value));
                     if (possibleArrays.length > 0) {
                         possibleArrays.forEach((arrayOfApps) => {
                             arrayOfApps.forEach(item => {
                                 if (item.joinedUserIds && Array.isArray(item.joinedUserIds) && item.joinedUserIds.includes(userProfile.userId)) {
-                                    filteredApps.push(item);
+                                    setApps(prev => [...prev, item]);
                                 }
                             });
                         });
@@ -90,7 +92,6 @@ export default function JoinedPage() {
                         }
                     }
                 } else {
-
                     setApps([]);
                 }
 
@@ -98,12 +99,14 @@ export default function JoinedPage() {
             } catch (error) {
                 console.error('Failed to fetch apps:', error);
                 setError('Failed to load apps. Please try again.');
+                // Fallback to empty array if fetch fails
                 setApps([]);
             } finally {
                 setLoading(false);
             }
         }
-        // Only fetch if we have a valid userId
+
+        // Fetch apps if we have authentication
         if (userProfile.userId && userProfile.userId !== '0') {
             fetchApps();
         } else {
@@ -116,6 +119,7 @@ export default function JoinedPage() {
                 {/* Apps Section */}
                 <main>
                     <h2 className="text-xl sm:text-2xl font-semibold mb-6 sm:mb-8">Joined Tests</h2>
+
                     {/* Loading State */}
                     {loading && (
                         <div className="flex items-center justify-center py-12">
@@ -123,6 +127,7 @@ export default function JoinedPage() {
                             <span className="ml-4 text-gray-600">Loading your joined tests...</span>
                         </div>
                     )}
+
                     {/* Error State */}
                     {error && (
                         <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
@@ -134,6 +139,7 @@ export default function JoinedPage() {
                             </div>
                         </div>
                     )}
+
                     {/* Empty State */}
                     {!loading && !error && apps.length === 0 && (
                         <div className="text-center py-12">
@@ -146,11 +152,12 @@ export default function JoinedPage() {
                             <p className="text-gray-500">You haven&apos;t joined any beta tests yet. Explore available apps to get started!</p>
                         </div>
                     )}
+
                     {/* Grid for the apps */}
                     {!loading && !error && apps.length > 0 && (
                         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
                             {apps.map(app => (
-                                <AppSquareCard key={app.id} app={app} route={`/test-instruction/${app.id}`} />
+                                <AppSquareCard key={app.id} app={app} route={`/test-instruction/${app.id}/download-guidelines`} />
                             ))}
                         </div>
                     )}
